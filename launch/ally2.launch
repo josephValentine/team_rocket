@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- declare arg to be passed in -->
+    <arg name="sim_mode" default="false" />
+    <arg name="team_side" default="home" />
+    <arg name="vel_cmds_remap" default="vel_cmds" />
+
+    <group ns="ally2">
+        <!-- Load this robot's param file with physical params -->
+        <!-- This is where you bind a certain robot to be in either the ally1 or ally2 position -->
+        <rosparam command="load" file="$(find mcthuggets)/param/$(optenv ROBOT fry).yaml" />
+
+        <!-- Load this position (ally1/ally2) param file -->
+        <rosparam command="load" file="$(find mcthuggets)/param/ally2.yaml" />
+
+        <!-- Start the robot up -->
+        <include file="$(find mcthuggets)/launch/robot.launch">
+            <arg name="me" value="ally2" />
+            <arg name="ally" value="ally1" />
+            <arg name="sim_mode" value="$(arg sim_mode)" />
+            <arg name="team_side" value="$(arg team_side)" />
+            <arg name="vel_cmds_remap" value="$(arg vel_cmds_remap)" />
+        </include>
+
+    </group>
+</launch>

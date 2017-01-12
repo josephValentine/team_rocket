@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- declare arg to be passed in -->
+    <arg name="me" default="ally1" />
+    <arg name="ally" default="ally2" />
+    <arg name="sim_mode" default="false" />
+    <arg name="team_side" default="home" />
+    <arg name="vel_cmds_remap" default="vel_cmds" />
+
+    <!-- using which side of the field we are on, determine the appropriate -->
+    <!-- connections to the output of the vision system -->
+    <arg name="other_side" value="away" if="$(eval team_side == 'home')" />
+    <arg name="other_side" value="home" if="$(eval team_side == 'away')" />
+    
+    <!-- Hardware agnostic code -->
+    <node name="ball_estimator" pkg="mcthuggets" type="ball_estimator_node.py" output="screen">
+        <remap from="vision_position" to="/vision/ball" />
+    </node>
+    <node name="ally1_estimator" pkg="mcthuggets" type="robot_estimator_node.py">
+        <remap from="vision_position" to="/vision/$(arg team_side)1" />
+        <remap from="robot_state" to="ally1_state" />
+    </node>
+    <node name="ally2_estimator" pkg="mcthuggets" type="robot_estimator_node.py">
+        <remap from="vision_position" to="/vision/$(arg team_side)2" />
+        <remap from="robot_state" to="ally2_state" />
+    </node>
+    <node name="opponent1_estimator" pkg="mcthuggets" type="robot_estimator_node.py">
+        <remap from="vision_position" to="/vision/$(arg other_side)1" />
+        <remap from="robot_state" to="opponent1_state" />
+    </node>
+    <node name="opponent2_estimator" pkg="mcthuggets" type="robot_estimator_node.py">
+        <remap from="vision_position" to="/vision/$(arg other_side)2" />
+        <remap from="robot_state" to="opponent2_state" />
+    </node>
+    <node name="ai" pkg="mcthuggets" type="ai_node.py" output="screen">
+        <remap from="my_state" to="$(arg me)_state" />
+        <remap from="ally_state" to="$(arg ally)_state" />
+    </node>
+    <node name="controller" pkg="mcthuggets" type="controller_node.py" output="screen">
+        <!-- The controller needs to know which robot state to listen to -->
+        <remap from="robot_state" to="$(arg me)_state" />
+        <!-- For simulation, remap the output -->
+        <remap from="vel_cmds" to="$(arg vel_cmds_remap)" />
+    </node>
+
+    <!-- Hardware Dependent: Only start in non-simulation environment -->
+    <group unless="$(arg sim_mode)">
+
+        <!-- Things like a motion node would go here, i.e., code that -->
+        <!-- talks to real hardware: motors, kickers, LEDs, smoke machines... -->
+
+        <!-- <node name="motion" pkg="mcthuggets" type="motion_node.py" output="screen">
+            <remap from="robot_state" to="$(arg me)_state" />
+        </node> -->
+    </group>
+</launch>
