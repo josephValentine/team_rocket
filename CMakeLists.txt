@@ -1,30 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(mcthuggets)
+project(teamrocket)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  roslaunch
-  std_msgs
-  geometry_msgs
-  message_generation
-  std_srvs
-  
-  # Since we need the GameState.msg file from soccerref, we have to add it here
-  soccerref
-)
+find_package(catkin REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
-# Check all *.launch files for common errors
-roslaunch_add_file_check(launch)
-
-find_package(OpenCV)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -57,17 +40,17 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  BallState.msg
-  RobotState.msg
-  PIDInfo.msg
-)
+# add_message_files(
+#   FILES
+#   Message1.msg
+#   Message2.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
-#   file.srv
+#   Service1.srv
+#   Service2.srv
 # )
 
 ## Generate actions in the 'action' folder
@@ -78,11 +61,10 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  geometry_msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs  # Or other packages containing msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -115,8 +97,8 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES mcthuggets
- CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs message_runtime std_srvs soccerref
+#  LIBRARIES rocket
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
 
@@ -126,30 +108,29 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS}, include/playground)
+# include_directories(include)
 
 ## Declare a C++ library
-# add_library(soccersim_mcthuggets
-#   src/${PROJECT_NAME}/soccersim_mcthuggets.cpp
+# add_library(rocket
+#   src/${PROJECT_NAME}/rocket.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(soccersim_mcthuggets ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(rocket ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(soccersim_mcthuggets_node src/soccersim_mcthuggets_node.cpp)
+# add_executable(rocket_node src/rocket_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(soccersim_mcthuggets_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(rocket_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(soccersim_mcthuggets_node
+# target_link_libraries(rocket_node
 #   ${catkin_LIBRARIES}
 # )
-
 
 #############
 ## Install ##
@@ -166,7 +147,7 @@ include_directories(include ${catkin_INCLUDE_DIRS}, include/playground)
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS soccersim_mcthuggets soccersim_mcthuggets_node
+# install(TARGETS rocket rocket_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -191,7 +172,7 @@ include_directories(include ${catkin_INCLUDE_DIRS}, include/playground)
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_soccersim_mcthuggets.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rocket.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -1,6 +1,12 @@
-McThuggets - Robot Soccer example package
-=========================================
+Team Rocket - The Winning Team
+===============================
 
-This example package is a slimmed down version of the [original code](https://github.com/zamora18/robot-soccer) of the 2016 BYU Robot Soccer champtions, the Chicken McThuggets.
+This directory contains the files for the Robot Soccer competition for the
+Winter 2016 group Team Rocket.
 
-It was simplified so that the ROS architecture could be easier to understand and so it would work for the new Gazebo Robot Soccer simulation competition. Much of the complex functionality has been removed.
+The team members are:
+    - Joe Valentine
+    - Steven Whitaker
+    - Jared Collier
+    - Harrison McCullough
+

@@ -20,23 +20,21 @@ velocities = (0, 0, 0)
 def init(gains=None):
     global PID_x, PID_y, PID_theta
 
-    xP = gains['x']['P'] if gains is not None else 2.5
-    xI = gains['x']['I'] if gains is not None else 0
-    xD = gains['x']['D'] if gains is not None else 0
+    xP = 5
+    xI = 0
+    xD = 0
 
-    yP = gains['y']['P'] if gains is not None else 2.5
-    yI = gains['y']['I'] if gains is not None else 0
-    yD = gains['y']['D'] if gains is not None else 0
+    yP = 5
+    yI = 0
+    yD = 0
 
-    thetaP = gains['theta']['P'] if gains is not None else 2.5
-    thetaI = gains['theta']['I'] if gains is not None else 0
-    thetaD = gains['theta']['D'] if gains is not None else 0
+    thetaP = 3
+    thetaI = 0
+    thetaD = 0
 
     PID_x = PID(xP, xI, xD, 2, 0.05, integrator_limit=0.05)
     PID_y = PID(yP, yI, yD, 2, 0.05, integrator_limit=0.05)
     PID_theta = PID(thetaP, thetaI, thetaD, 180, 0.05, integrator_limit=0.05)
-
-    print "Initializing controller with gains: {}".format(str(gains))
 
 def set_commanded_position(x, y, theta):
     """Set Commanded Position
