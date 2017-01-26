@@ -8,7 +8,7 @@ etc.
 """
 
 # from geometry_msgs.msg import Pose2D
-from Models import Point, Angle
+from Models import Point, Vector, Line, Angle
 import math
 
 
@@ -43,3 +43,94 @@ def rad_to_deg(rad):
 
 def deg_to_rad(deg):
    return deg*math.pi/180
+
+
+def get_vector_between_points(p1, p2):
+   return Vector(p2.x-p1.x, p2.y-p1.y)
+
+
+def get_vector_magnitude(v):
+   return math.sqrt(v.x**2 + v.y**2)
+
+
+def normalize_vector(v):
+   m = get_vector_magnitude(v)
+   return Vector(v.x/m, v.y/m)
+
+
+def scale_vector(v, k):
+   return Vector(v.x*k, v.y*k)
+
+
+def get_angle_of_vector(v):
+   return math.atan(v.y/v.x)
+
+
+
+
+def test():
+   def close(v1, v2):
+      delta = 0.0000001
+      if v1 == v2: return True
+      if type(v1) != type(v2): return False
+      if type(v1) == int: return abs(v1-v2) < delta
+      return False
+   def disp_error(rec, exp, mes):
+      print('Received {}, expected {} for {}'.format(rec, exp, mes))
+      exit()
+   def disp_errors(recs, exps, mess):
+      # print('recs ({}): {}\nexps ({}): {}\nmess ({}): {}\n'.format(
+      #       type(recs[0]), recs, type(exps[0]), exps, type(mess[0]), mess))
+      [disp_error(r, e, m) for r, e, m in zip(rec, exp, mes) \
+       if not close(r, e)]
+
+   p0 = Point(0,0)
+   p1 = Point(-1,-1)
+   p2 = Point(-1, 1)
+   p3 = Point( 1, 1)
+   p4 = Point( 1,-1)
+   l12 = Line(p1,p2)
+   l23 = Line(p2,p3)
+   l34 = Line(p3,p4)
+   l41 = Line(p4,p1)
+
+   rec = [  dist(p1,p2),   dist(p2,p3),   dist(p3,p4),   dist(p4,p1)]
+   exp = [2]*len(rec)
+   mes = ['dist(p1,p2)', 'dist(p2,p3)', 'dist(p3,p4)', 'dist(p4,p1)']
+   disp_errors(rec,exp,mes)
+
+   rec = [  dist(p2,p1),   dist(p3,p2),   dist(p4,p3),   dist(p1,p4)]
+   exp = [2]*len(rec)
+   mes = ['dist(p2,p1)', 'dist(p3,p2)', 'dist(p4,p3)', 'dist(p1,p4)']
+   disp_errors(rec,exp,mes)
+
+   rec = [  dist(p1,p3),   dist(p3,p1),   dist(p2,p4),   dist(p4,p2)]
+   exp = [math.sqrt(8)]
+   mes = ['dist(p1,p3)', 'dist(p3,p1)', 'dist(p2,p4)', 'dist(p4,p2)']
+   disp_errors(rec,exp,mes)
+
+   rec = [  dist_to_line(p0,l12),   dist_to_line(p0,l12),
+            dist_to_line(p0,l12),   dist_to_line(p0,l12)]
+   exp = [1]*len(rec)
+   mes = ['dist_to_line(p0,l12)', 'dist_to_line(p0,l12)',
+          'dist_to_line(p0,l12)', 'dist_to_line(p0,l12)']
+   disp_errors(rec,exp,mes)
+
+   rec = [  get_vector_between_points(p1,p2),
+            get_vector_between_points(p2,p3),
+            get_vector_between_points(p3,p4),
+            get_vector_between_points(p4,p1)]
+   exp = [Vector(0,2), Vector(2,0), Vector(0,-2), Vector(-2,0)]
+   mes = ['get_vector_between_points(p1,p2)',
+          'get_vector_between_points(p2,p3)',
+          'get_vector_between_points(p3,p4)',
+          'get_vector_between_points(p4,p1)']
+   disp_errors(rec,exp,mes)
+
+
+
+   print('All tests passed')
+
+
+if __name__ == '__main__':
+   test()
