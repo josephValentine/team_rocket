@@ -1,6 +1,20 @@
 """ Combination of Utilities to perform simple tasks """
 
+import Constants
 
+def get_pos_behind_ball(field, angle):
+   """ Get the position behind the ball facing a given direction
+
+   field (Field)   : Current state of game field
+   angle (Angle)   : Direction to face
+   return (Pose2D) : A position and orientation to be behind the ball
+   """
+   p = field.ball.pos
+   v = get_normalized_vector(angle)
+   distance_behind_ball = 0.2
+   v = scale_vector(-distance_behind_ball)
+   
+   pass
 
 
 # def kick_ball_toward_pos(robot, ball, pos):

@@ -53,6 +53,10 @@ class Vector:
         return repr(self)
     def __repr__(self):
         return 'Vector({}, {})'.format(self.x, self.y)
+    # def __add__(self):
+    #     pass
+    # def __sub__(self):
+    #     pass
 
 
 class Line:
