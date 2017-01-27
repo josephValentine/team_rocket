@@ -1,9 +1,7 @@
 #!/usr/bin/env python
+"""Functions.py
 
-""" Functions.py
-
-This file contains common functions for doing geometric calculations,
-etc.
+This file contains common functions for doing geometric calculations, etc.
 
 """
 
@@ -13,20 +11,22 @@ import math
 
 
 def dist(p1, p2):
-   """ Compute the distance between two points
+   """Compute the distance between two points
 
    p1 (Point)     : point 1
    p2 (Point)     : point 2
    return (Float) : distance between point 1 and point 2
+
    """
    return math.sqrt((p2.y - p1.y)**2 + (p2.x - p1.x)**2)
 
 def dist_to_line(p, line):
-   """ Compute the distance from a point to a line
+   """Compute the distance from a point to a line
 
    p (Point)      : point to calculate distance from
    line (Line)    : tuple of two points that define a line
    return (Float) : distance from p to line
+
    """
    p0 = p
    p1 = line.beg
@@ -38,59 +38,65 @@ def dist_to_line(p, line):
 
 
 def get_vector_between_points(p1, p2):
-   """ Returns a vector between two points
+   """Returns a vector between two points
 
    p1 (Point)      : first point
    p2 (Point)      : second point
    return (Vector) : vector between points
+
    """
    return Vector(p2.x-p1.x, p2.y-p1.y)
 
 
 def get_vector_magnitude(v):
-   """ Get the magnitude of a vector
+   """Get the magnitude of a vector
 
    v (Vector)     : input vector
    return (Float) : magnitude of v
+
    """
    return math.sqrt(v.x**2 + v.y**2)
 
 
 def normalize_vector(v):
-   """ Return a vector with same direction and magnitude 1
+   """Return a vector with same direction and magnitude 1
 
    v (Vector)     : input vector
    return (Float) : vector with same direction and magnitude 1
+
    """
    m = get_vector_magnitude(v)
    return Vector(v.x/m, v.y/m)
 
 
 def get_normalized_vector(angle):
-   """ Return a vector in the given angle with magnitude 1
+   """Return a vector in the given angle with magnitude 1
 
    angle (Angle)   : input angle
    return (Vector) : vector in given angle with magnitude 1
+
    """
    a = angle.radian
    return Vector(math.cos(a), math.sin(a))
 
 
 def scale_vector(v, k):
-   """ Return a vector scaled by a constant factor
+   """Return a vector scaled by a constant factor
 
    v (Vector)     : input vector
    k (Number)     : scale factor
    return (Float) : vector v scaled by constant k
+
    """
    return Vector(v.x*k, v.y*k)
 
 
 def get_angle_of_vector(v):
-   """ Return the angle in radians of a vector
+   """Return the angle in radians of a vector
 
    v (Vector)     : input vector
    return (Angle) : angle in radians between 0 and 2*pi
+
    """
    a = math.atan(v.y/v.x)
    if v.x < 0:

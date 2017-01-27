@@ -1,15 +1,16 @@
-""" Combination of Utilities to perform simple tasks """
+"""Combination of Utilities to perform simple tasks"""
 
 import Constants
 from Models import Position
 import Functions
 
 def get_point_behind_ball(field, angle, distance):
-   """ Get the point behind the ball facing a given direction
+   """Get the point behind the ball facing a given direction.
 
    field (Field)  : Current state of game field
    angle (Angle)  : Direction to face
    return (Point) : A point behind the ball
+
    """
    ball_point = field.ball.point
    dir_vec = Functions.get_normalized_vector(angle)

@@ -1,4 +1,4 @@
-""" Elementary and Secondary actions """
+"""Elementary and Secondary actions"""
 
 # Elementary 
 def move_to_pos_abs(robot, pos):

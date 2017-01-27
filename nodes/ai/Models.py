@@ -1,9 +1,10 @@
-""" Models for robots, ball, etc. """
+"""Models for robots, ball, etc."""
 
 import Constants
 import math
 
 class Robot:
+    """Holds information about a robot"""
     def __init__(self, team, id, pos):
        self.team = team
        self.id   = id
@@ -17,6 +18,7 @@ class Robot:
 
 
 class Ball:
+    """Holds information about the ball"""
     def __init__(self, point):
         self.point = point
     def __eq__(self, other):
@@ -28,6 +30,7 @@ class Ball:
 
 
 class Point:
+    """An x,y cartesian coordinate pair"""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -40,16 +43,31 @@ class Point:
     def __repr__(self):
         return 'Point({}, {})'.format(self.x, self.y)
     def __add__(self, other):
+        """Adds a vector to a point
+
+        Adds the x, y values of the vector to the point. All other types
+        (including another Point) are not defined. It does not make sense to add
+        a point to another point.
+
+        """
         if type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
         return Point(self.x + other.x, self.y + other.y)
     def __sub__(self, other):
+        """Subtracts a vector or another vector from a point
+
+        Subtracts the x, y values of the Point or Vector from the point. All
+        other types are not defined. It does not make sense to add a point to
+        another point.
+
+        """
         if type(other) != Point and type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
         return Vector(self.x - other.x, self.y - other.y)
 
 
 class Vector:
+    """An x,y cartesian coordinate vector"""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -72,6 +90,12 @@ class Vector:
 
 
 class Line:
+    """A pair of lines that define a point
+
+    The beginning and end points may or may not constitude the end points of a
+    line segment, depending on the usage.
+
+    """
     def __init__(self, beg, end):
         self.beg = beg
         self.end = end
@@ -86,6 +110,7 @@ class Line:
 
 
 class Angle:
+    """An angle, stored in both radians and degrees"""
     def __init__(self, value, is_degree):
         if is_degree:
             self.degree = value
@@ -112,6 +137,7 @@ class Angle:
 
 
 class Position:
+    """Information about a position, including a point and angle"""
     def __init__(self, point, angle):
         self.point = point
         self.angle = angle
@@ -135,6 +161,11 @@ class Position:
 
 
 class Field:
+    """Holds information about everything on the field
+
+    This includes all robots and the ball.
+
+    """
     def __init__(self):
         self.ball  = Ball(Point(Constants.ball_start_x,
                                 Constants.ball_start_y))
@@ -162,6 +193,12 @@ class Field:
 
 
 class GameHistory:
+    """Information about what has happened in the game so far
+
+    This could contain strategies for our team or our opponenets, how aggressive
+    each team was, etc.
+
+    """
     def __init__(self):
         pass
     def __str__(self):
@@ -171,6 +208,11 @@ class GameHistory:
 
 
 class GameState:
+    """Information about the past and current state of the game
+
+    This includes the current field and the past history.
+
+    """
     def __init__(self, field, game_history):
         self.field        = field
         self.game_history = game_history
@@ -183,11 +225,11 @@ class GameState:
 
 # Helper functions
 def _rad_to_deg(rad):
-   return rad*180/math.pi
+    return rad*180/math.pi
 
 
 def _deg_to_rad(deg):
-   return deg*math.pi/180
+    return deg*math.pi/180
 
 
 def _type_str(x):
