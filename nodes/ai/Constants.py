@@ -28,7 +28,13 @@ opp_2_id      = 'opp_1'
 team_us   = 'team_us'
 team_them = 'team_them'
 
+left_side  = 'left_side'
+right_side = 'right_side'
 
+first_half  = 'first_half'
+second_half = 'second_half'
+
+time_in_half = 2*60 # seconds
 
 ################################################################################
 ################ Everything below here is taken from McThuggets ################
@@ -43,11 +49,19 @@ robot_width         = 0.175 # (7.0 in)
 robot_half_width    = robot_width/2
 # add constant that is the front of the robot, where we actually kick.
 
-goal_box_width      = 0.619 # (24.375 in)
-goal_box_length     = 0.127 # (5.0 in)
-goal_position_home  = [-field_length/2, 0]
-goal_position_opp   = [-goal_position_home[0], 0]
-goal_score_threshold= 0.07 # .03 IN REAL LIFE?, 0.00 IN SIMULATOR
+goal_box_width       = 0.619 # (24.375 in)
+goal_box_length      = 0.127 # (5.0 in)
+goal_position_home   = [-field_length/2, 0]
+goal_position_opp    = [-goal_position_home[0], 0]
+### Harrison begin ###
+goal_point_left_x    = -field_length/2
+goal_point_left_y    = 0
+goal_point_right_x   = -goal_point_left_x
+goal_point_right_y   = 0
+print('left: {}'.format(goal_point_left_x))
+print('right: {}'.format(goal_point_right_x))
+#### Harrison end ####
+goal_score_threshold = 0.07 # .03 IN REAL LIFE?, 0.00 IN SIMULATOR
 
 center_circle_radius= 0.25
 
