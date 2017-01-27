@@ -100,7 +100,14 @@ def get_angle_of_vector(v):
    v (Vector)     : input vector
    return (Float) : angle in radians
    """
-   return math.atan(v.y/v.x)
+   a = math.atan(v.y/v.x)
+   if v.x < 0:
+      if v.y > 0:
+         return a + math.pi
+      else:
+         return a - math.pi
+   else:
+      return a
 
 
 
