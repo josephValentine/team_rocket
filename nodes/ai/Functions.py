@@ -72,7 +72,7 @@ def get_normalized_vector(angle):
    angle (Angle)   : input angle
    return (Vector) : vector in given angle with magnitude 1
    """
-   a = angle.rad
+   a = angle.radian
    return Vector(math.cos(a), math.sin(a))
 
 

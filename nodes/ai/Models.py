@@ -1,6 +1,7 @@
 """ Models for robots, ball, etc. """
 
 import Constants
+import math
 
 class Robot:
     def __init__(self, team, id, pos):
@@ -16,14 +17,14 @@ class Robot:
 
 
 class Ball:
-    def __init__(self, pos):
-        self.pos = pos
+    def __init__(self, point):
+        self.point = point
     def __eq__(self, other):
         return type(self) == type(other)
     def __str__(self):
         return repr(self)
     def __repr__(self):
-        return 'Ball({})'.format(self.pos)
+        return 'Ball({})'.format(self.point)
 
 
 class Point:
@@ -48,8 +49,6 @@ class Point:
         return Vector(self.x - other.x, self.y - other.y)
 
 
-
-# Do we want a seperate class? What would be different?
 class Vector:
     def __init__(self, x, y):
         self.x = x
@@ -62,10 +61,10 @@ class Vector:
         return repr(self)
     def __repr__(self):
         return 'Vector({}, {})'.format(self.x, self.y)
-    def __add__(self):
+    def __add__(self, other):
         if type(other) != Vector and type(other) != Point:
             raise TypeError(_type_error_str(self, other))
-        return other.__class__(self.x + other.x, self.y + Other.y)
+        return other.__class__(self.x + other.x, self.y + other.y)
     def __sub__(self, other):
         if type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
@@ -102,19 +101,58 @@ class Angle:
         return repr(self)
     def __repr__(self):
         return 'Angle({}, {})'.format(self.degree, True)
+    def __add__(self, other):
+        if type(other) == Angle:
+            return Angle(self.radian + other.radian, False)
+        raise TypeError(_type_error_str(self, other))
+    def __sub__(self, other):
+        if type(other) == Angle:
+            return Angle(self.radian - other.radian, False)
+        raise TypeError(_type_error_str(self, other))
+
+
+class Position:
+    def __init__(self, point, angle):
+        self.point = point
+        self.angle = angle
+    def __add__(self, other):
+        if type(other) == Vector:
+            return Position(self.point + other, self.angle)
+        if type(other) == Angle:
+            return Position(self.point, self.angle + other)
+        raise TypeError(_type_error_str(self, other))
+    def __sub__(self, other):
+        if type(other) == Vector:
+            return Position(self.point - other, self.angle)
+        if type(other) == Angle:
+            return Position(self.point, self.angle - other)
+        raise TypeError(_type_error_str(self, other))
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return 'Position({}, {})'.format(self.point, self.angle)
+
 
 
 class Field:
     def __init__(self):
         self.ball  = Ball(Point(Constants.ball_start_x,
                                 Constants.ball_start_y))
-        self.ally1 = Robot(Point(Constants.ally_1_start_x,
+        self.ally1 = Robot(Constants.team_us,
+                           Constants.ally_1_id,
+                           Point(Constants.ally_1_start_x,
                                  Constants.ally_1_start_y))
-        self.ally2 = Robot(Point(Constants.ally_2_start_x,
+        self.ally2 = Robot(Constants.team_us,
+                           Constants.ally_2_id,
+                           Point(Constants.ally_2_start_x,
                                  Constants.ally_2_start_y))
-        self.opp1  = Robot(Point(Constants.opp_1_start_x,
+        self.opp1  = Robot(Constants.team_them,
+                           Constants.opp_1_id,
+                           Point(Constants.opp_1_start_x,
                                  Constants.opp_1_start_y))
-        self.opp2  = Robot(Point(Constants.opp_2_start_x,
+        self.opp2  = Robot(Constants.team_them,
+                           Constants.opp_2_id,
+                           Point(Constants.opp_2_start_x,
                                  Constants.opp_2_start_y))
     def __str__(self):
         return repr(self)
@@ -157,5 +195,5 @@ def _type_str(x):
 
 
 def _type_error_str(x, y):
-    return 'unsupported operand type(s) for: \''+_type_str(self)+\
-        '\' and \''+_type_str(other)+'\''
+    return 'unsupported operand type(s) for: \''+_type_str(x)+\
+        '\' and \''+_type_str(y)+'\''

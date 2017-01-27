@@ -8,18 +8,27 @@ ball_start_y = 0.0
 ally_1_start_x = -1.0
 ally_1_start_y = 0.0
 ally_1_start_a = 0.0
+ally_1_id      = 'ally_1'
 
 ally_2_start_x = -2.0
 ally_2_start_y = 0.0
 ally_2_start_a = 0.0
+ally_2_id      = 'ally_1'
 
 opp_1_start_x = 1.0
 opp_1_start_y = 0.0
 opp_1_start_a = math.pi
+opp_1_id      = 'opp_1'
 
 opp_2_start_x = 2.0
 opp_2_start_y = 0.0
 opp_2_start_a = math.pi
+opp_2_id      = 'opp_1'
+
+team_us   = 'team_us'
+team_them = 'team_them'
+
+
 
 ################################################################################
 ################ Everything below here is taken from McThuggets ################
