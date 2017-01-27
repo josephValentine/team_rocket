@@ -1,10 +1,14 @@
 """ Models for robots, ball, etc. """
 
+import Constants
+
 class Robot:
     def __init__(self, team, id, pos):
        self.team = team
        self.id   = id
        self.pos  = pos
+    def __eq__(self, other):
+        return type(self) == type(other) and self.id == other.id
     def __str__(self):
         return 'Robot({}, {}, {})'.format(self.team, self.id, self.pos)
 
@@ -12,6 +16,8 @@ class Robot:
 class Ball:
     def __init__(self, pos):
         self.pos = pos
+    def __eq__(self, other):
+        return type(self) == type(other)
     def __str__(self):
         return 'Ball({})'.format(self.pos)
 
@@ -67,6 +73,32 @@ class Angle:
             self.radian == other.radian
     def __str__(self):
         return 'Point({}, {})'.format(self.degree, True)
+
+
+class Field:
+    def __init__(self):
+        self.ball  = Ball(Point(Constants.ball_start_x,
+                                Constants.ball_start_y))
+        self.ally1 = Robot(Point(Constants.ally_1_start_x,
+                                 Constants.ally_1_start_y))
+        self.ally2 = Robot(Point(Constants.ally_2_start_x,
+                                 Constants.ally_2_start_y))
+        self.opp1  = Robot(Point(Constants.opp_1_start_x,
+                                 Constants.opp_1_start_y))
+        self.opp2  = Robot(Point(Constants.opp_2_start_x,
+                                 Constants.opp_2_start_y))
+
+
+class GameHistory:
+    def __init__(self):
+        pass
+
+
+class GameState:
+    def __init__(self, field, game_history):
+        self.field        = field
+        self.game_history = game_history
+
 
 
 def _rad_to_deg(rad):
