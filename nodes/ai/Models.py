@@ -10,6 +10,8 @@ class Robot:
     def __eq__(self, other):
         return type(self) == type(other) and self.id == other.id
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Robot({}, {}, {})'.format(self.team, self.id, self.pos)
 
 
@@ -19,6 +21,8 @@ class Ball:
     def __eq__(self, other):
         return type(self) == type(other)
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Ball({})'.format(self.pos)
 
 
@@ -31,6 +35,8 @@ class Point:
             self.x == other.x and \
             self.y == other.y
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Point({}, {})'.format(self.x, self.y)
 
 
@@ -44,6 +50,8 @@ class Vector:
             self.x == other.x and \
             self.y == other.y
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Vector({}, {})'.format(self.x, self.y)
 
 
@@ -56,6 +64,8 @@ class Line:
             self.beg == other.beg and \
             self.end == other.end
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Line({}, {})'.format(self.beg, self.end)
 
 
@@ -72,6 +82,8 @@ class Angle:
             self.degree == other.degree and \
             self.radian == other.radian
     def __str__(self):
+        return repr(self)
+    def __repr__(self):
         return 'Point({}, {})'.format(self.degree, True)
 
 
@@ -87,20 +99,34 @@ class Field:
                                  Constants.opp_1_start_y))
         self.opp2  = Robot(Point(Constants.opp_2_start_x,
                                  Constants.opp_2_start_y))
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return 'Board({}, {}, {}, {}, {})'.format(
+            self.ball, self.ally1, self.ally2, self.opp1, self.opp2)
 
 
 class GameHistory:
     def __init__(self):
         pass
+    def __str__(self):
+        return 'Uninitialized GameHistory'
+    def __repr__(self):
+        return 'GameHistory()'
 
 
 class GameState:
     def __init__(self, field, game_history):
         self.field        = field
         self.game_history = game_history
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return 'GameState({}, {})'.format(self.field, self.game_history)
 
 
 
+# Helper functions
 def _rad_to_deg(rad):
    return rad*180/math.pi
 
