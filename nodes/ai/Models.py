@@ -38,6 +38,15 @@ class Point:
         return repr(self)
     def __repr__(self):
         return 'Point({}, {})'.format(self.x, self.y)
+    def __add__(self, other):
+        if type(other) != Vector:
+            raise TypeError(_type_error_str(self, other))
+        return Point(self.x + other.x, self.y + other.y)
+    def __sub__(self, other):
+        if type(other) != Point and type(other) != Vector:
+            raise TypeError(_type_error_str(self, other))
+        return Vector(self.x - other.x, self.y - other.y)
+
 
 
 # Do we want a seperate class? What would be different?
@@ -53,10 +62,14 @@ class Vector:
         return repr(self)
     def __repr__(self):
         return 'Vector({}, {})'.format(self.x, self.y)
-    # def __add__(self):
-    #     pass
-    # def __sub__(self):
-    #     pass
+    def __add__(self):
+        if type(other) != Vector and type(other) != Point:
+            raise TypeError(_type_error_str(self, other))
+        return other.__class__(self.x + other.x, self.y + Other.y)
+    def __sub__(self, other):
+        if type(other) != Vector:
+            raise TypeError(_type_error_str(self, other))
+        return Vector(self.x - other.x, self.y - other.y)
 
 
 class Line:
@@ -88,7 +101,7 @@ class Angle:
     def __str__(self):
         return repr(self)
     def __repr__(self):
-        return 'Point({}, {})'.format(self.degree, True)
+        return 'Angle({}, {})'.format(self.degree, True)
 
 
 class Field:
@@ -106,7 +119,7 @@ class Field:
     def __str__(self):
         return repr(self)
     def __repr__(self):
-        return 'Board({}, {}, {}, {}, {})'.format(
+        return 'Field({}, {}, {}, {}, {})'.format(
             self.ball, self.ally1, self.ally2, self.opp1, self.opp2)
 
 
@@ -114,7 +127,7 @@ class GameHistory:
     def __init__(self):
         pass
     def __str__(self):
-        return 'Uninitialized GameHistory'
+        return 'Unimplemented GameHistory'
     def __repr__(self):
         return 'GameHistory()'
 
@@ -137,3 +150,12 @@ def _rad_to_deg(rad):
 
 def _deg_to_rad(deg):
    return deg*math.pi/180
+
+
+def _type_str(x):
+    return str(type(x))[8:-2]
+
+
+def _type_error_str(x, y):
+    return 'unsupported operand type(s) for: \''+_type_str(self)+\
+        '\' and \''+_type_str(other)+'\''
