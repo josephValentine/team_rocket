@@ -102,12 +102,10 @@ def get_angle_of_vector(v):
    """
    a = math.atan(v.y/v.x)
    if v.x < 0:
-      if v.y > 0:
-         return a + math.pi
-      else:
-         return a - math.pi
-   else:
-      return a
+      a += math.pi
+   elif v.y < 0:
+      a += 2*math.pi
+   return a
 
 
 
