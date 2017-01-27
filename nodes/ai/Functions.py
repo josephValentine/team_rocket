@@ -38,36 +38,73 @@ def dist_to_line(p, line):
 
 
 def rad_to_deg(rad):
+   """ Converts radians to degrees
+
+   rad (Float)    : angle in radians
+   return (Float) : angle in degrees
+   """
    return rad*180/math.pi
 
 
 def deg_to_rad(deg):
+   """ Converts degrees to radians
+
+   rad (Float)    : angle in degrees
+   return (Float) : angle in radians
+   """
    return deg*math.pi/180
 
 
 def get_vector_between_points(p1, p2):
+   """ Returns a vector between two points
+
+   p1 (Point)      : first point
+   p2 (Point)      : second point
+   return (Vector) : vector between points
+   """
    return Vector(p2.x-p1.x, p2.y-p1.y)
 
 
 def get_vector_magnitude(v):
+   """ Get the magnitude of a vector
+
+   v (Vector)     : input vector
+   return (Float) : magnitude of v
+   """
    return math.sqrt(v.x**2 + v.y**2)
 
 
 def normalize_vector(v):
+   """ Return a vector with same direction and magnitude 1
+
+   v (Vector)     : input vector
+   return (Float) : vector with same direction and magnitude 1
+   """
    m = get_vector_magnitude(v)
    return Vector(v.x/m, v.y/m)
 
 
 def scale_vector(v, k):
+   """ Return a vector scaled by a constant factor
+
+   v (Vector)     : input vector
+   k (Number)     : scale factor
+   return (Float) : vector v scaled by constant k
+   """
    return Vector(v.x*k, v.y*k)
 
 
 def get_angle_of_vector(v):
+   """ Return the angle in radians of a vector
+
+   v (Vector)     : input vector
+   return (Float) : angle in radians
+   """
    return math.atan(v.y/v.x)
 
 
 
-
+# Testing
 def test():
    def close(v1, v2):
       delta = 0.0000001
