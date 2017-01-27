@@ -5,13 +5,12 @@ This file contains common functions for doing geometric calculations, etc.
 
 """
 
-# from geometry_msgs.msg import Pose2D
 from Models import Point, Vector, Line, Angle
 import math
 
 
 def dist(p1, p2):
-   """Compute the distance between two points
+   """Compute the distance between two points.
 
    p1 (Point)     : point 1
    p2 (Point)     : point 2
@@ -21,7 +20,7 @@ def dist(p1, p2):
    return math.sqrt((p2.y - p1.y)**2 + (p2.x - p1.x)**2)
 
 def dist_to_line(p, line):
-   """Compute the distance from a point to a line
+   """Compute the distance from a point to a line.
 
    p (Point)      : point to calculate distance from
    line (Line)    : tuple of two points that define a line
@@ -38,7 +37,7 @@ def dist_to_line(p, line):
 
 
 def get_vector_between_points(p1, p2):
-   """Returns a vector between two points
+   """Returns a vector between two points.
 
    p1 (Point)      : first point
    p2 (Point)      : second point
@@ -49,7 +48,7 @@ def get_vector_between_points(p1, p2):
 
 
 def get_vector_magnitude(v):
-   """Get the magnitude of a vector
+   """Get the magnitude of a vector.
 
    v (Vector)     : input vector
    return (Float) : magnitude of v
@@ -59,7 +58,7 @@ def get_vector_magnitude(v):
 
 
 def normalize_vector(v):
-   """Return a vector with same direction and magnitude 1
+   """Return a vector with same direction and magnitude 1.
 
    v (Vector)     : input vector
    return (Float) : vector with same direction and magnitude 1
@@ -70,7 +69,7 @@ def normalize_vector(v):
 
 
 def get_normalized_vector(angle):
-   """Return a vector in the given angle with magnitude 1
+   """Return a vector in the given angle with magnitude 1.
 
    angle (Angle)   : input angle
    return (Vector) : vector in given angle with magnitude 1
@@ -81,7 +80,7 @@ def get_normalized_vector(angle):
 
 
 def scale_vector(v, k):
-   """Return a vector scaled by a constant factor
+   """Return a vector scaled by a constant factor.
 
    v (Vector)     : input vector
    k (Number)     : scale factor
@@ -92,7 +91,7 @@ def scale_vector(v, k):
 
 
 def get_angle_of_vector(v):
-   """Return the angle in radians of a vector
+   """Return the angle in radians of a vector.
 
    v (Vector)     : input vector
    return (Angle) : angle in radians between 0 and 2*pi
@@ -105,6 +104,16 @@ def get_angle_of_vector(v):
       a += 2*math.pi
    return Angle(a, False)
 
+
+def line2vec(line):
+   """Return a vector from the beginning of the line to the end.
+
+   line (Line)     : input line
+   return (Vector) : vector representing going from the begninning of the line
+                     to the end of the line
+
+   """
+   return Vector(line.end.x - line.beg.x, line.end.y - line.beg.y)
 
 
 # Testing
@@ -164,7 +173,7 @@ def test():
    mes = ['get_vector_between_points(p1,p2)',
           'get_vector_between_points(p2,p3)',
           'get_vector_between_points(p3,p4)',
-          'get_vector_between_points(p4,p1)']
+          'Get_vector_between_points(p4,p1)']
    disp_errors(rec,exp,mes)
 
 
