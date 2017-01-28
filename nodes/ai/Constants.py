@@ -28,13 +28,15 @@ opp_2_id      = 'opp_1'
 team_us   = 'team_us'
 team_them = 'team_them'
 
-left_side  = 'left_side'
-right_side = 'right_side'
+left_side  = 'home'
+right_side = 'away'
 
 first_half  = 'first_half'
 second_half = 'second_half'
 
 time_in_half = 2*60 # seconds
+
+goalie_dist_from_goal = 10.0
 
 ################################################################################
 ################ Everything below here is taken from McThuggets ################

@@ -37,6 +37,10 @@ class Point:
         if type(other) != Point and type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
         return Vector(self.x - other.x, self.y - other.y)
+    def to_tuple(self):
+        return (self.x, self.y, 0)
+    def from_tuple(self, tup):
+        self.x, self.y = tup[0:2]
 
 
 class Vector:
@@ -130,6 +134,10 @@ class Position:
         return repr(self)
     def __repr__(self):
         return 'Position({}, {})'.format(self.point, self.angle)
+    def to_tuple(self):
+        return (self.point.x, self.point.y, self.angle.radian)
+    def from_tuple(tup):
+        return Position(Point(tup[0], tup[1]), Angle(tup[2], False))
 
 
 # Helper functions

@@ -1,6 +1,6 @@
 """Helpful functions to get information about game"""
 
-from Geometry.Models import Position, Point, Line
+from Geometry.Models import Position, Point, Line, Angle
 import Geometry.Functions as gf
 import Constants
 
@@ -20,33 +20,45 @@ def get_point_behind_ball(field, angle, distance):
 
 
 def get_line_goal2ball(game_state):
-   """Get a line from the goal to the ball
+   """Get a line from the center of the goal to the ball
 
    game_state (GameState) : Current state of game
    return (Line)          : A line with beginning at goal and end at ball
 
    """
-   return Line(get_cur_home_goal(game_state.game_info),
+   return Line(game_state.game_info.get_home_goal_point(),
                game_state.field.ball.point)
 
 
-def get_cur_home_goal(game_info):
-   if game_info.side == Constants.left_side:
-      return Point(Constants.goal_point_left_x,
-                   Constants.goal_point_left_y)
-   elif game_info.side == Constants.right_side:
-      return Point(Constants.goal_point_right_x,
-                   Constants.goal_point_right_y)
-   raise Exception('invalid side in GameInfo')
+def get_angle_goal2ball(game_state):
+   """Get the angle from the center of the goal to the ball
 
-def get_cur_opp_goal(game_info):
-   if game_info.side == Constants.left_side:
-      return Point(Constants.goal_point_right_x,
-                   Constants.goal_point_right_y)
-   elif game_info.side == Constants.right_side:
-      return Point(Constants.goal_point_left_x,
-                   Constants.goal_point_left_y)
-   raise Exception('invalid side in GameInfo')
+   game_state (GameState) : Current state of game
+   return (Angle)         : Angle from center of goal to the ball
+
+   """
+   return gf.get_angle_of_vector(Vector(
+      game_state.game_info.get_home_goal_point(),
+      game_state.field.ball.point))
+
+
+# def get_cur_home_goal_point(game_info):
+#    if game_info.side == Constants.left_side:
+#       return Point(Constants.goal_point_left_x,
+#                    Constants.goal_point_left_y)
+#    elif game_info.side == Constants.right_side:
+#       return Point(Constants.goal_point_right_x,
+#                    Constants.goal_point_right_y)
+#    raise Exception('invalid side in GameInfo')
+
+# def get_cur_opp_goal_point(game_info):
+#    if game_info.side == Constants.left_side:
+#       return Point(Constants.goal_point_right_x,
+#                    Constants.goal_point_right_y)
+#    elif game_info.side == Constants.right_side:
+#       return Point(Constants.goal_point_left_x,
+#                    Constants.goal_point_left_y)
+#    raise Exception('invalid side in GameInfo')
 
 
 def test():

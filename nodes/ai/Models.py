@@ -54,16 +54,18 @@ class Field:
 
 class Robot:
     """Holds information about a robot."""
-    def __init__(self, team, id, pos):
-       self.team = team
-       self.id   = id
-       self.pos  = pos
+    def __init__(self, team, id, position):
+       self.team     = team
+       self.id       = id
+       self.position = position
     def __eq__(self, other):
         return type(self) == type(other) and self.id == other.id
     def __str__(self):
         return repr(self)
     def __repr__(self):
-        return 'Robot({}, {}, {})'.format(self.team, self.id, self.pos)
+        return 'Robot({}, {}, {})'.format(self.team, self.id, self.position)
+    def update_position_from_tuple(self, position_tuple):
+        self.position = Position.from_tuple(position_tuple)
 
 
 class Ball:
@@ -76,7 +78,8 @@ class Ball:
         return repr(self)
     def __repr__(self):
         return 'Ball({})'.format(self.point)
-
+    def update_point_from_tuple(self, position_tuple):
+        self.point = Point(position_tuple)
 
 
 class GameInfo:
@@ -100,8 +103,25 @@ class GameInfo:
     def __str__(self):
         return repr(self)
     def __repr__(self):
-        return 'GameHistory({}, {}, {}, {})'.format(self.side, self.half,
-                                              self.time_elapsed, self.score)
+        return 'GameInfo({}, {}, {}, {})'.format(self.side, self.half,
+                                                 self.time_elapsed, self.score)
+    def get_home_goal_point(self):
+        if self.side == Constants.left_side:
+            return Point(Constants.goal_point_left_x,
+                         Constants.goal_point_left_y)
+        elif self.side == Constants.right_side:
+            return Point(Constants.goal_point_right_x,
+                         Constants.goal_point_right_y)
+        raise Exception('invalid side in GameInfo')
+    def get_opp_goal_point(self):
+        if self.side == Constants.left_side:
+            return Point(Constants.goal_point_right_x,
+                         Constants.goal_point_right_y)
+        elif self.side == Constants.right_side:
+            return Point(Constants.goal_point_left_x,
+                         Constants.goal_point_left_y)
+        raise Exception('invalid side in GameInfo')
+
 
 
 class Score:

@@ -2,28 +2,50 @@ import numpy as np
 from std_srvs.srv import Trigger
 import rospy
 
+import Skills
+from Models import GameState, Field, GameInfo
+from Geometry import Position
+
 field_width = 3.53
 
 class AI(object):
     def __init__(self, team_side, ally_number):
         super(AI, self).__init__()
 
-        # Which team side (home/away) am I on?
-        self.team_side = team_side
+        # Create GameState object
+        self.game_state = GameState(Field(), GameInfo(team_side))
 
         # Am I ally1?
         self.ally1 = (ally_number == 1)
-        
 
-    def strategize(self, me, ally, opp1, opp2, ball, game_state):
-        
+
+    def update(self, me, ally, opp1, opp2, ball, game_state):
+        f = game_state.field
+        if self.ally1:
+            f.ally1.update_position_from_tuple(me)
+            f.ally2.update_position_from_tuple(ally)
+        else:
+            f.ally1.update_position_from_tuple(ally)
+            f.ally2.update_position_from_tuple(me)
+        f.opp1.update_position_from_tuple(opp1)
+        f.opp2.update_position_from_tuple(opp2)
+        f.ball.update_point_from_tuple(ball)
+        # update game state
+
+
+    def strategize(self):
+
         if self.ally1:
             # rush ball
-            cmds = self.rush_goal(me, ball)
+            cmds = self.rush_goal(
+                self.game_state.field.ally1.position.to_tuple(),
+                self.game_state.field.ball.point.to_tuple())
 
         else:
             # be a goalie (i.e., follow line on ball)
-            cmds = self.follow_ball_on_line(ball, -1.25)
+            # cmds = self.follow_ball_on_line(ball, -1.25)
+            cmds = Skills.stay_between_goalnball(
+                self.game_state, self.game_state.field.ally2)
 
 
         return cmds
@@ -52,22 +74,22 @@ class AI(object):
         # or in other words, once I am 21cm behind the ball, just
         # drive to the goal.
         dist_to_ball = np.linalg.norm(p - mevec)
-        print( 'p:', p)
-        print( 'mevec:', mevec)
-        print( 'distance to ball: ', dist_to_ball, type(dist_to_ball))
+        print('p:', p)
+        print('mevec:', mevec)
+        print('distance to ball: ', dist_to_ball, type(dist_to_ball))
         if dist_to_ball < 0.21:
-            print( 'Close enough to drive to goal')
+            print('Close enough to drive to goal')
             cmdvec = goalvec
             # Addition
             if dist_to_ball < 0.11:
-                print( 'Close enough to drive to kick!')
+                print('Close enough to kick!')
                 # kick!
                 try:
                     self.kick()
                 except Exception as e:
-                    print( e)
+                    print(e)
         else:
-            print( 'Get behind ball')
+            print('Get behind ball')
             cmdvec = p
 
         return (cmdvec.flatten()[0], cmdvec.flatten()[1], 0)
@@ -82,8 +104,8 @@ class AI(object):
         try:
             kick_srv = rospy.ServiceProxy('kick', Trigger)
             kick_srv()
-            print( 'successfully kicked ball')
+            print('successfully kicked ball')
             # _kick_num = _kick_num + 1
-            # print( ("Kicking. Kick number: {}" .format(_kick_num)))
+            # print(("Kicking. Kick number: {}" .format(_kick_num)))
         except rospy.ServiceException as e:
-            print( "Kick service call failed: %s"%e)
+            print("Kick service call failed: %s"%e)
