@@ -7,6 +7,7 @@ from Models import GameState, Field, GameInfo
 from Geometry.Models import Position, Point, Angle
 
 field_width = 3.53
+no_attack = True
 
 class AI(object):
     def __init__(self, team_side, ally_number):
@@ -20,7 +21,7 @@ class AI(object):
 
 
     def update(self, me, ally, opp1, opp2, ball, game_state):
-        print(me, ally, opp1, opp2, ball, game_state, type(game_state))
+        # print me, ally, opp1, opp2, ball, game_state, type(game_state)
         f = self.game_state.field
         if self.ally1:
             f.ally1.position = _pose2d_to_position(me)
@@ -39,8 +40,8 @@ class AI(object):
         if self.ally1:
             # rush ball
             cmds = self.rush_goal(
-                self.game_state.field.ally1.position.to_pose2d(),
-                self.game_state.field.ball.point.to_pose2d())
+                _position_to_pose2d(self.game_state.field.ally1.position),
+                _point_to_pose2d(self.game_state.field.ball.point))
 
         else:
             # be a goalie (i.e., follow line on ball)
@@ -59,6 +60,10 @@ class AI(object):
 
 
     def rush_goal(self, me, ball):
+        if no_attack:
+            return me
+        # print 'me ({}): {}'.format(type(me), me)
+        # print 'ball ({}): {}'.format(type(ball), ball)
         # Use numpy to create vectors
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
@@ -75,22 +80,22 @@ class AI(object):
         # or in other words, once I am 21cm behind the ball, just
         # drive to the goal.
         dist_to_ball = np.linalg.norm(p - mevec)
-        print('p:', p)
-        print('mevec:', mevec)
-        print('distance to ball: ', dist_to_ball, type(dist_to_ball))
+        # print 'p:', p
+        # print 'mevec:', mevec
+        # print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
         if dist_to_ball < 0.21:
-            print('Close enough to drive to goal')
+            # print 'Close enough to drive to goal'
             cmdvec = goalvec
             # Addition
             if dist_to_ball < 0.11:
-                print('Close enough to kick!')
+                # print 'Close enough to kick!'
                 # kick!
                 try:
                     self.kick()
                 except Exception as e:
-                    print(e)
+                    print e
         else:
-            print('Get behind ball')
+            # print 'Get behind ball'
             cmdvec = p
 
         return (cmdvec.flatten()[0], cmdvec.flatten()[1], 0)
@@ -105,11 +110,12 @@ class AI(object):
         try:
             kick_srv = rospy.ServiceProxy('kick', Trigger)
             kick_srv()
-            print('successfully kicked ball')
+            # print 'successfully kicked ball'
             # _kick_num = _kick_num + 1
-            # print(("Kicking. Kick number: {}" .format(_kick_num)))
+            # print ("Kicking. Kick number: {}" .format(_kick_num))
         except rospy.ServiceException as e:
-            print("Kick service call failed: %s"%e)
+            # print "Kick service call failed: %s"%e
+            pass
 
 
 def p2d_2_pos(p):
@@ -120,7 +126,7 @@ def test():
     import Constants
     ai = AI('home', 2)
     cmds = ai.strategize()
-    print(cmds)
+    print cmds
     ai.update(_position_to_pose2d(ai.game_state.field.ally2.position),
               _position_to_pose2d(ai.game_state.field.ally1.position),
               _position_to_pose2d(ai.game_state.field.opp1.position),
@@ -130,12 +136,16 @@ def test():
               ())
     ai.game_state.game_info.side = Constants.right_side
     cmds = ai.strategize()
-    print(cmds)
+    print cmds
 
 
 def _position_to_pose2d(position):
     from geometry_msgs.msg import Pose2D
     return Pose2D(position.point.x, position.point.y, position.angle.radian)
+
+def _point_to_pose2d(point):
+    from geometry_msgs.msg import Pose2D
+    return Pose2D(point.x, point.y, 0)
 
 def _pose2d_to_position(pose2d):
     return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, False))
