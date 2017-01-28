@@ -7,7 +7,7 @@ from Models import GameState, Field, GameInfo
 from Geometry.Models import Position, Point, Angle
 
 field_width = 3.53
-no_attack = True
+no_attack = False
 
 class AI(object):
     def __init__(self, team_side, ally_number):
