@@ -207,20 +207,58 @@ class GameHistory:
         return 'GameHistory()'
 
 
+class GameInfo:
+    """Information about the current status of the game.
+
+    This includes the current side, half, time elapsed/left, and points.
+
+    """
+    def __init__(self, side, half=None, time_elapsed=None, score=None):
+        self.side                          = side
+        if half:         self.half         = half
+        else:            self.half         = Constants.first_half
+        if time_elapsed: self.time_elapsed = time_elapsed
+        else:            self.time_elapsed = 0
+        if score:        self.score        = score
+        else:            self.score        = Score(0,0)
+    def get_time_elapsed(self):
+        return self.time_elapsed
+    def get_time_left(self):
+        return Constants.time_in_half - self.time_elapsed
+    def __str__(self):
+        return repr(self)
+    def __repr__(self):
+        return 'GameHistory({}, {}, {}, {})'.format(self.side, self.half,
+                                              self.time_elapsed, self.score)
+
+
 class GameState:
-    """Information about the past and current state of the game
+    """Information about the past and current state of the game.
 
     This includes the current field and the past history.
 
     """
-    def __init__(self, field, game_history):
-        self.field        = field
-        self.game_history = game_history
+    def __init__(self, field, game_info, game_history=None):
+        self.field                         = field
+        self.game_info                     = game_info
+        if game_history: self.game_history = game_history
+        else:            self.game_history = GameHistory()
     def __str__(self):
         return repr(self)
     def __repr__(self):
         return 'GameState({}, {})'.format(self.field, self.game_history)
 
+
+class Score:
+    """The scores for us and them."""
+    def __init__(self, us=None, them=None):
+        if (us is None) != (them is None):
+            raise Exception('cannot initialize Score with only one side\'s '+
+                            'score')
+        if us:   self.us   = us
+        else:    self.us   = 0
+        if them: self.them = them
+        else:    self.them = 0
 
 
 # Helper functions
