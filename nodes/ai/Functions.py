@@ -65,28 +65,28 @@ def test():
    from Models import Field, Angle, GameInfo, GameState
    import Constants
    f = Field()
-   print(f)
+   print f
    a = Angle(33, True)
    d1 = 0.2
    p1 = get_point_behind_ball(f, a, d1)
-   print('get_point_behind_ball(f, {}, {}) = {}'.format(a, d1, p1))
-   print('distance = {}'.format(gf.dist(f.ball.point, p1)))
+   print 'get_point_behind_ball(f, {}, {}) = {}'.format(a, d1, p1)
+   print 'distance = {}'.format(gf.dist(f.ball.point, p1))
    d2 = 3.0
    p2 = get_point_behind_ball(f, a, d2)
-   print('get_point_behind_ball(f, {}, {}) = {}'.format(a, d2, p2))
-   print('distance = {}'.format(gf.dist(f.ball.point, p2)))
+   print 'get_point_behind_ball(f, {}, {}) = {}'.format(a, d2, p2)
+   print 'distance = {}'.format(gf.dist(f.ball.point, p2))
    gi1 = GameInfo(Constants.left_side)
    gs1 = GameState(f, gi1)
    l1  = get_line_goal2ball(gs1)
    v1  = gf.line2vec(l1)
-   print('line1: {} ({}, {} long)'.format(l1, v1,
-                                          gf.get_vector_magnitude(v1)))
+   print 'line1: {} ({}, {} long'.format(l1, v1,
+                                          gf.get_vector_magnitude(v1))
    gi2 = GameInfo(Constants.right_side)
    gs2 = GameState(f, gi2)
    l2  = get_line_goal2ball(gs2)
    v2  = gf.line2vec(l2)
-   print('line2: {} ({}, {} long)'.format(l2, v2,
-                                          gf.get_vector_magnitude(v2)))
+   print 'line2: {} ({}, {} long'.format(l2, v2,
+                                          gf.get_vector_magnitude(v2))
 
 
 

@@ -2,7 +2,7 @@
 
 import math
 
-class Point:
+class Point(object):
     """An x,y cartesian coordinate pair."""
     def __init__(self, x, y):
         self.x = x
@@ -43,7 +43,7 @@ class Point:
         self.x, self.y = tup[0:2]
 
 
-class Vector:
+class Vector(object):
     """An x,y cartesian coordinate vector."""
     def __init__(self, x, y):
         self.x = x
@@ -66,7 +66,7 @@ class Vector:
         return Vector(self.x - other.x, self.y - other.y)
 
 
-class Line:
+class Line(object):
     """A pair of lines that define a point.
 
     The beginning and end points may or may not constitude the end points of a
@@ -86,7 +86,7 @@ class Line:
         return 'Line({}, {})'.format(self.beg, self.end)
 
 
-class Angle:
+class Angle(object):
     """An angle, stored in both radians and degrees."""
     def __init__(self, value, is_degree):
         if is_degree:
@@ -113,7 +113,7 @@ class Angle:
         raise TypeError(_type_error_str(self, other))
 
 
-class Position:
+class Position(object):
     """Information about a position, including a point and angle."""
     def __init__(self, point, angle):
         self.point = point

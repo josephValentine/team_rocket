@@ -5,8 +5,8 @@ This file contains common functions for doing geometric calculations, etc.
 
 """
 
+from Models import Point, Vector, Line, Angle
 # from .Models import Point, Vector, Line, Angle
-from .Models import Point, Vector, Line, Angle
 import math
 
 
@@ -117,6 +117,94 @@ def line2vec(line):
    return Vector(line.end.x - line.beg.x, line.end.y - line.beg.y)
 
 
+def closest_point_on_ellipse(center, x_radius, y_radius, point):
+   if x_radius >= y_radius:
+      e0, e1 = x_radius, y_radius
+      c0, c1 = center.x, center.y
+      y0, y1 = point.x - c0, point.y - c1
+      swap = False
+   else:
+      e0, e1 = y_radius, x_radius
+      c0, c1 = center.y, center.x
+      y0, y1 = point.y - c0, point.x - c1
+      swap = True
+
+   if y0 < 0:
+      if y1 < y0:
+         p = _closest_point_on_norm_ellipse(e0, e1, -y0, -y1)
+         p.x, p.y = -p.x, -p.y
+         pass
+      else:
+         p = _closest_point_on_norm_ellipse(e0, e1, -y0, y1)
+         p.x = p.x
+         # p = closest_point_on_ellipse(center, x_radius, y_radius,
+         #                              Point(y0, -y1))
+         # return Point(p.x, -p.y)
+   else:
+      if y1 < y0:
+         p = _closest_point_on_norm_ellipse(e0, e1, y0, -y1)
+         p.y = -p.y
+         # p = closest_point_on_ellipse(center_point, x_radius, y_radius,
+         #                              Point(-y0, y1))
+      else:
+         p = _closest_point_on_norm_ellipse(e0, e1, y0, y1)
+
+   if swap:
+      return Point(p.y, p.x)
+   else:
+      return p
+
+
+def _closest_point_on_norm_ellipse(e0, e1, y0, y1):
+   # https://www.geometrictools.com/Documentation/DistancePointEllipseEllipsoid.pdf
+   # e0 >= e1 > 0
+   assert e0 >= e1 and e1 > 0
+   assert y0 >= 0 and y1 >= 0
+   # if x_radius >= y_radius:
+   #    e0, e1 = x_radius, y_radius
+   #    c0, c1 = center.x, center.y
+   #    y0, y1 = point.x - c0, point.y - c1
+   #    swap = False
+   # else:
+   #    e0, e1 = y_radius, x_radius
+   #    c0, c1 = center.y, center.x
+   #    y0, y1 = point.y - c0, point.x - c1
+   #    swap = True
+
+   # if y0 < 0:
+   #    p = closest_point_on_ellipse(center, x_radius, y_radius,
+   #                                 Point(y0, -y1))
+   #    return Point(p.x, -p.y)
+   # if y1 < 0:
+   #    p = closest_point_on_ellipse(center_point, x_radius, y_radius,
+   #                                 Point(-y0, y1))
+   #    return Point(-p.x, p.y)
+
+   # y0 >= 0 and y1 >= 0
+   if y1 > 0:
+      if y0 > 0:
+         tbar = 1 # implement this
+         x0 = e0**2*y0/(tbar + e0**2)
+         x1 = e1**2*y1/(tbar + e1**2)
+      else:
+         x0 = 0
+         x1 = e1
+   else: # y1 == 0
+      if y0 < ((e0**2 - e1**2)/e0):
+         x0 = e0**2*y0/(e0**2 - e1**2)
+         x1 = e1*math.sqrt(1 - (x0/e0)**2)
+      else:
+         x0 = e0
+         x1 = 0
+
+   return Point(x0, x1)
+   # if swap:
+   #    return Point(x1 + c1, x0 + c0)
+   # else:
+   #    return Point(x0 + c0, x1 + c1)
+
+
+
 # Testing
 def test():
    def is_close(v1, v2):
@@ -178,6 +266,33 @@ def test():
    disp_errors(rec,exp,mes)
 
 
+   # ellipse
+   def print_ell(x,y,p,c,e):
+      print 'x_axis: {}'.format(x)
+      print 'y_axis: {}'.format(y)
+      print 'point:  {}'.format(p)
+      print 'center: {}'.format(c)
+      print 'ell_pt: {}'.format(e)
+      print 'dist:   {}'.format(get_vector_magnitude(e - c))
+   x_axis = 0.22
+   y_axis = 0.309
+
+   point  = Point(-1.2, 0.4)
+   center = Point(-1.7, 0.1)
+   ell_pt = closest_point_on_ellipse(center, x_axis, y_axis, point)
+   print_ell(x_axis, y_axis, point, center, ell_pt)
+
+   point  = Point(1.2, 0.4)
+   ell_pt = closest_point_on_ellipse(center, x_axis, y_axis, point)
+   print_ell(x_axis, y_axis, point, center, ell_pt)
+
+   point  = Point(1.2, -0.4)
+   ell_pt = closest_point_on_ellipse(center, x_axis, y_axis, point)
+   print_ell(x_axis, y_axis, point, center, ell_pt)
+
+   point  = Point(-1.2, -0.4)
+   ell_pt = closest_point_on_ellipse(center, x_axis, y_axis, point)
+   print_ell(x_axis, y_axis, point, center, ell_pt)
 
    print('All tests passed')
 

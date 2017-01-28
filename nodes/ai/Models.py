@@ -3,7 +3,7 @@
 from Geometry.Models import Position, Point, Angle
 import Constants
 
-class GameState:
+class GameState(object):
     """Information about the past and current state of the game.
 
     This includes the current field and the past history.
@@ -20,7 +20,7 @@ class GameState:
         return 'GameState({}, {})'.format(self.field, self.game_history)
 
 
-class Field:
+class Field(object):
     """Holds information about everything on the field.
 
     This includes all robots and the ball.
@@ -60,7 +60,7 @@ class Field:
             self.ball, self.ally1, self.ally2, self.opp1, self.opp2)
 
 
-class Robot:
+class Robot(object):
     """Holds information about a robot."""
     def __init__(self, team, id, position):
        self.team     = team
@@ -76,7 +76,7 @@ class Robot:
         self.position = self.position.from_tuple(position_tuple)
 
 
-class Ball:
+class Ball(object):
     """Holds information about the ball."""
     def __init__(self, point):
         self.point = point
@@ -90,7 +90,7 @@ class Ball:
         self.point = self.point(*position_tuple[:2])
 
 
-class GameInfo:
+class GameInfo(object):
     """Information about the current status of the game.
 
     This includes the current side, half, time elapsed/left, and points.
@@ -132,7 +132,7 @@ class GameInfo:
 
 
 
-class Score:
+class Score(object):
     """The scores for us and them."""
     def __init__(self, us=None, them=None):
         if (us is None) != (them is None):
@@ -144,7 +144,7 @@ class Score:
         else:    self.them = 0
 
 
-class GameHistory:
+class GameHistory(object):
     """Information about what has happened in the game so far.
 
     This could contain strategies for our team or our opponenets, how aggressive
