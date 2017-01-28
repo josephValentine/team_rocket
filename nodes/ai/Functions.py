@@ -118,7 +118,7 @@ def line2vec(line):
 
 # Testing
 def test():
-   def close(v1, v2):
+   def is_close(v1, v2):
       delta = 0.0000001
       if v1 == v2: return True
       if type(v1) != type(v2): return False
@@ -131,7 +131,7 @@ def test():
       # print('recs ({}): {}\nexps ({}): {}\nmess ({}): {}\n'.format(
       #       type(recs[0]), recs, type(exps[0]), exps, type(mess[0]), mess))
       [disp_error(r, e, m) for r, e, m in zip(rec, exp, mes) \
-       if not close(r, e)]
+       if not is_close(r, e)]
 
    p0 = Point(0,0)
    p1 = Point(-1,-1)

@@ -58,8 +58,6 @@ goal_point_left_x    = -field_length/2
 goal_point_left_y    = 0
 goal_point_right_x   = -goal_point_left_x
 goal_point_right_y   = 0
-print('left: {}'.format(goal_point_left_x))
-print('right: {}'.format(goal_point_right_x))
 #### Harrison end ####
 goal_score_threshold = 0.07 # .03 IN REAL LIFE?, 0.00 IN SIMULATOR
 
