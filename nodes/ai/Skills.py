@@ -1,7 +1,8 @@
 """Combination of Utilities to perform simple tasks"""
 
-from Geometry import Position, Point, Line
-import Functions, Utilities
+from Geometry.Models import Position, Point, Line
+import Geometry.Functions as gf
+import Utilities
 
 
 def get_point_behind_ball(field, angle, distance):
@@ -14,8 +15,8 @@ def get_point_behind_ball(field, angle, distance):
 
    """
    ball_point = field.ball.point
-   dir_vec    = Functions.get_normalized_vector(angle)
-   offset_vec = Functions.scale_vector(dir_vec, -distance)
+   dir_vec    = gf.get_normalized_vector(angle)
+   offset_vec = gf.scale_vector(dir_vec, -distance)
    return ball_point + offset_vec
 
 
@@ -60,23 +61,23 @@ def test():
    d1 = 0.2
    p1 = get_point_behind_ball(f, a, d1)
    print('get_point_behind_ball(f, {}, {}) = {}'.format(a, d1, p1))
-   print('distance = {}'.format(Functions.dist(f.ball.point, p1)))
+   print('distance = {}'.format(gf.dist(f.ball.point, p1)))
    d2 = 3.0
    p2 = get_point_behind_ball(f, a, d2)
    print('get_point_behind_ball(f, {}, {}) = {}'.format(a, d2, p2))
-   print('distance = {}'.format(Functions.dist(f.ball.point, p2)))
+   print('distance = {}'.format(gf.dist(f.ball.point, p2)))
    gi1 = GameInfo(Constants.left_side)
    gs1 = GameState(f, gi1)
    l1  = get_line_goal2ball(gs1)
-   v1  = Functions.line2vec(l1)
+   v1  = gf.line2vec(l1)
    print('line1: {} ({}, {} long)'.format(l1, v1,
-                                          Functions.get_vector_magnitude(v1)))
+                                          gf.get_vector_magnitude(v1)))
    gi2 = GameInfo(Constants.right_side)
    gs2 = GameState(f, gi2)
    l2  = get_line_goal2ball(gs2)
-   v2  = Functions.line2vec(l2)
+   v2  = gf.line2vec(l2)
    print('line2: {} ({}, {} long)'.format(l2, v2,
-                                          Functions.get_vector_magnitude(v2)))
+                                          gf.get_vector_magnitude(v2)))
 
 
 

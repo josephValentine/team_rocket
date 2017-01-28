@@ -1,7 +1,7 @@
 """Elementary actions"""
 
 import Constants
-from Geometry import Point
+from Geometry.Models import Point
 
 # Elementary
 def move_to_point_abs(robot, point):

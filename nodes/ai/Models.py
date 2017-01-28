@@ -1,6 +1,6 @@
 """Models for robots, ball, etc."""
 
-from Geometry import Position, Point, Angle
+from Geometry.Models import Position, Point, Angle
 import Constants
 
 class GameState:
