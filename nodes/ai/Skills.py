@@ -1,6 +1,6 @@
 """Combination of Utilities to perform simple tasks"""
 
-from Models import Position, Point, Line
+from Geometry import Position, Point, Line
 import Functions, Utilities
 
 

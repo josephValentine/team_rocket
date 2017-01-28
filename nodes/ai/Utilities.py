@@ -1,15 +1,15 @@
 """Elementary actions"""
 
 import Constants
-from Models import Point
+from Geometry import Point
 
 # Elementary
-def move_to_pos_abs(robot, pos):
-   set_commanded_pos(pos)
+def move_to_point_abs(robot, point):
+   set_commanded_point(point)
    pass
 
-def move_to_pos_rel(robot, pos):
-   set_commanded_pos((robot.x + pos.x, robot.y + pos.y))
+def move_to_point_rel(robot, point):
+   set_commanded_point((robot.x + point.x, robot.y + point.y))
    pass
 
 def rotate_to_ang_abs(robot, ang):
@@ -18,9 +18,9 @@ def rotate_to_ang_abs(robot, ang):
 def rotate_by_ang_rel(robot, ang):
    pass
 
-def move_to_pose2d(robot, pose2d):
-   set_commanded_pos(robot, (pose2d.x, pose2d.y))
-   set_commanded_ang(robot, pose2d.ang)
+def move_to_position(robot, position):
+   set_commanded_pos(robot, (position.point.x, position.point.y))
+   set_commanded_ang(robot, position.ang)
 
 def kick(robot):
    # call kicker
