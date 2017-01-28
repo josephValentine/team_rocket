@@ -52,22 +52,22 @@ class AI(object):
         # or in other words, once I am 21cm behind the ball, just
         # drive to the goal.
         dist_to_ball = np.linalg.norm(p - mevec)
-        print 'p:', p
-        print 'mevec:', mevec
-        print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
+        print( 'p:', p)
+        print( 'mevec:', mevec)
+        print( 'distance to ball: ', dist_to_ball, type(dist_to_ball))
         if dist_to_ball < 0.21:
-            print 'Close enough to drive to goal'
+            print( 'Close enough to drive to goal')
             cmdvec = goalvec
             # Addition
             if dist_to_ball < 0.11:
-                print 'Close enough to drive to kick!'
+                print( 'Close enough to drive to kick!')
                 # kick!
                 try:
                     self.kick()
                 except Exception as e:
-                    print e
+                    print( e)
         else:
-            print 'Get behind ball'
+            print( 'Get behind ball')
             cmdvec = p
 
         return (cmdvec.flatten()[0], cmdvec.flatten()[1], 0)
@@ -82,8 +82,8 @@ class AI(object):
         try:
             kick_srv = rospy.ServiceProxy('kick', Trigger)
             kick_srv()
-            print 'successfully kicked ball'
+            print( 'successfully kicked ball')
             # _kick_num = _kick_num + 1
-            # print ("Kicking. Kick number: {}" .format(_kick_num))
-        except rospy.ServiceException, e:
-            print "Kick service call failed: %s"%e
+            # print( ("Kicking. Kick number: {}" .format(_kick_num)))
+        except rospy.ServiceException as e:
+            print( "Kick service call failed: %s"%e)
