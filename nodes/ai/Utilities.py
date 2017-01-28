@@ -1,6 +1,9 @@
-"""Elementary and Secondary actions"""
+"""Elementary actions"""
 
-# Elementary 
+import Constants
+from Models import Point
+
+# Elementary
 def move_to_pos_abs(robot, pos):
    set_commanded_pos(pos)
    pass
@@ -23,3 +26,22 @@ def kick(robot):
    # call kicker
    pass
 
+
+# Helper
+def get_cur_home_goal(game_info):
+   if game_info.side == Constants.left_side:
+      return Point(Constants.goal_point_left_x,
+                   Constants.goal_point_left_y)
+   elif game_info.side == Constants.right_side:
+      return Point(Constants.goal_point_right_x,
+                   Constants.goal_point_right_y)
+   raise Exception('invalid side in GameInfo')
+
+def get_cur_opp_goal(game_info):
+   if game_info.side == Constants.left_side:
+      return Point(Constants.goal_point_right_x,
+                   Constants.goal_point_right_y)
+   elif game_info.side == Constants.right_side:
+      return Point(Constants.goal_point_left_x,
+                   Constants.goal_point_left_y)
+   raise Exception('invalid side in GameInfo')
