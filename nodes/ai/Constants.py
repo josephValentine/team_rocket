@@ -13,7 +13,7 @@ ally_1_id      = 'ally_1'
 ally_2_start_x = -2.0
 ally_2_start_y = 0.0
 ally_2_start_a = 0.0
-ally_2_id      = 'ally_1'
+ally_2_id      = 'ally_2'
 
 opp_1_start_x = 1.0
 opp_1_start_y = 0.0
@@ -23,7 +23,7 @@ opp_1_id      = 'opp_1'
 opp_2_start_x = 2.0
 opp_2_start_y = 0.0
 opp_2_start_a = math.pi
-opp_2_id      = 'opp_1'
+opp_2_id      = 'opp_2'
 
 team_us   = 'team_us'
 team_them = 'team_them'
@@ -36,7 +36,13 @@ second_half = 'second_half'
 
 time_in_half = 2*60 # seconds
 
-goalie_dist_from_goal = 0.4
+goalie_dist_from_goal = 0.22
+
+goal_width      = 0.619
+goal_half_width = goal_width/2
+
+goal_top_y    = goal_half_width
+goal_bottom_y = -goal_half_width
 
 ################################################################################
 ################ Everything below here is taken from McThuggets ################
