@@ -36,7 +36,7 @@ second_half = 'second_half'
 
 time_in_half = 2*60 # seconds
 
-goalie_dist_from_goal = 10.0
+goalie_dist_from_goal = 0.4
 
 ################################################################################
 ################ Everything below here is taken from McThuggets ################

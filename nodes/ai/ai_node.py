@@ -93,8 +93,9 @@ def main():
 
         # Based on the state of the game and the positions of the players,
         # run the AI and return commanded positions for this robot
-        cmds = ai.strategize(_me, _ally, _opp1, _opp2, _ball, _game_state)
-
+        ai.update(_me, _ally, _opp1, _opp2, _ball, _game_state)
+        cmds = ai.strategize()
+        
         # Get a message ready to send
         msg = Pose2D()           
 

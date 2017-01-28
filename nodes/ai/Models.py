@@ -31,20 +31,28 @@ class Field:
                                 Constants.ball_start_y))
         self.ally1 = Robot(Constants.team_us,
                            Constants.ally_1_id,
-                           Point(Constants.ally_1_start_x,
-                                 Constants.ally_1_start_y))
+                           Position(Point(Constants.ally_1_start_x,
+                                          Constants.ally_1_start_y),
+                                    Angle(Constants.ally_1_start_a,
+                                          True)))
         self.ally2 = Robot(Constants.team_us,
                            Constants.ally_2_id,
-                           Point(Constants.ally_2_start_x,
-                                 Constants.ally_2_start_y))
-        self.opp1  = Robot(Constants.team_them,
-                           Constants.opp_1_id,
-                           Point(Constants.opp_1_start_x,
-                                 Constants.opp_1_start_y))
-        self.opp2  = Robot(Constants.team_them,
-                           Constants.opp_2_id,
-                           Point(Constants.opp_2_start_x,
-                                 Constants.opp_2_start_y))
+                           Position(Point(Constants.ally_2_start_x,
+                                          Constants.ally_2_start_y),
+                                    Angle(Constants.ally_2_start_a,
+                                          True)))
+        self.opp1 = Robot(Constants.team_us,
+                          Constants.opp_1_id,
+                          Position(Point(Constants.opp_1_start_x,
+                                         Constants.opp_1_start_y),
+                                   Angle(Constants.opp_1_start_a,
+                                         True)))
+        self.opp2 = Robot(Constants.team_us,
+                          Constants.opp_2_id,
+                          Position(Point(Constants.opp_2_start_x,
+                                         Constants.opp_2_start_y),
+                                   Angle(Constants.opp_2_start_a,
+                                         True)))
     def __str__(self):
         return repr(self)
     def __repr__(self):
@@ -65,7 +73,7 @@ class Robot:
     def __repr__(self):
         return 'Robot({}, {}, {})'.format(self.team, self.id, self.position)
     def update_position_from_tuple(self, position_tuple):
-        self.position = Position.from_tuple(position_tuple)
+        self.position = self.position.from_tuple(position_tuple)
 
 
 class Ball:
@@ -79,7 +87,7 @@ class Ball:
     def __repr__(self):
         return 'Ball({})'.format(self.point)
     def update_point_from_tuple(self, position_tuple):
-        self.point = Point(position_tuple)
+        self.point = self.point(*position_tuple[:2])
 
 
 class GameInfo:

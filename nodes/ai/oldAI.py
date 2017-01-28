@@ -2,51 +2,28 @@ import numpy as np
 from std_srvs.srv import Trigger
 import rospy
 
-import Skills
-from Models import GameState, Field, GameInfo
-from Geometry.Models import Position, Point, Angle
-
 field_width = 3.53
 
 class AI(object):
     def __init__(self, team_side, ally_number):
         super(AI, self).__init__()
 
-        # Create GameState object
-        self.game_state = GameState(Field(), GameInfo(team_side))
+        # Which team side (home/away) am I on?
+        self.team_side = team_side
 
         # Am I ally1?
         self.ally1 = (ally_number == 1)
+        
 
-
-    def update(self, me, ally, opp1, opp2, ball, game_state):
-        print(me, ally, opp1, opp2, ball, game_state, type(game_state))
-        f = self.game_state.field
-        if self.ally1:
-            f.ally1.position = _pose2d_to_position(me)
-            f.ally2.position = _pose2d_to_position(ally)
-        else:
-            f.ally1.position = _pose2d_to_position(ally)
-            f.ally2.position = _pose2d_to_position(me)
-        f.opp1.position = _pose2d_to_position(opp1)
-        f.opp2.position = _pose2d_to_position(opp2)
-        f.ball.point = _pose2d_to_point(ball)
-        # update game state
-
-
-    def strategize(self):
-
+    def strategize(self, me, ally, opp1, opp2, ball, game_state):
+        
         if self.ally1:
             # rush ball
-            cmds = self.rush_goal(
-                self.game_state.field.ally1.position.to_pose2d(),
-                self.game_state.field.ball.point.to_pose2d())
+            cmds = self.rush_goal(me, ball)
 
         else:
             # be a goalie (i.e., follow line on ball)
-            # cmds = self.follow_ball_on_line(ball, -1.25)
-            cmds = Skills.stay_between_goalnball(
-                self.game_state, self.game_state.field.ally2)
+            cmds = self.follow_ball_on_line(ball, -1.25)
 
 
         return cmds
@@ -110,38 +87,3 @@ class AI(object):
             # print(("Kicking. Kick number: {}" .format(_kick_num)))
         except rospy.ServiceException as e:
             print("Kick service call failed: %s"%e)
-
-
-def p2d_2_pos(p):
-    return Position(Point(p.x, p.y), Angle(p.theta, False))
-
-
-def test():
-    import Constants
-    ai = AI('home', 2)
-    cmds = ai.strategize()
-    print(cmds)
-    ai.update(_position_to_pose2d(ai.game_state.field.ally2.position),
-              _position_to_pose2d(ai.game_state.field.ally1.position),
-              _position_to_pose2d(ai.game_state.field.opp1.position),
-              _position_to_pose2d(ai.game_state.field.opp2.position),
-              Pose2D(1.5, -1.0, 0.0),
-              # (1.5, -1.0, 0.0),
-              ())
-    ai.game_state.game_info.side = Constants.right_side
-    cmds = ai.strategize()
-    print(cmds)
-
-
-def _position_to_pose2d(position):
-    from geometry_msgs.msg import Pose2D
-    return Pose2D(position.point.x, position.point.y, position.angle.radian)
-
-def _pose2d_to_position(pose2d):
-    return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, False))
-
-def _pose2d_to_point(pose2d):
-    return Point(pose2d.x, pose2d.y)
-
-if __name__ == '__main__':
-   test()

@@ -5,6 +5,7 @@ This file contains common functions for doing geometric calculations, etc.
 
 """
 
+# from .Models import Point, Vector, Line, Angle
 from .Models import Point, Vector, Line, Angle
 import math
 

@@ -150,7 +150,8 @@ def _deg_to_rad(deg):
 
 
 def _type_str(x):
-    return str(type(x))[8:-2]
+    # return str(type(x))[8:-2]
+    return str(type(x))
 
 
 def _type_error_str(x, y):

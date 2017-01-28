@@ -1,6 +1,7 @@
 """Combination of Utilities to perform simple tasks"""
 
 import Functions
+from Geometry.Models import Position, Point
 import Geometry.Functions as gf
 import Constants
 
@@ -23,10 +24,15 @@ def get_goalie_position(game_state, distance):
 
    """
    goal_point = game_state.game_info.get_home_goal_point()
+   print('goal_point = {}'.format(goal_point))
    ball_point = game_state.field.ball.point
+   print('ball_point = {}'.format(ball_point))
+   print(goal_point, type(goal_point))
+   print(ball_point, type(ball_point))
    vec        = ball_point - goal_point
    angle      = gf.get_angle_of_vector(vec)
    offset     = gf.scale_vector(gf.get_normalized_vector(angle), distance)
+   print('offset = {}'.format(offset))
    return Position(goal_point + offset, angle)
 
 # def kick_ball_toward_pos(robot, ball, pos):
@@ -49,3 +55,23 @@ def get_goalie_position(game_state, distance):
 # def push_ball_toward_pos(robot, ball, pos):
 
 
+
+def test():
+   from Models import GameState, Field, GameInfo
+   
+   f1  = Field()
+   gi1 = GameInfo(Constants.left_side)
+   gs1 = GameState(f1, gi1)
+   cmds1 = stay_between_goalnball(gs1, f1.ally2)
+   print('cmds1: {}'.format(cmds1))
+   
+   f2  = Field()
+   f2.ball.point = Point(1.5, -1.0)
+   gi2 = GameInfo(Constants.right_side)
+   gs2 = GameState(f2, gi2)
+   cmds2 = stay_between_goalnball(gs2, f2.ally2)
+   print('cmds2: {}'.format(cmds2))
+
+
+if __name__ == '__main__':
+   test()
