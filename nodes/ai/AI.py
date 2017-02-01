@@ -44,7 +44,7 @@ class AI(object):
     def strategize(self):
 
         if self.ally1:
-            return _position_to_tuple(self.game_state.field.ally1.position)
+            # return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
             cmds = self.rush_goal(
                 _position_to_pose2d(self.game_state.field.ally1.position),
