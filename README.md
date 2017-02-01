@@ -10,3 +10,6 @@ The team members are:
 - Jared Collier
 - Harrison McCullough
 
+Our robot's names are:
+- Ekans   (IP address 23)
+- Koffing (IP address 109)
