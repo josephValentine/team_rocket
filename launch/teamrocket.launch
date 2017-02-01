@@ -36,7 +36,8 @@
         </group>
 
         <!-- Orienter -->
-        
+        <node name="orienter" pkg="teamrocket" type="orienter_node.py" output="screen">
+        </node>
 
     </group>
 </launch>
