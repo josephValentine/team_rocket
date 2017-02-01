@@ -36,7 +36,7 @@ second_half = 'second_half'
 
 time_in_half = 2*60 # seconds
 
-goalie_dist_from_goal = 0.22
+goalie_dist_from_goal = 0.16
 
 goal_width      = 0.619
 goal_half_width = goal_width/2

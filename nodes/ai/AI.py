@@ -15,7 +15,8 @@ class AI(object):
 
         # Create GameState object
         self.game_state = GameState(Field(), GameInfo(team_side))
-
+        self.game_state.game_info.side = team_side
+        self.team_side = team_side
         # Am I ally1?
         self.ally1 = (ally_number == 1)
 
@@ -32,23 +33,46 @@ class AI(object):
         f.opp1.position = _pose2d_to_position(opp1)
         f.opp2.position = _pose2d_to_position(opp2)
         f.ball.point = _pose2d_to_point(ball)
-        # update game state
 
+        role_str = 'ally1' if self.ally1 else 'ally2'
+        print self.team_side, role_str, (me.x, me.y, me.theta)
+        # update game state
+        # print game_state
+        # home_score, away_score, home_bot_count, away_bot_count,
+        # remaining_seconds, play, reset_field, second_half
 
     def strategize(self):
 
         if self.ally1:
+            return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
             cmds = self.rush_goal(
                 _position_to_pose2d(self.game_state.field.ally1.position),
                 _point_to_pose2d(self.game_state.field.ball.point))
+            # print self.team_side, "forward cmds:", cmds
+            # print self.team_side, "forward pos: ", \
+            #     _position_to_pose2d(self.game_state.field.ally1.position)
 
         else:
             # be a goalie (i.e., follow line on ball)
             # cmds = self.follow_ball_on_line(ball, -1.25)
-            cmds = Skills.stay_between_goalnball(
-                self.game_state, self.game_state.field.ally2)
+            cmds = _position_to_tuple(Skills.stay_between_goalnball(
+                self.game_state, self.game_state.field.ally2))
+            # print self.team_side,  "goalie cmds:", cmds
+            # print self.team_side, "goalie pos: ", \
+            #     _position_to_pose2d(self.game_state.field.ally2.position)
 
+        print self.team_side
+        if self.team_side != 'home':
+            print 'flip (before =', cmds, ',',
+            cmds = _flip_coordinate_system(cmds)
+            print 'after =', cmds, ')'
+
+        pos_str = "forward" if self.ally1 else "goalie"
+        print self.team_side, pos_str, "cmds:", cmds
+        my_pos = self.game_state.field.ally1.position if self.ally1 else \
+                 self.game_state.field.ally2.position
+        print self.team_side, pos_str, "pos: ", my_pos
 
         return cmds
 
@@ -141,17 +165,27 @@ def test():
 
 def _position_to_pose2d(position):
     from geometry_msgs.msg import Pose2D
-    return Pose2D(position.point.x, position.point.y, position.angle.radian)
+    return Pose2D(position.point.x, position.point.y, position.angle.degree)
 
 def _point_to_pose2d(point):
     from geometry_msgs.msg import Pose2D
     return Pose2D(point.x, point.y, 0)
 
 def _pose2d_to_position(pose2d):
-    return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, False))
+    return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, True))
 
 def _pose2d_to_point(pose2d):
     return Point(pose2d.x, pose2d.y)
+
+def _pose2d_to_tuple(pose2d):
+    return (pose2d.x, pose2d.y, pose2d.theta)
+
+def _position_to_tuple(position):
+    return (position.point.x, position.point.y, position.angle.degree)
+
+def _flip_coordinate_system(cmds):
+    return cmds
+    # return (-cmds[0], -cmds[1], (cmds[2]+180) % 360)
 
 if __name__ == '__main__':
    test()

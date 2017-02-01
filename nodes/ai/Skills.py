@@ -11,9 +11,9 @@ def stay_between_goalnball(game_state, robot):
    goalie_position = get_smart_goalie_position(game_state,
                                                Constants.goalie_dist_from_goal)
    if True: # Check if it's a good idea
-      return goalie_position.to_tuple()
+      return goalie_position
    else:
-      return robot.position.to_tuple()
+      return robot.position
 
 
 def get_goalie_position(game_state, distance):
@@ -72,6 +72,7 @@ def get_smart_goalie_position(game_state, distance):
       goal_point = Point(goal_center_point.x, ball_point.y)
    vec        = ball_point - goal_point
    angle      = gf.get_angle_of_vector(vec)
+   print "commanded angle: %s" % angle
    offset     = gf.scale_vector(gf.get_normalized_vector(angle), distance)
    return Position(goal_point + offset, angle)
 
