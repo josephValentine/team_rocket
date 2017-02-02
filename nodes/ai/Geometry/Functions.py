@@ -117,37 +117,43 @@ def test():
    l34 = Line(p3,p4)
    l41 = Line(p4,p1)
 
-   rec = [  dist(p1,p2),   dist(p2,p3),   dist(p3,p4),   dist(p4,p1)]
+   rec = [  p1.dist_to_point(p2),   p2.dist_to_point(p3),
+            p3.dist_to_point(p4),   p4.dist_to_point(p1)]
    exp = [2]*len(rec)
-   mes = ['dist(p1,p2)', 'dist(p2,p3)', 'dist(p3,p4)', 'dist(p4,p1)']
+   mes = ['p1.dist_to_point(p2)', 'p2.dist_to_point(p3)',
+          'p3.dist_to_point(p4)', 'p4.dist_to_point(p1)']
    disp_errors(rec,exp,mes)
 
-   rec = [  dist(p2,p1),   dist(p3,p2),   dist(p4,p3),   dist(p1,p4)]
+   rec = [  p2.dist_to_point(p1),   p3.dist_to_point(p2),
+            p4.dist_to_point(p3),   p1.dist_to_point(p4)]
    exp = [2]*len(rec)
-   mes = ['dist(p2,p1)', 'dist(p3,p2)', 'dist(p4,p3)', 'dist(p1,p4)']
+   mes = ['p2.dist_to_point(p1)', 'p3.dist_to_point(p2)',
+          'p4.dist_to_point(p3)', 'p1.dist_to_point(p4)']
    disp_errors(rec,exp,mes)
 
-   rec = [  dist(p1,p3),   dist(p3,p1),   dist(p2,p4),   dist(p4,p2)]
+   rec = [  p1.dist_to_point(p3),   p3.dist_to_point(p1),
+            p2.dist_to_point(p4),   p4.dist_to_point(p2)]
    exp = [math.sqrt(8)]
-   mes = ['dist(p1,p3)', 'dist(p3,p1)', 'dist(p2,p4)', 'dist(p4,p2)']
+   mes = ['p1.dist_to_point(p3)', 'p3.dist_to_point(p1)',
+          'p2.dist_to_point(p4)', 'p4.dist_to_point(p2)']
    disp_errors(rec,exp,mes)
 
-   rec = [  dist_to_line(p0,l12),   dist_to_line(p0,l12),
-            dist_to_line(p0,l12),   dist_to_line(p0,l12)]
+   rec = [  p0.dist_to_line(l12),   p0.dist_to_line(l12),
+            p0.dist_to_line(l12),   p0.dist_to_line(l12)]
    exp = [1]*len(rec)
-   mes = ['dist_to_line(p0,l12)', 'dist_to_line(p0,l12)',
-          'dist_to_line(p0,l12)', 'dist_to_line(p0,l12)']
+   mes = ['p0.dist_to_line(l12)', 'p0.dist_to_line(l12)',
+          'p0.dist_to_line(l12)', 'p0.dist_to_line(l12)']
    disp_errors(rec,exp,mes)
 
-   rec = [  get_vector_between_points(p1,p2),
-            get_vector_between_points(p2,p3),
-            get_vector_between_points(p3,p4),
-            get_vector_between_points(p4,p1)]
+   rec = [  p1.get_vector_to_point(p2),
+            p2.get_vector_to_point(p3),
+            p3.get_vector_to_point(p4),
+            p4.get_vector_to_point(p1)]
    exp = [Vector(0,2), Vector(2,0), Vector(0,-2), Vector(-2,0)]
-   mes = ['get_vector_between_points(p1,p2)',
-          'get_vector_between_points(p2,p3)',
-          'get_vector_between_points(p3,p4)',
-          'Get_vector_between_points(p4,p1)']
+   mes = ['p1.get_vector_to_point(p2)',
+          'p2.get_vector_to_point(p3)',
+          'p3.get_vector_to_point(p4)',
+          'p4.get_vector_to_point(p1)']
    disp_errors(rec,exp,mes)
 
 
@@ -158,7 +164,7 @@ def test():
       print 'point:  {}'.format(p)
       print 'center: {}'.format(c)
       print 'ell_pt: {}'.format(e)
-      print 'dist:   {}'.format(get_vector_magnitude(e - c))
+      print 'dist:   {}'.format((e - c).get_magnitude())
    x_axis = 0.22
    y_axis = 0.309
 
