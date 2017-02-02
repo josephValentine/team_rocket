@@ -131,7 +131,6 @@ class GameInfo(object):
         raise Exception('invalid side in GameInfo')
 
 
-
 class Score(object):
     """The scores for us and them."""
     def __init__(self, us=None, them=None):

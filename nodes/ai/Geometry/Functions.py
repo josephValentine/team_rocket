@@ -6,116 +6,7 @@ This file contains common functions for doing geometric calculations, etc.
 """
 
 from Models import Point, Vector, Line, Angle
-# from .Models import Point, Vector, Line, Angle
 import math
-
-
-# def dist(p1, p2):
-#    """Compute the distance between two points.
-
-#    p1 (Point)     : point 1
-#    p2 (Point)     : point 2
-#    return (Float) : distance between point 1 and point 2
-
-#    """
-#    return math.sqrt((p2.y - p1.y)**2 + (p2.x - p1.x)**2)
-
-# def dist_to_line(p, line):
-#    """Compute the distance from a point to a line.
-
-#    p (Point)      : point to calculate distance from
-#    line (Line)    : tuple of two points that define a line
-#    return (Float) : distance from p to line
-
-#    """
-#    p0 = p
-#    p1 = line.beg
-#    p2 = line.end
-#    # https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
-#    num = abs((p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
-#    den = math.sqrt((p2.y-p1.y)**2 + (p2.x-p1.x)**2)
-#    return num/den
-
-
-# def get_vector_between_points(p1, p2):
-#    """Returns a vector between two points.
-
-#    p1 (Point)      : first point
-#    p2 (Point)      : second point
-#    return (Vector) : vector between points
-
-#    """
-#    return Vector(p2.x-p1.x, p2.y-p1.y)
-
-
-# def get_vector_magnitude(v):
-#    """Get the magnitude of a vector.
-
-#    v (Vector)     : input vector
-#    return (Float) : magnitude of v
-
-#    """
-#    return math.sqrt(v.x**2 + v.y**2)
-
-
-# def normalize_vector(v):
-#    """Return a vector with same direction and magnitude 1.
-
-#    v (Vector)     : input vector
-#    return (Float) : vector with same direction and magnitude 1
-
-#    """
-#    m = get_vector_magnitude(v)
-#    return Vector(v.x/m, v.y/m)
-
-
-# def get_normalized_vector(angle):
-#    """Return a vector in the given angle with magnitude 1.
-
-#    angle (Angle)   : input angle
-#    return (Vector) : vector in given angle with magnitude 1
-
-#    """
-#    a = angle.radian
-#    return Vector(math.cos(a), math.sin(a))
-
-
-# def scale_vector(v, k):
-#    """Return a vector scaled by a constant factor.
-
-#    v (Vector)      : input vector
-#    k (Number)      : scale factor
-#    return (Vector) : vector v scaled by constant k
-
-#    """
-#    return Vector(v.x*k, v.y*k)
-
-
-# def get_angle_of_vector(v):
-#    """Return the angle in radians of a vector.
-
-#    v (Vector)     : input vector
-#    return (Angle) : angle in radians between 0 and 2*pi
-
-#    """
-#    a = math.atan(v.y/v.x)
-#    if v.x < 0:
-#       a += math.pi
-#    elif v.y < 0:
-#       a += 2*math.pi
-#    return Angle(a, False)
-
-
-# def line2vec(line):
-#    """Return a vector from the beginning of the line to the end.
-
-#    line (Line)     : input line
-#    return (Vector) : vector representing going from the begninning of the line
-#                      to the end of the line
-
-#    """
-#    return Vector(line.end.x - line.beg.x, line.end.y - line.beg.y)
-
 
 def closest_point_on_ellipse(center, x_radius, y_radius, point):
    if x_radius >= y_radius:
@@ -137,15 +28,10 @@ def closest_point_on_ellipse(center, x_radius, y_radius, point):
       else:
          p = _closest_point_on_norm_ellipse(e0, e1, -y0, y1)
          p.x = p.x
-         # p = closest_point_on_ellipse(center, x_radius, y_radius,
-         #                              Point(y0, -y1))
-         # return Point(p.x, -p.y)
    else:
       if y1 < y0:
          p = _closest_point_on_norm_ellipse(e0, e1, y0, -y1)
          p.y = -p.y
-         # p = closest_point_on_ellipse(center_point, x_radius, y_radius,
-         #                              Point(-y0, y1))
       else:
          p = _closest_point_on_norm_ellipse(e0, e1, y0, y1)
 
@@ -202,7 +88,6 @@ def _closest_point_on_norm_ellipse(e0, e1, y0, y1):
    #    return Point(x1 + c1, x0 + c0)
    # else:
    #    return Point(x0 + c0, x1 + c1)
-
 
 
 # Testing

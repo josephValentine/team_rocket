@@ -102,7 +102,9 @@ class Point(object):
 
         """
         return math.sqrt((self.y - point.y)**2 + (self.x - point.x)**2)
-
+    def get_vector_to_point(self, point):
+        """Return Vector of going from self to point."""
+        return point - self
 
 
 class Vector(object):
@@ -254,7 +256,9 @@ class Angle(object):
 
 
 class NoIntersectionException(Exception):
+    """An exception to throw when lines don't intersect."""
     pass
+
 
 # Helper functions
 def _rad_to_deg(rad):
@@ -266,7 +270,6 @@ def _deg_to_rad(deg):
 
 
 def _type_str(x):
-    # return str(type(x))[8:-2]
     return str(type(x))
 
 
@@ -281,6 +284,7 @@ def _dist_point_to_line(p, line):
     num = abs((p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     den = math.sqrt((p2.y-p1.y)**2 + (p2.x-p1.x)**2)
     return num/den
+
 
 delta = 0.0000001
 def _close(x, y):
