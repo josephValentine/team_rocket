@@ -74,6 +74,16 @@ class Robot(object):
         return 'Robot({}, {}, {})'.format(self.team, self.id, self.position)
     def update_position_from_tuple(self, position_tuple):
         self.position = self.position.from_tuple(position_tuple)
+    def get_position(self):
+        return self.position
+    def get_point(self):
+        return self.position.point
+    def get_angle(self):
+        return self.position.angle
+    def get_dist_to_obj(self, obj):
+        return self.get_point().dist_to_point(obj.get_point())
+    def get_dist_to_point(self, point):
+        return self.get_point().dist_to_point(point)
 
 
 class Ball(object):
@@ -88,6 +98,17 @@ class Ball(object):
         return 'Ball({})'.format(self.point)
     def update_point_from_tuple(self, position_tuple):
         self.point = self.point(*position_tuple[:2])
+    # def get_position(self):
+    #     return self.position
+    def get_point(self):
+        # return self.position.point
+        return self.point
+    # def get_angle(self):
+    #     return self.position.angle
+    def get_dist_to_obj(self, obj):
+        return self.get_point().dist_to_point(obj.get_point())
+    def get_dist_to_point(self, point):
+        return self.get_point().dist_to_point(point)
 
 
 class GameInfo(object):
