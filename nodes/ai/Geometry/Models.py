@@ -7,6 +7,10 @@ class Position(object):
     def __init__(self, point, angle):
         self.point = point
         self.angle = angle
+    def __eq__(self, other):
+        return type(self) == type(other) and \
+            self.point == other.point and \
+            self.angle == other.angle
     def __add__(self, other):
         if type(other) == Vector:
             return Position(self.point + other, self.angle)
@@ -41,9 +45,9 @@ class Point(object):
         self.x = x
         self.y = y
     def __eq__(self, other):
-        return type(other) == type(self) and \
-            self.x == other.x and \
-            self.y == other.y
+        return type(self) == type(other) and \
+            _close(self.x, other.x) and \
+            _close(self.y, other.y)
     def __str__(self):
         return repr(self)
     def __repr__(self):
@@ -78,7 +82,7 @@ class Point(object):
         self.x = x
     def update_y(self, y):
         self.y = y
-    def dist_to_line(self, line)
+    def dist_to_line(self, line):
         """Return distance to a line.
 
         line (Line)   : line to calculate distance to
@@ -93,7 +97,7 @@ class Point(object):
         return (Float) : distance between self and point
 
         """
-        return math.sqrt((p2.y - point.y)**2 + (p2.x - point.x)**2)
+        return math.sqrt((self.y - point.y)**2 + (self.x - point.x)**2)
 
 
 
@@ -103,9 +107,9 @@ class Vector(object):
         self.x = x
         self.y = y
     def __eq__(self, other):
-        return type(other) == type(self) and \
-            self.x == other.x and \
-            self.y == other.y
+        return type(self) == type(other) and \
+            _close(self.x, other.x) and \
+            _close(self.y, other.y)
     def __str__(self):
         return repr(self)
     def __repr__(self):
@@ -127,10 +131,10 @@ class Vector(object):
         return Vector(self.x/m, self.y/m)
     def get_angle(self):
         """Return the angle the vector makes from x-axis."""
-        a = math.atan(v.y/v.x)
-        if v.x < 0:
+        a = math.atan(self.y/self.x)
+        if self.x < 0:
             a += math.pi
-        elif v.y < 0:
+        elif self.y < 0:
             a += 2*math.pi
         return Angle(a, False)
 
@@ -146,7 +150,7 @@ class Line(object):
         self.beg = beg
         self.end = end
     def __eq__(self, other):
-        return type(other) == type(self) and \
+        return type(self) == type(other) and \
             self.beg == other.beg and \
             self.end == other.end
     def __str__(self):
@@ -156,6 +160,8 @@ class Line(object):
     def to_vector(self):
         """Return Vector version of line from beginning to end."""
         return self.end - self.beg
+    def get_angle(self):
+        return self.to_vector().get_angle()
     def dist_to_point(self, point):
         """Return distance to a point.
 
@@ -167,10 +173,10 @@ class Line(object):
     def intersection_with_line(self, line):
         """Return the point of intersection with another line.
 
-        line (Line)  : line to find intersction with
-        return (Flat) : point of intersection
+        line (Line)    : line to find intersction with
+        return (Float) : point of intersection
 
-        Throws NoIntersectionError if the lines do not intersect (are
+        Throws NoIntersectionException if the lines do not intersect (are
         parrallel).
 
         """
@@ -184,8 +190,11 @@ class Line(object):
         x3y4, y3x4 = x3*y4, y3*x4
         x1_x2, x3_x4 = x1-x2, x3-x4
         y1_y2, y3_y4 = y1-y2, y3-y4
-        a, b = x1y2-y1x2, x3y4-y3x4
         den = x1_x2*y3_y4 - y1_y2*x3_x4
+        if den == 0.0:
+            raise NoIntersectionException(
+                'No intersection found between %s and %s' % (self, line))
+        a, b = x1y2-y1x2, x3y4-y3x4
         P_x = (a*x3_x4 - x1_x2*b)/den
         P_y = (a*y3_y4 - y1_y2*b)/den
         return Point(P_x, P_y)
@@ -196,7 +205,7 @@ class Angle(object):
     def __init__(self, value, is_degree):
         self.update_angle(value, is_degree)
     def __eq__(self, other):
-        return type(other) == type(self) and \
+        return type(self) == type(other) and \
             self.degree == other.degree and \
             self.radian == other.radian
     def __str__(self):
@@ -211,9 +220,6 @@ class Angle(object):
         if type(other) == Angle:
             return Angle(self.normalize(self.radian-other.radian, False), False)
         raise TypeError(_type_error_str(self, other))
-    def normalize(self, value, is_degree):
-        max_value = 360 if is_degree else 2*math.pi
-        return value % max_value
     def update_angle(self, value, is_degree):
         if is_degree:
             self.degree = value % 360
@@ -221,7 +227,14 @@ class Angle(object):
         else:
             self.radian = value % (2*math.pi)
             self.degree = _rad_to_deg(self.radian)
+    def normalize(self, value, is_degree):
+        """Force a value to be in between 0-2pi radians/0-360 degrees."""
+        max_value = 360 if is_degree else 2*math.pi
+        return value % max_value
 
+
+class NoIntersectionException(Exception):
+    pass
 
 # Helper functions
 def _rad_to_deg(rad):
@@ -243,8 +256,70 @@ def _type_error_str(x, y):
 
 def _dist_point_to_line(p, line):
     p0 = p
-    p1 = self.beg
-    p2 = self.end
+    p1 = line.beg
+    p2 = line.end
     num = abs((p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     den = math.sqrt((p2.y-p1.y)**2 + (p2.x-p1.x)**2)
     return num/den
+
+delta = 0.0000001
+def _close(x, y):
+    return abs(x-y) < delta
+
+
+# Testing
+def test():
+    p1 = Point(0.1, 0.3)
+    v1 = Vector(0.4, -0.1)
+    assert p1 + v1 == Point(0.5, 0.2)
+    p2 = Point(-0.4, 0.3)
+    assert p1.dist_to_point(p2) == 0.5
+    assert p1 - p2 == Vector(0.5, 0.0)
+    v2 = Vector(3.0, 4.0)
+    assert v2.get_magnitude() == 5.0
+    assert v2.get_normalized() == Vector(3.0/5.0, 4.0/5.0)
+    v3 = Vector(-3.0, -4.0)
+    assert v3.get_magnitude() == 5.0
+    assert v3.get_normalized() == Vector(-3.0/5.0, -4.0/5.0)
+    v4 = Vector(3.0, -4.0)
+    assert v4.get_magnitude() == 5.0
+    assert v4.get_normalized() == Vector(3.0/5.0, -4.0/5.0)
+    v5 = Vector(1.0, 1.0)
+    assert v5.get_angle() == Angle(45, True)
+    l1 = Line(p1, p2)
+    assert l1.dist_to_point(p1) == 0.0
+    assert p1.dist_to_line(l1) == 0.0
+    p3 = Point(-0.1, 0.5)
+    assert l1.dist_to_point(p3) == 0.2
+    assert p3.dist_to_line(l1) == 0.2
+    l2 = Line(Point(0,0), Point(1,1))
+    assert l2.to_vector() == Vector(1,1)
+    assert l2.get_angle() == Angle(45, True)
+    p4 = Point(0,1)
+    assert l2.dist_to_point(p4) == 1/math.sqrt(2)
+    assert p4.dist_to_line(l2) == 1/math.sqrt(2)
+    l3 = Line(Point(2,0), Point(0,2))
+    assert l2.intersection_with_line(l3) == Point(1,1)
+    assert l3.intersection_with_line(l2) == Point(1,1)
+    l4 = Line(Point(-2,0), Point(0,-2))
+    assert l2.intersection_with_line(l4) == Point(-1,-1)
+    assert l4.intersection_with_line(l2) == Point(-1,-1)
+    l3 = Line(Point(-2,-2), Point(-3,-3))
+    assert l3.to_vector() == Vector(-1,-1)
+    assert l3.get_angle() == Angle(225, True)
+    a1 = Angle(180, True)
+    assert a1 == Angle(math.pi, False)
+    assert a1 == Angle(3*math.pi, False)
+    pos1 = Position(p4, a1)
+    v6 = Vector(-2, 0.5)
+    assert pos1 == Position(Point(0,1), Angle(180, True))
+    assert pos1 + v6 == Position(Point(-2, 1.5), Angle(180, True))
+    assert pos1 + v6 == Position(Point(-2, 1.5), a1)
+    assert pos1 + a1 == Position(p4, Angle(0, True))
+    assert pos1 + a1 == Position(p4, Angle(360, True))
+    assert Angle(45, True) == Angle(360 + 45, True)
+    print 'All assertions passed'
+
+
+if __name__ == '__main__':
+    test()
