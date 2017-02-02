@@ -84,6 +84,8 @@ class Robot(object):
         return self.get_point().dist_to_point(obj.get_point())
     def get_dist_to_point(self, point):
         return self.get_point().dist_to_point(point)
+    def get_radius(self):
+        return Constants.robot_radii[self.id]
 
 
 class Ball(object):
@@ -109,6 +111,9 @@ class Ball(object):
         return self.get_point().dist_to_point(obj.get_point())
     def get_dist_to_point(self, point):
         return self.get_point().dist_to_point(point)
+    def get_radius(self):
+        return Constants.ball_radius
+
 
 
 class GameInfo(object):

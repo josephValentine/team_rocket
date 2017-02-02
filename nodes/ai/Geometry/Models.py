@@ -46,8 +46,8 @@ class Point(object):
     def __init__(self, x, y):
         assert isinstance(x, numbers.Number)
         assert isinstance(y, numbers.Number)
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
     def __eq__(self, other):
         return type(self) == type(other) and \
             _close(self.x, other.x) and \
@@ -78,6 +78,8 @@ class Point(object):
         if type(other) != Point and type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
         return Vector(self.x - other.x, self.y - other.y)
+    def to_vector(self):
+        return Vector(self.x, self.y)
     def to_tuple(self):
         return (self.x, self.y, 0)
     def from_tuple(self, tup):
@@ -105,6 +107,8 @@ class Point(object):
     def get_vector_to_point(self, point):
         """Return Vector of going from self to point."""
         return point - self
+    def dist_to_line_segment(self, line):
+        return _dist_point_to_line_segment(self, line)
 
 
 class Vector(object):
@@ -130,6 +134,10 @@ class Vector(object):
         if type(other) != Vector:
             raise TypeError(_type_error_str(self, other))
         return Vector(self.x - other.x, self.y - other.y)
+    def to_point(self):
+        return Point(self.x, self.y)
+    def to_vector(self):
+        return self
     def get_magnitude(self):
         """Return magnitude of vector."""
         return math.sqrt(self.x**2 + self.y**2)
@@ -139,6 +147,11 @@ class Vector(object):
         return Vector(self.x/m, self.y/m)
     def get_angle(self):
         """Return the angle the vector makes from x-axis."""
+        # check for x=0 to avoid dividing by 0
+        if self.x == 0:
+            # if y also is 0 then we have a zero vector, so the angle doesn't
+            # matter
+            return Angle(90, True) if self.y > 0 else Angle(270, True)
         a = math.atan(self.y/self.x)
         if self.x < 0:
             a += math.pi
@@ -153,6 +166,11 @@ class Vector(object):
 
         """
         return Vector(k*self.x, k*self.y)
+    def dot(self, other):
+        if type(other) != Vector:
+            raise TypeError(_type_error_str(self, other))
+        return self.x*other.x + self.y*other.y
+
 
 class Line(object):
     """A pair of lines that define a point.
@@ -177,10 +195,12 @@ class Line(object):
     def to_vector(self):
         """Return Vector version of line from beginning to end."""
         return self.end - self.beg
+    def get_magnitude(self):
+        return self.to_vector().get_magnitude()
     def get_angle(self):
         return self.to_vector().get_angle()
     def dist_to_point(self, point):
-        """Return distance to a point.
+        """Return distance to a point, treating self as an infinite line.
 
         point (Point)  : point to calculate distance to
         return (Float) : distance from self to point
@@ -215,6 +235,19 @@ class Line(object):
         P_x = (a*x3_x4 - x1_x2*b)/den
         P_y = (a*y3_y4 - y1_y2*b)/den
         return Point(P_x, P_y)
+    def get_projection(self, v):
+        v = v.to_vector()
+        s = self.to_vector()
+        # https://en.wikibooks.org/wiki/
+        # Linear_Algebra/Orthogonal_Projection_Onto_a_Line
+        print '%s.get_projection(%s)' % (self, v)
+        print 'v.dot(s) = %s' % v.dot(s)
+        print 's.dot(s) = %s' % s.dot(s)
+        print 'vdot/sdot = %d' % (v.dot(s) / s.dot(s))
+        print 'get_projection returns = %s' % s.get_scaled(v.dot(s)/s.dot(s))
+        return s.get_scaled(v.dot(s)/s.dot(s))
+    def dist_from_segment_to_point(self, point):
+        return _dist_point_to_line_segment(point, self)
 
 
 class Angle(object):
@@ -241,10 +274,10 @@ class Angle(object):
         raise TypeError(_type_error_str(self, other))
     def update_angle(self, value, is_degree):
         if is_degree:
-            self.degree = value % 360
+            self.degree = float(value) % 360
             self.radian = _deg_to_rad(self.degree)
         else:
-            self.radian = value % (2*math.pi)
+            self.radian = float(value) % (2*math.pi)
             self.degree = _rad_to_deg(self.radian)
     def normalize(self, value, is_degree):
         """Force a value to be in between 0-2pi radians/0-360 degrees."""
@@ -284,6 +317,40 @@ def _dist_point_to_line(p, line):
     num = abs((p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     den = math.sqrt((p2.y-p1.y)**2 + (p2.x-p1.x)**2)
     return num/den
+
+
+def _dist_point_to_line_segment(point, line):
+    print 'point = %s' % point
+    print 'line = %s' % line
+    print point - line.beg
+    print (point - line.beg).to_point()
+    point = (point - line.beg).to_point()
+    line = Line(Point(0,0), (line.end - line.beg).to_point())
+    print 'point = %s' % point
+    print 'line = %s' % line
+    print 'from_beg = %s' % point
+    projection = line.get_projection(point)
+    # projection = line.get_projection(point.to_vector())
+    proj_mag = projection.get_magnitude()
+    proj_ang = projection.get_angle()
+    line_mag = line.get_magnitude()
+    line_ang = line.get_angle()
+    print 'projection = %s' % projection
+    print 'proj_mag = %s' % proj_mag
+    print 'proj_ang = %s' % proj_ang
+    print 'line_mag = %s' % line_mag
+    print 'line_ang = %s' % line_ang
+    # check if in same direction
+    if line_ang == proj_ang:
+        # check if past end
+        if proj_mag > line_mag:
+            return line.end.dist_to_point(point)
+        # in between beginning and end
+        else:
+            return line.dist_to_point(point)
+    # behind beginning
+    else:
+        return line.beg.dist_to_point(point)
 
 
 delta = 0.0000001
@@ -328,9 +395,9 @@ def test():
     l4 = Line(Point(-2,0), Point(0,-2))
     assert l2.intersection_with_line(l4) == Point(-1,-1)
     assert l4.intersection_with_line(l2) == Point(-1,-1)
-    l3 = Line(Point(-2,-2), Point(-3,-3))
-    assert l3.to_vector() == Vector(-1,-1)
-    assert l3.get_angle() == Angle(225, True)
+    l5 = Line(Point(-2,-2), Point(-3,-3))
+    assert l5.to_vector() == Vector(-1,-1)
+    assert l5.get_angle() == Angle(225, True)
     a1 = Angle(180, True)
     assert a1 == Angle(math.pi, False)
     assert a1 == Angle(3*math.pi, False)
@@ -343,7 +410,34 @@ def test():
     assert pos1 + a1 == Position(p4, Angle(360, True))
     assert Angle(45, True) == Angle(360 + 45, True)
     assert a1.normalize(360+32, True) == Angle(32, True)
+    l6 = Line(Point(1,1), Point(2,2))
+    p5 = Point(0,0)
+    print '-'*80
+    print l6.dist_from_segment_to_point(p5)
+    print '-'*80
+    assert _close(l6.dist_from_segment_to_point(p5), math.sqrt(2.0))
+    assert _close(p5.dist_to_line_segment(l6), math.sqrt(2.0))
+    p6 = Point(0,1)
+    assert _close(l6.dist_from_segment_to_point(p6), 1)
+    assert _close(p6.dist_to_line_segment(l6), 1)
+    p7 = Point(0,2)
+    print '-'*80
+    print 'p7 = %s' % l6.dist_from_segment_to_point(p7)
+    print '-'*80
+    assert _close(l6.dist_from_segment_to_point(p7), math.sqrt(2.0))
+    assert _close(p7.dist_to_line_segment(l6), math.sqrt(2.0))
+    p8 = Point(1,2)
+    print '-'*80
+    print 'p8 = %s' % l6.dist_from_segment_to_point(p8)
+    print 'sqrt(2.0)/2.0 = %f' % (math.sqrt(2.0)/2.0)
+    print '-'*80
+    assert _close(l6.dist_from_segment_to_point(p8), math.sqrt(2.0)/2.0)
+    assert _close(p8.dist_to_line_segment(l6), math.sqrt(2.0)/2.0)
+    p9 = Point(3,3)
+    assert _close(l6.dist_from_segment_to_point(p9), math.sqrt(2.0))
+    assert _close(p9.dist_to_line_segment(l6), math.sqrt(2.0))
     print 'All assertions passed'
+
 
 
 if __name__ == '__main__':
