@@ -1,10 +1,12 @@
 """Custom objects for geometrical constructs."""
 
-import math
+import math, numbers
 
 class Position(object):
     """Information about a position, including a point and angle."""
     def __init__(self, point, angle):
+        assert type(point) == Point
+        assert type(angle) == Angle
         self.point = point
         self.angle = angle
     def __eq__(self, other):
@@ -42,6 +44,8 @@ class Position(object):
 class Point(object):
     """An x,y cartesian coordinate pair."""
     def __init__(self, x, y):
+        assert isinstance(x, numbers.Number)
+        assert isinstance(y, numbers.Number)
         self.x = x
         self.y = y
     def __eq__(self, other):
@@ -104,6 +108,8 @@ class Point(object):
 class Vector(object):
     """An x,y cartesian coordinate vector."""
     def __init__(self, x, y):
+        assert isinstance(x, numbers.Number)
+        assert isinstance(y, numbers.Number)
         self.x = x
         self.y = y
     def __eq__(self, other):
@@ -154,6 +160,8 @@ class Line(object):
 
     """
     def __init__(self, beg, end):
+        assert type(beg) == Point
+        assert type(end) == Point
         self.beg = beg
         self.end = end
     def __eq__(self, other):
@@ -210,6 +218,8 @@ class Line(object):
 class Angle(object):
     """An angle, stored in both radians and degrees."""
     def __init__(self, value, is_degree):
+        assert isinstance(value, numbers.Number)
+        assert bool(is_degree) or True # can I call bool on is_degree?
         self.update_angle(value, is_degree)
     def __eq__(self, other):
         return type(self) == type(other) and \

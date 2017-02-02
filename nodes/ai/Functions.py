@@ -1,6 +1,6 @@
 """Helpful functions to get information about game"""
 
-from Geometry.Models import Position, Point, Line, Angle
+from Geometry.Models import Position, Point, Line, Angle, Vector
 import Geometry.Functions as gf
 import Constants
 
@@ -40,9 +40,11 @@ def get_angle_goal2ball(game_state):
    return (Angle)         : Angle from center of goal to the ball
 
    """
-   return gf.get_angle_of_vector(Vector(
-      game_state.game_info.get_home_goal_point(),
-      game_state.field.ball.point))
+   # return gf.get_angle_of_vector(Vector(
+   #    game_state.game_info.get_home_goal_point(),
+   #    game_state.field.ball.point))
+   return (game_state.field.ball.point -
+           game_state.game_info.get_home_goal_point()).get_angle()
 
 
 # def get_cur_home_goal_point(game_info):
@@ -73,24 +75,27 @@ def test():
    d1 = 0.2
    p1 = get_point_behind_ball(f, a, d1)
    print 'get_point_behind_ball(f, {}, {}) = {}'.format(a, d1, p1)
-   print 'distance = {}'.format(gf.dist(f.ball.point, p1))
+   # print 'distance = {}'.format(gf.dist(f.ball.point, p1))
+   print 'distance = {}'.format(f.ball.point.dist_to_point(p1))
    d2 = 3.0
    p2 = get_point_behind_ball(f, a, d2)
    print 'get_point_behind_ball(f, {}, {}) = {}'.format(a, d2, p2)
-   print 'distance = {}'.format(gf.dist(f.ball.point, p2))
+   # print 'distance = {}'.format(gf.dist(f.ball.point, p2))
+   print 'distance = {}'.format(f.ball.point.dist_to_point(p2))
    gi1 = GameInfo(Constants.left_side)
    gs1 = GameState(f, gi1)
    l1  = get_line_goal2ball(gs1)
-   v1  = gf.line2vec(l1)
-   print 'line1: {} ({}, {} long'.format(l1, v1,
-                                          gf.get_vector_magnitude(v1))
+   # v1  = gf.line2vec(l1)
+   v1  = l1.to_vector()
+   print 'line1: {} ({}, {} long)'.format(l1, v1, v1.get_magnitude())
+   a1 = get_angle_goal2ball(gs1)
+   print 'angle1: {}'.format(a1)
    gi2 = GameInfo(Constants.right_side)
    gs2 = GameState(f, gi2)
    l2  = get_line_goal2ball(gs2)
-   v2  = gf.line2vec(l2)
-   print 'line2: {} ({}, {} long'.format(l2, v2,
-                                          gf.get_vector_magnitude(v2))
-
+   # v2  = gf.line2vec(l2)
+   v2  = l2.to_vector()
+   print 'line2: {} ({}, {} long)'.format(l2, v2, v2.get_magnitude())
 
 
 if __name__ == '__main__':
