@@ -14,8 +14,11 @@ def get_point_behind_ball(field, angle, distance):
 
    """
    ball_point = field.ball.point
-   dir_vec    = gf.get_normalized_vector(angle)
-   offset_vec = gf.scale_vector(dir_vec, -distance)
+   # # dir_vec    = gf.get_normalized_vector(angle)
+   # dir_vec    = angle.get_normalized_vector()
+   # # offset_vec = gf.scale_vector(dir_vec, -distance)
+   # offset_vec = dir_vec.get_scaled(-distance)
+   offset_vec = angle.get_normalized_vector().get_scaled(-distance)
    return ball_point + offset_vec
 
 

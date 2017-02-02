@@ -83,9 +83,9 @@ def get_normalized_vector(angle):
 def scale_vector(v, k):
    """Return a vector scaled by a constant factor.
 
-   v (Vector)     : input vector
-   k (Number)     : scale factor
-   return (Float) : vector v scaled by constant k
+   v (Vector)      : input vector
+   k (Number)      : scale factor
+   return (Vector) : vector v scaled by constant k
 
    """
    return Vector(v.x*k, v.y*k)

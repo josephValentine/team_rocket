@@ -137,7 +137,14 @@ class Vector(object):
         elif self.y < 0:
             a += 2*math.pi
         return Angle(a, False)
+    def get_scaled(self, k):
+        """Return a vector scaled by a constant factor.
 
+        k (Number)     : scale factor
+        return (Vector) : self scaled by constant k
+
+        """
+        return Vector(k*self.x, k*self.y)
 
 class Line(object):
     """A pair of lines that define a point.
@@ -214,11 +221,11 @@ class Angle(object):
         return 'Angle({}, {})'.format(self.degree, True)
     def __add__(self, other):
         if type(other) == Angle:
-            return Angle(self.normalize(self.radian+other.radian, False), False)
+            return self.normalize(self.radian + other.radian, False)
         raise TypeError(_type_error_str(self, other))
     def __sub__(self, other):
         if type(other) == Angle:
-            return Angle(self.normalize(self.radian-other.radian, False), False)
+            return self.normalize(self.radian - other.radian, False)
         raise TypeError(_type_error_str(self, other))
     def update_angle(self, value, is_degree):
         if is_degree:
@@ -230,7 +237,10 @@ class Angle(object):
     def normalize(self, value, is_degree):
         """Force a value to be in between 0-2pi radians/0-360 degrees."""
         max_value = 360 if is_degree else 2*math.pi
-        return value % max_value
+        return Angle(value % max_value, is_degree)
+    def get_normalized_vector(self):
+        """Return a normalized (magnitude 1) vector at this angle."""
+        return Vector(math.cos(self.radian), math.sin(self.radian))
 
 
 class NoIntersectionException(Exception):
@@ -318,6 +328,7 @@ def test():
     assert pos1 + a1 == Position(p4, Angle(0, True))
     assert pos1 + a1 == Position(p4, Angle(360, True))
     assert Angle(45, True) == Angle(360 + 45, True)
+    assert a1.normalize(360+32, True) == Angle(32, True)
     print 'All assertions passed'
 
 
