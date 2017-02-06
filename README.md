@@ -2,7 +2,7 @@ Team Rocket - The Winning Team
 ===============================
 
 This directory contains the files for the Robot Soccer competition for the
-Winter 2016 group Team Rocket.
+Winter 2017 group Team Rocket.
 
 The team members are:
 - Joe Valentine
@@ -10,3 +10,6 @@ The team members are:
 - Jared Collier
 - Harrison McCullough
 
+Our robot's names are:
+- Ekans   (IP address 23)
+- Koffing (IP address 109)

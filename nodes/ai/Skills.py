@@ -16,6 +16,20 @@ def stay_between_goalnball(game_state, robot):
       return robot.position
 
 
+def push_ball_in_direction(game_state, robot, angle):
+   """Get behind ball and start pushing in direction.
+
+   Get behind the ball relative to given angle, then start pushing the ball in
+   the given angle.
+
+   Assumptions:
+   - There is nobody between us and the ball.
+   - We are not directly in front of the ball.
+
+   """
+   pass
+
+
 def get_goalie_position(game_state, distance):
    """Return a point at specified distance from goal toward the ball
 
@@ -70,10 +84,10 @@ def get_smart_goalie_position(game_state, distance):
       goal_point = Point(goal_center_point.x, Constants.goal_bottom_y)
    else:
       goal_point = Point(goal_center_point.x, ball_point.y)
-   vec        = ball_point - goal_point
-   angle      = gf.get_angle_of_vector(vec)
+   vec    = ball_point - goal_point
+   angle  = vec.get_angle()
    print "commanded angle: %s" % angle
-   offset     = gf.scale_vector(gf.get_normalized_vector(angle), distance)
+   offset = angle.get_normalized_vector().get_scaled(distance)
    return Position(goal_point + offset, angle)
 
 

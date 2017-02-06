@@ -44,6 +44,13 @@ goal_half_width = goal_width/2
 goal_top_y    = goal_half_width
 goal_bottom_y = -goal_half_width
 
+robot_radii = {ally_1_id : robot_width,
+               ally_2_id : robot_width,
+               opp_1_id  : robot_width,
+               opp_2_id  : robot_width}
+
+ball_radius = 41.1/1000 # 41.1 mm
+
 ################################################################################
 ################ Everything below here is taken from McThuggets ################
 ################################################################################
