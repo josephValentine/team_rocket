@@ -2,8 +2,13 @@
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
 
+# Rate
+_rate = 100
+
 # Team Side (default = home)
-_team_side = 'home'
+_home_side = 'home'
+_away_side = 'away'
+_team_side = _home_side
 
 # Keys
 _home1_key = 'home1'
@@ -55,16 +60,16 @@ def main():
     global _team_side
     param_name = rospy.search_param('team_side')
     # get which team you're on, default to home
-    _team_side = rospy.get_param(param_name, 'home')
+    _team_side = rospy.get_param(param_name, _home_side)
 
     rospy.init_node('orienter', anonymous=False)
 
     # Subscribers
-    rospy.Subscriber('vision/home1', Pose2D, _handle_home1)
-    rospy.Subscriber('vision/home2', Pose2D, _handle_home2)
-    rospy.Subscriber('vision/away1', Pose2D, _handle_away1)
-    rospy.Subscriber('vision/away2', Pose2D, _handle_away2)
-    rospy.Subscriber('vision/ball',  Pose2D, _handle_ball)
+    rospy.Subscriber('/vision/home1', Pose2D, _handle_home1)
+    rospy.Subscriber('/vision/home2', Pose2D, _handle_home2)
+    rospy.Subscriber('/vision/away1', Pose2D, _handle_away1)
+    rospy.Subscriber('/vision/away2', Pose2D, _handle_away2)
+    rospy.Subscriber('/vision/ball',  Pose2D, _handle_ball)
 
     # Publishers
     pub_home1 = rospy.Publisher('orienter/home1', Pose2D, queue_size=10)
@@ -76,7 +81,7 @@ def main():
                 _away1_key : pub_away1, _away2_key : pub_away2,
                 _ball_key  : pub_ball}
 
-    rate = rospy.Rate(int(1/_ctrl_period))
+    rate = rospy.Rate(int(_rate))
     while not rospy.is_shutdown():
 
         # Flip coordinate system if necessary
