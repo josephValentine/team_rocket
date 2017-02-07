@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
     <!-- declare arg to be passed in -->
-    <arg name="team_side" default="home" />
-    <arg name="my_number" default="1" />
+    <arg name="team_side"   default="home" />
+    <arg name="my_number"   default="1" />
     <arg name="ally_number" default="2" />
 
     <!-- using which side of the field we are on, determine the appropriate -->
@@ -12,7 +12,7 @@
     
     <!-- Hardware agnostic code -->
     <node name="ai" pkg="teamrocket" type="ai_node.py" output="screen">
-        <remap from="me" to="orienter/$(arg team_side)$(arg my_number)" />
+        <remap from="me"   to="orienter/$(arg team_side)$(arg my_number)" />
         <remap from="ally" to="orienter/$(arg team_side)$(arg ally_number)" />
         <remap from="opp1" to="orienter/$(arg other_side)1" />
         <remap from="opp2" to="orienter/$(arg other_side)2" />

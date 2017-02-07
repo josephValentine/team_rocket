@@ -64,10 +64,10 @@ class AI(object):
             #     _position_to_pose2d(self.game_state.field.ally2.position)
 
         print self.team_side
-        if self.team_side != 'home':
-            print 'flip (before =', cmds, ',',
-            cmds = _flip_coordinate_system(cmds)
-            print 'after =', cmds, ')'
+        # if self.team_side != 'home':
+        #     print 'flip (before =', cmds, ',',
+        #     cmds = _flip_coordinate_system(cmds)
+        #     print 'after =', cmds, ')'
 
         pos_str = "forward" if self.ally1 else "goalie"
         print self.team_side, pos_str, "cmds:", cmds
