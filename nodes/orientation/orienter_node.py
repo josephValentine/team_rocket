@@ -1,68 +1,96 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist, Pose2D
-# from std_srvs.srv import Trigger, TriggerResponse
 
+# Team Side (default = home)
 _team_side = 'home'
+
+# Keys
+_home1_key = 'home1'
+_home2_key = 'home2'
+_away1_key = 'away1'
+_away2_key = 'away2'
+_ball_key  = 'ball'
+
+_all_keys = [_home1_key, _home2_key, _away1_key, _away2_key, _ball_key]
+
+# Messages
+_home1_msg = Pose2D()
+_home2_msg = Pose2D()
+_away1_msg = Pose2D()
+_away2_msg = Pose2D()
+_ball_msg  = Pose2D()
+
+_all_msgs = {_home1_key : _home1_msg, _home2_key : _home2_msg,
+             _away1_key : _away1_msg, _away2_key : _away2_msg,
+             _ball_key  : _ball_msg}
+
+# Handlers
+def _handle_home1(msg):
+    global _home1_msg
+    _home1_msg = msg
+
+
+def _handle_home2(msg):
+    global _home2_msg
+    _home2_msg = msg
+
+
+def _handle_away1(msg):
+    global _away1_msg
+    _away1_msg = msg
+
+
+def _handle_away2(msg):
+    global _away2_msg
+    _away2_msg = msg
+
+
+def _handle_ball(msg):
+    global _ball_msg
+    _ball_msg = msg
+
 
 def main():
     global _team_side
     param_name = rospy.search_param('team_side')
+    # get which team you're on, default to home
     _team_side = rospy.get_param(param_name, 'home')
-    
+
     rospy.init_node('orienter', anonymous=False)
 
-    # Sub/Pub
-    rospy.Subscriber('vision/away1', RobotState, _handle_robot_state)
-    rospy.Subscriber('desired_position', Pose2D, _handle_desired_position)
-    pub = rospy.Publisher('vel_cmds', Twist, queue_size=10)
-    pub_PIDInfo = rospy.Publisher('pidinfo', PIDInfo, queue_size=10)
+    # Subscribers
+    rospy.Subscriber('vision/home1', Pose2D, _handle_home1)
+    rospy.Subscriber('vision/home2', Pose2D, _handle_home2)
+    rospy.Subscriber('vision/away1', Pose2D, _handle_away1)
+    rospy.Subscriber('vision/away2', Pose2D, _handle_away2)
+    rospy.Subscriber('vision/ball',  Pose2D, _handle_ball)
 
-    # Services
-    # rospy.Service('/controller/toggle', Trigger, _toggle)
-
-    # Get the correct PID stuff
-    gains = rospy.get_param('gains') # returns as a dict
-    # {'x': {'P': 0, 'I': 0, 'D': 0}, ... }
-
-    # initialize the controller
-    Controller.init(gains)
+    # Publishers
+    pub_home1 = rospy.Publisher('orienter/home1', Pose2D, queue_size=10)
+    pub_home2 = rospy.Publisher('orienter/home2', Pose2D, queue_size=10)
+    pub_away1 = rospy.Publisher('orienter/away1', Pose2D, queue_size=10)
+    pub_away2 = rospy.Publisher('orienter/away2', Pose2D, queue_size=10)
+    pub_ball  = rospy.Publisher('orienter/ball',  Pose2D, queue_size=10)
+    all_pubs = {_home1_key : pub_home1, _home2_key : pub_home2,
+                _away1_key : pub_away1, _away2_key : pub_away2,
+                _ball_key  : pub_ball}
 
     rate = rospy.Rate(int(1/_ctrl_period))
     while not rospy.is_shutdown():
 
-        global _ctrl_on
+        # Flip coordinate system if necessary
+        if _team_side == 'away':
+            for msg in _all_msgs:
+                msg.x = -msg.x
+                msg.y = -msg.y
+                msg.theta = (msg.theta + 180) % 360
 
-        if _ctrl_on:
-            (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
-
-            if _team_side == 'away':
-               # flip coordinate system
-               vx = -vx
-               vy = -vy
-               w  = w + 180 % 360
-            
-            # Publish Velocity Commands
-            msg = Twist()
-            msg.linear.x = vx
-            msg.linear.y = vy
-            msg.angular.z = w
+        # Publish Oriented Coordinates
+        for key in _all_keys:
+            msg = _all_msgs[key]
+            pub = all_pubs[key]
             pub.publish(msg)
-
-            # # Publish PID Info
-            # msg = PIDInfo()
-            # msg.error.x = Controller.PID_x.error_d1
-            # msg.error.y = Controller.PID_y.error_d1
-            # msg.error.theta = Controller.PID_theta.error_d1
-            # set_point = Controller.get_commanded_position()
-            # msg.desired.x = set_point[0]
-            # msg.desired.y = set_point[1]
-            # msg.desired.theta = set_point[2]
-            # msg.actual.x = _xhat
-            # msg.actual.y = _yhat
-            # msg.actual.theta = _thetahat
-            # pub_PIDInfo.publish(msg)
-
 
         rate.sleep()
 

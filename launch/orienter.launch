@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- declare arg to be passed in -->
+    <arg name="team_side" default="home" />
+
+    <!-- Hardware agnostic code -->
+    <node name="orienter" pkg="teamrocket" type="orienter_node.py" output="screen">
+        <!-- <remap from="me"   to="/orienter/$(arg team_side)$(arg my_number)" /> -->
+        <!-- <remap from="ally" to="/orienter/$(arg team_side)$(arg ally_number)" /> -->
+        <!-- <remap from="opp1" to="/orienter/$(arg other_side)1" /> -->
+        <!-- <remap from="opp2" to="/orienter/$(arg other_side)2" /> -->
+        <!-- <remap from="ball" to="/orienter/ball" /> -->
+    </node>
+    <node name="controller" pkg="teamrocket" type="controller_node.py" output="screen">
+        <!-- The controller needs to know which orienter msg to listen to -->
+        <remap from="me" to="/orienter/$(arg team_side)$(arg my_number)" />
+        <!-- For simulation, remap the output -->
+        <remap from="vel_cmds" to="/$(arg team_side)$(arg my_number)/command" />
+    </node>
+
+</launch>
