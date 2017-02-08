@@ -36,12 +36,10 @@
         </group>
 
         <!-- Orienter -->
-        <group ns="orienter">
-            <!-- Start the orienter up -->
-            <include file="$(find teamrocket)/launch/orienter.launch">
-                <arg name="team_side" value="$(arg team_side)" />
-            </include>
-        </group>
+        <!-- Start the orienter up -->
+        <include file="$(find teamrocket)/launch/orienter.launch">
+          <arg name="team_side" value="$(arg team_side)" />
+        </include>
 
     </group>
 </launch>
