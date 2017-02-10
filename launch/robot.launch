@@ -10,7 +10,7 @@
     <!-- connections to the output of the orienter system -->
     <arg name="other_side" value="away" if="$(eval team_side == 'home')" />
     <arg name="other_side" value="home" if="$(eval team_side == 'away')" />
-    
+
     <!-- Hardware agnostic code -->
     <node name="ai" pkg="teamrocket" type="ai_node.py" output="screen">
         <!-- <remap from="me"   to="orienter/$(arg team_side)$(arg my_number)" /> -->
@@ -22,16 +22,17 @@
                to="$(arg orienter_path)/$(arg team_side)$(arg my_number)" />
         <remap from="ally"
                to="$(arg orienter_path)/$(arg team_side)$(arg ally_number)" />
-        <remap from="opp1" 
+        <remap from="opp1"
                to="$(arg orienter_path)/$(arg other_side)1" />
-        <remap from="opp2" 
+        <remap from="opp2"
                to="$(arg orienter_path)/$(arg other_side)2" />
-        <remap from="ball" 
+        <remap from="ball"
                to="$(arg orienter_path)/ball" />
     </node>
     <node name="controller" pkg="teamrocket" type="controller_node.py" output="screen">
         <!-- The controller needs to know which orienter msg to listen to -->
-        <remap from="me" to="/orienter/me$(arg my_number)" />
+        <!-- <remap from="me" to="/orienter/ally$(arg my_number)" /> -->
+        <remap from="me" to="$(arg orienter_path)/ally$(arg my_number)" />
         <!-- For simulation, remap the output -->
         <remap from="vel_cmds" to="/$(arg team_side)$(arg my_number)/command" />
     </node>
