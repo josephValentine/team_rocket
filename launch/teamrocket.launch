@@ -41,8 +41,12 @@
         </group>
 
         <!-- Orienter -->
-        <node name="orienter" pkg="teamrocket" type="orienter_node.py" output="screen">
-        </node>
+        <!-- Start the orienter up -->
+        <group ns="orienter" >
+            <include file="$(find teamrocket)/launch/orienter.launch">
+                <arg name="team_side" value="$(arg team_side)" />
+            </include>
+        </group>
 
     </group>
 </launch>

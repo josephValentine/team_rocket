@@ -140,21 +140,25 @@ class GameInfo(object):
         return 'GameInfo({}, {}, {}, {})'.format(self.side, self.half,
                                                  self.time_elapsed, self.score)
     def get_home_goal_point(self):
-        if self.side == Constants.left_side:
-            return Point(Constants.goal_point_left_x,
-                         Constants.goal_point_left_y)
-        elif self.side == Constants.right_side:
-            return Point(Constants.goal_point_right_x,
-                         Constants.goal_point_right_y)
-        raise Exception('invalid side in GameInfo')
+        return Point(Constants.goal_point_left_x,
+                     Constants.goal_point_left_y)
+        # if self.side == Constants.left_side:
+        #     return Point(Constants.goal_point_left_x,
+        #                  Constants.goal_point_left_y)
+        # elif self.side == Constants.right_side:
+        #     return Point(Constants.goal_point_right_x,
+        #                  Constants.goal_point_right_y)
+        # raise Exception('invalid side in GameInfo')
     def get_opp_goal_point(self):
-        if self.side == Constants.left_side:
-            return Point(Constants.goal_point_right_x,
-                         Constants.goal_point_right_y)
-        elif self.side == Constants.right_side:
-            return Point(Constants.goal_point_left_x,
-                         Constants.goal_point_left_y)
-        raise Exception('invalid side in GameInfo')
+        return Point(Constants.goal_point_left_x,
+                     Constants.goal_point_left_y)
+        # if self.side == Constants.left_side:
+        #     return Point(Constants.goal_point_right_x,
+        #                  Constants.goal_point_right_y)
+        # elif self.side == Constants.right_side:
+        #     return Point(Constants.goal_point_left_x,
+        #                  Constants.goal_point_left_y)
+        # raise Exception('invalid side in GameInfo')
 
 
 class Score(object):
