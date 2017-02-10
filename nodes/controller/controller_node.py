@@ -35,7 +35,13 @@ def main():
     # Subscribe to my current state (from the vision node)
     # and my desired state (from the ai node)
     rospy.Subscriber('me', Pose2D, _handle_me)
+
+    # param_name   = rospy.search_param('my_number')
+    # _my_number   = rospy.get_param(param_name, '1')
+    # This is our publisher that tells the controller where we want to be
+    # desired_position_str = '/ally{}/desired_position'.format(_my_number)
     rospy.Subscriber('desired_position', Pose2D, _handle_desired_position)
+    # rospy.Subscriber(desired_position_str, Pose2D, _handle_desired_position)
 
     # Publish velocity commands from PID controller
     pub = rospy.Publisher('vel_cmds', Twist, queue_size=10)
