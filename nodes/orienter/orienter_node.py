@@ -72,11 +72,16 @@ def main():
     rospy.Subscriber('/vision/ball',  Pose2D, _handle_ball)
 
     # Publishers
-    pub_home1 = rospy.Publisher('orienter/home1', Pose2D, queue_size=10)
-    pub_home2 = rospy.Publisher('orienter/home2', Pose2D, queue_size=10)
-    pub_away1 = rospy.Publisher('orienter/away1', Pose2D, queue_size=10)
-    pub_away2 = rospy.Publisher('orienter/away2', Pose2D, queue_size=10)
-    pub_ball  = rospy.Publisher('orienter/ball',  Pose2D, queue_size=10)
+    # pub_home1 = rospy.Publisher('orienter/home1', Pose2D, queue_size=10)
+    # pub_home2 = rospy.Publisher('orienter/home2', Pose2D, queue_size=10)
+    # pub_away1 = rospy.Publisher('orienter/away1', Pose2D, queue_size=10)
+    # pub_away2 = rospy.Publisher('orienter/away2', Pose2D, queue_size=10)
+    # pub_ball  = rospy.Publisher('orienter/ball',  Pose2D, queue_size=10)
+    pub_home1 = rospy.Publisher('home1', Pose2D, queue_size=10)
+    pub_home2 = rospy.Publisher('home2', Pose2D, queue_size=10)
+    pub_away1 = rospy.Publisher('away1', Pose2D, queue_size=10)
+    pub_away2 = rospy.Publisher('away2', Pose2D, queue_size=10)
+    pub_ball  = rospy.Publisher('ball',  Pose2D, queue_size=10)
     all_pubs = {_home1_key : pub_home1, _home2_key : pub_home2,
                 _away1_key : pub_away1, _away2_key : pub_away2,
                 _ball_key  : pub_ball}

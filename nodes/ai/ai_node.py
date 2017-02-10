@@ -58,7 +58,7 @@ def _handle_ball(msg):
 
 
 def _handle_game_state(msg):
-    print "handle_game_state"
+    # print "handle_game_state"
     global _game_state
     _game_state = msg
 
@@ -70,22 +70,31 @@ def main():
     global _team_side
     param_name   = rospy.search_param('team_side')
     _team_side   = rospy.get_param(param_name, 'home')
+    print 'team_side: {} ({})'.format(param_name, type(param_name))
 
     # which ally are we?
     global _my_number
     global _ally_number
+
     param_name   = rospy.search_param('my_number')
     _my_number   = rospy.get_param(param_name, '1')
+    print '_my_number = {}'.format(_my_number)
+    print 'my_number: {} ({})'.format(param_name, type(param_name))
+
     param_name   = rospy.search_param('ally_number')
-    _ally_number = rospy.get_param(param_name, '1')
+    _ally_number = rospy.get_param(param_name, '2')
+    print '_ally_number = {}'.format(_ally_number)
+    print 'ally_number: {} ({})'.format(param_name, type(param_name))
 
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
     # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
 
     # # orienter node name
-    # param_name     = rospy.search_param('orienter_path')
-    # _orienter_path = rospy.get_param(param_name, 'teamrocket_home/orienter')
+    param_name     = rospy.search_param('orienter_path')
+    _orienter_path = rospy.get_param(param_name, 'teamrocket_home/orienter')
+    print '_orienter_path = {}'.format(_orienter_path)
+    print 'orienter_path: {} ({})'.format(param_name, type(param_name))
 
     # Subscribe to Robot and Ball positions
     # rospy.Subscriber(_orienter_path + '/me',   Pose2D, _handle_me  )
@@ -110,6 +119,7 @@ def main():
 
     # Create the AI object
     # ai = AI(_team_side, _ally_number)
+    print 'my_number: {} ({})'.format(_my_number, type(_my_number))
     ai = AI(_team_side, _my_number)
 
     rate = rospy.Rate(100) # 100 Hz
