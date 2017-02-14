@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- declare arg to be passed in -->
+    <arg name="skill" default="spin" />
+
+    <!-- Hardware agnostic code -->
+    <node name="skill_test" pkg="teamrocket" type="skill_test_node.py"
+          output="screen">
+        <remap from="me"   to="vision/home1" />
+        <remap from="ball" to="vision/ball" />
+    </node>
+    <node name="controller" pkg="teamrocket" type="controller_node.py"
+          output="screen">
+        <!-- The controller needs to know which vision msg to listen to -->
+        <remap from="me" to="vision/home1" />
+        <!-- For simulation, remap the output -->
+        <!-- <remap from="vel_cmds" to="/$(arg team_side)$(arg my_number)/command" /> -->
+    </node>
+
+</launch>
