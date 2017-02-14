@@ -3,8 +3,8 @@ import time
 import serial
 import matplotlib.pyplot as plt
 
-#ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=None) #linux
-ser = serial.Serial('COM11', 115200, timeout=None) #windows
+ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=None) #linux
+#ser = serial.Serial('COM11', 115200, timeout=None) #windows
 
 def writeFloat(f):
 	ser.write(struct.pack('>i', int(f*1000)))
@@ -41,15 +41,15 @@ def disengage():
 	
 totalTime = 3   #seconds
 sampleRate = 50 #samples per second
-pulsePerRotation = 116.16 #New motors
-#pulsePerRotation = 4955 #Old motors
+#pulsePerRotation = 116.16 #New motors
+pulsePerRotation = 25000 #Old motors
 speedM1 = 2
 speedM2 = 2
 speedM3 = 2
 
 # Set the PIDQ values for all motors
-setPID(0, 1, 1, 800)
-#setPID(0, 1, 0, 800)
+#setPID(0, 1, 1, 800)
+setPID(0, 1, 0, 800)
 
 # Set tick period (triggers PID control) and velocity filter corner frequency
 setT(20, 50)
