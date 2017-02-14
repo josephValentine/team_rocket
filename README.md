@@ -11,5 +11,5 @@ The team members are:
 - Harrison McCullough
 
 Our robot's names are:
-- Ekans   (IP address 23)
-- Koffing (IP address 109)
+- Ekans   (IP address 192.168.1.23)
+- Koffing (IP address 192.168.1.109)

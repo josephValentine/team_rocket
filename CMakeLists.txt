@@ -6,6 +6,11 @@ project(teamrocket)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
 
+#added by Jared
+  #cv_bridge
+  #image_transport
+  #OpenCV
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
