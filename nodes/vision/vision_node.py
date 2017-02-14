@@ -10,10 +10,11 @@ img = Image()
 
 _tmp_cnt = 0
 def _handle_img(msg):
+   global _tmp_cnt
    print "handle_img"
    _tmp_cnt = (_tmp_cnt + 1) % 100
    if _tmp_cnt == 0:
-      print msg
+      print 'msg:', dir(msg)
    global _img
    _img = msg
 
@@ -22,7 +23,7 @@ def main():
    rospy.init_node('ai', anonymous=False)
 
    # subscribe to camera
-   rospy.Subscriber('camera', Pose2D, _handle_img)
+   rospy.Subscriber('camera', Image, _handle_img)
 
    # publish locations
    us1_pub   = rospy.Publisher('us1', Pose2D, queue_size=10)

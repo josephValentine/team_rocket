@@ -10,7 +10,7 @@
     
     <!-- Hardware agnostic code -->
     <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
-        <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
+        <remap from="camera" to="/usb_cam_away/image_raw" />
     </node>
 
 </launch>
