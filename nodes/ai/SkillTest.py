@@ -1,9 +1,10 @@
 from Geometry.Models import Angle, Position, Point
+from Models import GameState, Field, GameInfo
 
 class SkillTest(object):
    def __init__(self):
       super(SkillTest, self).__init__()
-      self.game_state = GameState(Field(), GameInfo(team_side))
+      self.game_state = GameState(Field(), GameInfo('away'))
       self.timer = 0
    def update(self, me, ball, game_state):
       # print me, ally, opp1, opp2, ball, game_state, type(game_state)
@@ -21,6 +22,7 @@ class SkillTest(object):
       else:
          return self.spin()
    def spin(self):
+      f = self.game_state.field
       # set desired angle to 5 degrees off from where we are
       dtheta = Angle(5, True)
       my_pos = f.ally1.position
@@ -34,3 +36,9 @@ class SkillTest(object):
       if self.timer <= 1000:
          return Position(Point(1,0), Angle(0, True))
       raise NotImplemented('move_in_box')
+
+def _pose2d_to_position(pose2d):
+   return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, True))
+
+def _pose2d_to_point(pose2d):
+    return Point(pose2d.x, pose2d.y)
