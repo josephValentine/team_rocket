@@ -5,12 +5,6 @@ import serial
 from geometry_msgs.msg import Pose2D
 
 
-# Global variables #
-sampleRate = 50 #samples per second
-#pulsePerRotation = 116.16 #New motors
-pulsePerRotation = 25000 #Old motors
-
-
 class Serializer(object):
    def __init__(self):
       self.sampleRate = 50 #samples per second

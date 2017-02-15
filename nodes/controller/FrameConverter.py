@@ -65,7 +65,11 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, curAngle):
     ])
 
     omega = np.dot(np.dot(M,r_theta), v_world)
-    return omega[0], omega[1], omega[2]
+    # print 'omega: {}\nrepr: {}\ntype: {}'.format(
+    #     omega, repr(omega), type(omega))
+    # print '[0]: {}\n[0][0]: {}'.format(omega[0], omega[0][0])
+    # print 'array: {}\ntype: {}'.format(np.array(omega), type(np.array(omega)))
+    return omega.item(0,0), omega.item(1,0), omega.item(2,0)
 
 def test():
     omega = _convert_world_to_motor_velocities(10,0,3.14)

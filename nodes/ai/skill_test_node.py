@@ -60,8 +60,9 @@ def main():
       # run the SKILL_TEST and return commanded positions for this robot
       skill_test.update(_pose2d_to_pos(_me), _pose2d_to_pos(_ball))
       pos = skill_test.get_commanded_position('spin')
-      # print pos
+      print 'comamanded position: {}'.format(pos)
       cmds = _pos2cmd(pos)
+      print 'commands: {}'.format(cmds)
 
       # Get a message ready to send
       msg = Pose2D()
@@ -77,7 +78,8 @@ def main():
 
 
 def _pos2cmd(pos):
-   return (pos.point.x, pos.point.y, pos.angle.radian)
+   # return (pos.point.x, pos.point.y, pos.angle.radian)
+   return (pos.point.x, pos.point.y, pos.angle.degree)
 
 
 def _pose2d_to_pos(pose2d):

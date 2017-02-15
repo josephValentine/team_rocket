@@ -9,7 +9,8 @@ import FrameConverter
 
 _twist = Twist()
 def _handle_twist(msg):
-    print "handle_twist"
+    print 'handle_twist: {}'.format(msg)
+    print msg
     global _twist
     _twist = msg
 
@@ -37,16 +38,19 @@ def main():
    while not rospy.is_shutdown():
 
       # get body frame speeds
-      vx_w, vy_y = _twist.linear.x, _twist.linear.y
+      vx_w, vy_w = _twist.linear.x, _twist.linear.y
       curAngle   = _me.theta
       vx_b, vy_b = FrameConverter._convert_world_to_body_velocities(
-         vx_w, vy_y, curAngle)
+         vx_w, vy_w, curAngle)
 
       # get wheel speeds
       wz = _twist.angular.z
-      w1, w2, w3 = FrameConverter._convert_world_to_body_velocities(
+      w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
           vx_b, vy_b, wz)
+      # w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
+      #     vx_w, vy_w, curAngle)
 
+      print 'w1: {}\nw2: {}\nw3: {}'.format(w1, w2, w3)
       # update the speeds
       ser.set_speed(w1, w2, w3)
 
