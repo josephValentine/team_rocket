@@ -17,8 +17,8 @@ class Serializer(object):
       self.pulsePerRotation = 25000 #Old motors
       self.ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=None) #linux
    def set_speed(self, vw1, vw2, vw3):
-      setSpeed(vw1*self.pulsePerRotation, vw2*self.pulsePerRotation,
-               vw3*self.pulsePerRotation)
+      self.setSpeed(vw1*self.pulsePerRotation, vw2*self.pulsePerRotation,
+                    vw3*self.pulsePerRotation)
    # Serial Communication Functions #
    def writeFloat(self, f):
       self.ser.write(struct.pack('>i', int(f*1000)))
