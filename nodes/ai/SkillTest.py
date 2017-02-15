@@ -34,7 +34,7 @@ class SkillTest(object):
       # set desired angle to 5 degrees off from where we are
       dtheta = Angle(30, True)
       # print 'self.angle: {}, commanded angle: {}'.format(
-         self.me.angle, self.me.angle + dtheta)
+      #    self.me.angle, self.me.angle + dtheta)
       return Position(self.me.point, self.me.angle + dtheta)
    def go_to_center(self):
       # set desired position to be center facing goal
