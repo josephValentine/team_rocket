@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import math
 import numpy as np
 # from geometry_msgs.msg import Pose2D
@@ -70,7 +70,7 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, curAngle):
 
 def test():
     omega = _convert_world_to_motor_velocities(10,0,3.14)
-    print(omega)
+    print(omega[0])
 
 if __name__ == '__main__':
    test()
