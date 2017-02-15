@@ -26,24 +26,24 @@ class Serializer(object):
       return float(struct.unpack('>i', self.ser.read(4))[0])/1000
    def setPower(self, p1, p2, p3):
       self.ser.write('p')
-      writeFloat(p1)
-      writeFloat(p2)
-      writeFloat(p3)
+      self.writeFloat(p1)
+      self.writeFloat(p2)
+      self.writeFloat(p3)
    def setSpeed(self, s1, s2, s3):
       self.ser.write('s')
-      writeFloat(s1)
-      writeFloat(s2)
-      writeFloat(s3)
+      self.writeFloat(s1)
+      self.writeFloat(s2)
+      self.writeFloat(s3)
    def setPID(self, motor, p, i, qpps): #use motor = 0 to set all motors
       self.ser.write('k')
       self.ser.write(str(motor))
-      writeFloat(p)
-      writeFloat(i)
-      writeFloat(qpps)
+      self.writeFloat(p)
+      self.writeFloat(i)
+      self.writeFloat(qpps)
    def setT(self, period_ms, tau_ms):
       self.ser.write('t')
-      writeFloat(period_ms)
-      writeFloat(tau_ms)
+      self.writeFloat(period_ms)
+      self.writeFloat(tau_ms)
    def getSpeed(self):
       self.ser.write('v')
       return readFloat(), readFloat(), readFloat()
@@ -55,22 +55,22 @@ class Serializer(object):
 
 # Run #
 def main():
-   ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=None) #linux
+   ser = Serializer()
    #ser = serial.Serial('COM11', 115200, timeout=None) #windows
 
    # Set the PIDQ values for all motors
    #setPID(0, 1, 1, 800)
-   setPID(0, 1, 0, 800)
+   ser.setPID(0, 1, 0, 800)
 
    # Set tick period (triggers PID control) and velocity filter corner frequency
-   setT(20, 50)
+   ser.setT(20, 50)
 
    #setPower(80, 80, 80)
    #setSpeed(0, 0, 0)
-   setSpeed(speedM1*pulsePerRotation, speedM2*pulsePerRotation,
-            speedM3*pulsePerRotation)
+   ser.setSpeed(speedM1*pulsePerRotation, speedM2*pulsePerRotation,
+                speedM3*pulsePerRotation)
    time.sleep(3)
-   disengage()
+   ser.disengage()
 
 
 if __name__ == '__main__':
