@@ -9,8 +9,8 @@ import FrameConverter
 
 _twist = Twist()
 def _handle_twist(msg):
-    print 'handle_twist: {}'.format(msg)
-    print msg
+    # print 'handle_twist: {}'.format(msg)
+    # print msg
     global _twist
     _twist = msg
 
