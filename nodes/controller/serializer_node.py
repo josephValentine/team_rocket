@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 
 import rospy
-from x import Velocities
+from geometry_msgs.msg import Twist, Pose2D
 
 from Serializer import Serializer
+import FrameConverter
 
-_vels = Velocities()
-def _handle_vels(msg):
-    print "handle_vels"
-    global _vels
-    _vels = msg
+
+_twist = Twist()
+def _handle_twist(msg):
+    print "handle_twist"
+    global _twist
+    _twist = msg
+
+
+_me = Pose2D()
+def _handle_me(msg):
+    global _me
+    _me = msg
 
 
 def main():
@@ -18,7 +26,8 @@ def main():
    rospy.init_node('serializer', anonymous=False)
 
    # subscribe to the velocities message
-   rospy.Subscriber('wheels', Velocities, _handle_vels)
+   rospy.Subscriber('vel_cmds', Twist, _handle_twist)
+   rospy.Subscriber('me', Pose2D, _handle_me)
 
    # create a serializer object
    ser = Serializer()
@@ -27,11 +36,22 @@ def main():
    rate = rospy.Rate(100) # 100 Hz
    while not rospy.is_shutdown():
 
+      # get body frame speeds
+      vx_w, vy_y = _twist.linear.x, _twist.linear.y
+      curAngle   = _me.theta
+      vx_b, vy_b = FrameConverter._convert_world_to_body_velocities(
+         vx_w, vy_y, curAngle)
+
+      # get wheel speeds
+      wz = _twist.angular.z
+      w1, w2, w3 = FrameConverter.get_wheel_speeds(vx_b, vy_b, wz)
+
       # update the speeds
-      ser.set_speed(*_vels)
+      ser.set_speed(w1, w2, w3)
 
       # Wait however long it takes to make this tick at 100Hz
       rate.sleep()
+
       # time.sleep(1.0/sampleRate)
 
       # speed = getSpeed()

@@ -27,8 +27,8 @@ _tmp_hm_cnt = 0
 def _handle_me(msg):
    global _tmp_hm_cnt
    _tmp_hm_cnt = (_tmp_hm_cnt + 1) % 100
-   if _tmp_hm_cnt == 0:
-      print 'handle_me: {}'.format(msg)
+   # if _tmp_hm_cnt == 0:
+   #    print 'handle_me: {}'.format(msg)
    global _me
    _me = msg
 
@@ -37,8 +37,8 @@ _tmp_hb_cnt = 0
 def _handle_ball(msg):
    global _tmp_hb_cnt
    _tmp_hb_cnt = (_tmp_hb_cnt + 1) % 100
-   if _tmp_hb_cnt == 0:
-      print 'handle_ball: {}'.format(msg)
+   # if _tmp_hb_cnt == 0:
+   #    print 'handle_ball: {}'.format(msg)
    global _ball
    _ball = msg
 

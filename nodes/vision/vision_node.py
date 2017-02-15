@@ -1,22 +1,115 @@
 #!/usr/bin/env python
 
 import rospy
+import cv2
+import sys
+import numpy as np
+from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
 
 #### Global vars ####
 
-img = Image()
+_img = Image()
 
 _tmp_cnt = 0
 def _handle_img(msg):
    global _tmp_cnt
-   print "handle_img"
+   #print "handle_img"
    _tmp_cnt = (_tmp_cnt + 1) % 100
-   if _tmp_cnt == 0:
-      print 'msg:', dir(msg)
+   # if _tmp_cnt == 0:
+   #    print 'msg:', dir(msg)
    global _img
-   _img = msg
+   _img = _ros2cv(msg)
+   #_show_raw(_ros2cv(msg))
+   _show_filter_rt(_ros2cv(msg))
+
+def _ros2cv(msg):
+   try:
+      cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
+      return cv_image
+   except CvBridgeError as e:
+      print(e)
+
+def _show_raw(cv_image):
+   cv2.imshow("Image window", cv_image)
+   cv2.waitKey(3)
+
+def _nothing(x):
+    pass
+
+
+def _show_filter_rt(image):
+  # define the list of boundaries
+   cv2.namedWindow("Control")
+   rate = rospy.Rate(100)
+   # loop over the boundaries
+
+   # create NumPy arrays from the boundaries
+   Rup = 116
+   Gup = 236
+   Bup = 235
+   Rdn = 50
+   Gdn = 158
+   Bdn = 158
+   lower= [Bdn, Gdn, Rdn]
+   upper = [Bup, Gup, Rup]
+   lower = np.array(lower, dtype = "uint8")
+   upper = np.array(upper, dtype = "uint8")
+
+   # find the colors within the specified boundaries and apply
+   # the mask
+   mask = cv2.inRange(image, lower, upper)
+   output = cv2.bitwise_and(image, image, mask = mask)
+
+   # show the images
+
+   cv2.imshow("Control", np.hstack([image, output]))
+
+   cv2.waitKey(2)
+
+def _show_filter(image):
+  # define the list of boundaries
+   boundaries = [
+      #([17, 15, 100], [50, 56, 200]),
+      #([86, 31, 4], [220, 88, 50]),
+      #([25, 146, 190], [62, 174, 250]),
+      ([110, 50, 50], [130, 255, 255]),
+      ([103, 86, 65], [145, 133, 128])
+   ]
+   cv2.namedWindow("Control")
+
+   cv2.createTrackbar('Rup','Control',0,255,_nothing)
+   cv2.createTrackbar('Gup','Control',0,255,_nothing)
+   cv2.createTrackbar('Bup','Control',0,255,_nothing)
+   cv2.createTrackbar('Rdn','Control',0,255,_nothing)
+   cv2.createTrackbar('Gdn','Control',0,255,_nothing)
+   cv2.createTrackbar('Bdn','Control',0,255,_nothing)
+   # loop over the boundaries
+   while(1):
+      # create NumPy arrays from the boundaries
+      Rup = cv2.getTrackbarPos('Rup','Control')
+      Gup = cv2.getTrackbarPos('Gup','Control')
+      Bup = cv2.getTrackbarPos('Bup','Control')
+      Rdn = cv2.getTrackbarPos('Rdn','Control')
+      Gdn = cv2.getTrackbarPos('Gdn','Control')
+      Bdn = cv2.getTrackbarPos('Bdn','Control')
+      lower= [Bdn, Gdn, Rdn]
+      upper = [Bup, Gup, Rup]
+      lower = np.array(lower, dtype = "uint8")
+      upper = np.array(upper, dtype = "uint8")
+
+         # find the colors within the specified boundaries and apply
+         # the mask
+      mask = cv2.inRange(image, lower, upper)
+      output = cv2.bitwise_and(image, image, mask = mask)
+
+      # show the images
+
+      cv2.imshow("Control", np.hstack([image, output]))
+
+      cv2.waitKey(0)
 
 
 def main():
