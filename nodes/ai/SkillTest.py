@@ -2,9 +2,9 @@ from Geometry.Models import Angle, Position, Point, Vector
 # from Models import GameState, Field, GameInfo
 from geometry_msgs.msg import Pose2D
 
-box_dests = [(1,0), (0,1), (-1,0), (0,-1)]
+box_dests = [(0.005,0), (0,0), (0,0.005), (0,0), (-0.005,0), (0,0), (0,-0.005)]
 box_i = 0
-max_timer = 200
+max_timer = 150
 
 class SkillTest(object):
    def __init__(self):
@@ -45,6 +45,10 @@ class SkillTest(object):
       global box_dests, box_i, max_timer
       if (self.timer % max_timer) == (max_timer - 1):
          box_i += 1
+         if box_i < len(box_dests):
+            print '-'*80
+            print 'new box dest'
+            print '-'*80
       if box_i < len(box_dests):
          return Position(self.me.point + Vector(*box_dests[box_i]),
                          self.me.angle)
