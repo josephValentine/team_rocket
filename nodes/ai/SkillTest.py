@@ -2,9 +2,11 @@ from Geometry.Models import Angle, Position, Point, Vector
 # from Models import GameState, Field, GameInfo
 from geometry_msgs.msg import Pose2D
 
-box_dests = [(0.005,0), (0,0), (0,0.005), (0,0), (-0.005,0), (0,0), (0,-0.005)]
+box_dests = [(0.05,0), (0,0), (0,0.05), (0,0), (-0.05,0), (0,0), (0,-0.05)]
+box_dests_times = [(0.05,0,100), (0,0,200), (0,0.05,100), (0,0,200),
+                   (-0.05,0,100), (0,0,200), (0,-0.05,100), (0,0,200)]
 box_i = 0
-max_timer = 150
+max_timer = 50
 
 class SkillTest(object):
    def __init__(self):
@@ -42,15 +44,25 @@ class SkillTest(object):
       goal_angle = Angle(0, True)
       return Position(center_point, goal_angle)
    def move_in_box(self):
-      global box_dests, box_i, max_timer
+      global box_dests, box_dests_times, box_i, max_timer
+      # if (self.timer + 1) % 20 == 0:
+      #    print 'timer: %d' % self.timer
+      # if (self.timer % max_timer) == (max_timer - 1):
       if (self.timer % max_timer) == (max_timer - 1):
          box_i += 1
-         if box_i < len(box_dests):
+         self.timer = 0
+         # if box_i < len(box_dests):
+         if box_i < len(box_dests_times):
             print '-'*80
             print 'new box dest'
+            print box_dests_times[box_i]
             print '-'*80
-      if box_i < len(box_dests):
-         return Position(self.me.point + Vector(*box_dests[box_i]),
+      # if box_i < len(box_dests):
+      if box_i < len(box_dests_times):
+         # return Position(self.me.point + Vector(*box_dests[box_i][:2]),
+         #                 self.me.angle)
+         max_timer = box_dests_times[box_i][2]
+         return Position(self.me.point + Vector(*box_dests_times[box_i][:2]),
                          self.me.angle)
       else:
          return self.me

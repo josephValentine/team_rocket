@@ -61,9 +61,9 @@ def main():
       skill_test.update(_pose2d_to_pos(_me), _pose2d_to_pos(_ball))
       # pos = skill_test.get_commanded_position('spin')
       pos = skill_test.get_commanded_position('move_in_box')
-      print 'comamanded position: {}'.format(pos)
+      # print 'commanded position: {}'.format(pos)
       cmds = _pos2cmd(pos)
-      print 'commands: {}'.format(cmds)
+      # print 'commands: {}'.format(cmds)
 
       # Get a message ready to send
       msg = Pose2D()
