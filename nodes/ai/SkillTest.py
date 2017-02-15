@@ -3,8 +3,9 @@ from Geometry.Models import Angle, Position, Point, Vector
 from geometry_msgs.msg import Pose2D
 
 box_dests = [(0.05,0), (0,0), (0,0.05), (0,0), (-0.05,0), (0,0), (0,-0.05)]
-box_dests_times = [(0.05,0,100), (0,0,200), (0,0.05,100), (0,0,200),
-                   (-0.05,0,100), (0,0,200), (0,-0.05,100), (0,0,200)]
+box_dests_times = [(0.15,0,150), (0,0,200), (0,0.15,150), (0,0,200),
+                   (-0.15,0,150), (0,0,200), (0,-0.15,150), (0,0,200)]
+# box_dests_times = [(0.15,0,150), (0,0,200)]
 box_i = 0
 max_timer = 50
 

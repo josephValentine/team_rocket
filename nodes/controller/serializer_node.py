@@ -50,7 +50,7 @@ def main():
       w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
           vx_w, vy_w, curAngle)
 
-      # print 'w1: {}\nw2: {}\nw3: {}'.format(w1, w2, w3)
+      print 'w1: {}\nw2: {}\nw3: {}'.format(w1, w2, w3)
       # update the speeds
       ser.set_speed(w1, w2, w3)
 
