@@ -4,38 +4,41 @@
     <arg name="skill" default="spin" />
     <arg name="team_side" default="away" />
 
-    <group ns="vision">
-      <!-- Start the vision up -->
-      <include file="$(find teamrocket)/launch/vision.launch">
-        <arg name="team_side" value="$(arg team_side)" />
-      </include>
-    </group>
+    <group ns="teamrocket">
 
-    <!-- Hardware agnostic code -->
-    <node name="skill_test" pkg="teamrocket" type="skill_test_node.py"
-          output="screen">
+      <group ns="vision">
+        <!-- Start the vision up -->
+        <include file="$(find teamrocket)/launch/vision.launch">
+          <arg name="team_side" value="$(arg team_side)" />
+        </include>
+      </group>
+
+      <!-- Hardware agnostic code -->
+      <node name="skill_test" pkg="teamrocket" type="skill_test_node.py"
+            output="screen">
         <remap from="me"   to="vision/us1" />
         <remap from="ball" to="vision/ball" />
-    </node>
+      </node>
 
-    <!-- Controller -->
-    <node name="controller" pkg="teamrocket" type="controller_node.py"
-          output="screen">
+      <!-- Controller -->
+      <node name="controller" pkg="teamrocket" type="controller_node.py"
+            output="screen">
         <!-- The controller needs to know which vision msg to listen to -->
         <remap from="me" to="vision/us1" />
         <!-- For simulation, remap the output -->
         <!-- <remap from="vel_cmds" -->
         <!--        to="/$(arg team_side)$(arg my_number)/command" /> -->
-    </node>
+      </node>
 
-    <!-- Serializer -->
-    <node name="serializer" pkg="teamrocket" type="serializer_node.py"
-          output="screen">
+      <!-- Serializer -->
+      <node name="serializer" pkg="teamrocket" type="serializer_node.py"
+            output="screen">
         <!-- The serializer needs to know which vision msg to listen to -->
         <remap from="me" to="vision/us1" />
         <!-- For simulation, remap the output -->
         <!-- <remap from="vel_cmds" -->
         <!--        to="/$(arg team_side)$(arg my_number)/command" /> -->
-    </node>
+      </node>
 
+    </group>
 </launch>

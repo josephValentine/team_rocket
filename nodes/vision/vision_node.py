@@ -18,8 +18,8 @@ def _handle_img(msg):
    global _tmp_cnt
    #print "handle_img"
    _tmp_cnt = (_tmp_cnt + 1) % 100
-   if _tmp_cnt == 0:
-      print 'msg:', dir(msg)
+   # if _tmp_cnt == 0:
+   #    print 'msg:', dir(msg)
    global _img
    _img = _ros2cv(msg)
    #_show_raw(_ros2cv(msg))
