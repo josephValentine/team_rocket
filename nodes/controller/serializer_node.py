@@ -45,10 +45,10 @@ def main():
 
       # get wheel speeds
       wz = _twist.angular.z
-      w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
-          vx_b, vy_b, wz)
       # w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
-      #     vx_w, vy_w, curAngle)
+      #     vx_b, vy_b, wz)
+      w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
+          vx_w, vy_w, curAngle)
 
       # print 'w1: {}\nw2: {}\nw3: {}'.format(w1, w2, w3)
       # update the speeds
