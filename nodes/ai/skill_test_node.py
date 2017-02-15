@@ -59,7 +59,8 @@ def main():
       # Based on the state of the game and the positions of the players,
       # run the SKILL_TEST and return commanded positions for this robot
       skill_test.update(_pose2d_to_pos(_me), _pose2d_to_pos(_ball))
-      pos = skill_test.get_commanded_position('spin')
+      # pos = skill_test.get_commanded_position('spin')
+      pos = skill_test.get_commanded_position('move_in_box')
       print 'comamanded position: {}'.format(pos)
       cmds = _pos2cmd(pos)
       print 'commands: {}'.format(cmds)

@@ -1,13 +1,17 @@
-from Geometry.Models import Angle, Position, Point
+from Geometry.Models import Angle, Position, Point, Vector
 # from Models import GameState, Field, GameInfo
 from geometry_msgs.msg import Pose2D
+
+box_dests = [(1,0), (0,1), (-1,0), (0,-1)]
+box_i = 0
+max_timer = 200
 
 class SkillTest(object):
    def __init__(self):
       super(SkillTest, self).__init__()
       self.timer = 0
-      self.me = Pose2D()
-      self.ball = Pose2D()
+      self.me   = Position(Point(0,0), Angle(0,True))
+      self.ball = Position(Point(0,0), Angle(0,True))
    def update(self, me, ball):
       # print me, ally, opp1, opp2, ball, game_state, type(game_state)
       # f = self.game_state.field
@@ -38,12 +42,22 @@ class SkillTest(object):
       goal_angle = Angle(0, True)
       return Position(center_point, goal_angle)
    def move_in_box(self):
-      if self.timer <= 1000:
-         return Position(Point(1,0), Angle(0, True))
-      raise NotImplemented('move_in_box')
+      global box_dests, box_i, max_timer
+      if (self.timer % max_timer) == (max_timer - 1):
+         box_i += 1
+      if box_i < len(box_dests):
+         return Position(self.me.point + Vector(*box_dests[box_i]),
+                         self.me.angle)
+      else:
+         return self.me
+      # raise NotImplemented('move_in_box')
 
 def _pose2d_to_position(pose2d):
    return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, True))
 
 def _pose2d_to_point(pose2d):
     return Point(pose2d.x, pose2d.y)
+
+delta = 0.05
+def _close(p1, p2):
+   return p1.dist_to_point(p2) < delta

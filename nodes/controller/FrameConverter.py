@@ -32,12 +32,12 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, curAngle):
 
     #velocity vectors of wheels
     sbx1 = in2m * np.sqrt(3)/2
-    sbx2 = in2m * -np.sqrt(3)/2
-    sbx3 = in2m * 0
+    sbx2 = in2m * 0
+    sbx3 = in2m * -np.sqrt(3)/2
 
     sby1 = in2m * -0.5
-    sby2 = in2m * -0.5
-    sby3 = in2m * 1
+    sby2 = in2m * 1
+    sby3 = in2m * -0.5
 
     #distance from center of robot to wheel
     rbx1 = in2m * 3.5 * np.cos(np.pi/3)
