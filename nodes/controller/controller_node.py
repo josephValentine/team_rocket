@@ -20,15 +20,15 @@ _thetahat = 0
 
 def _handle_me(msg):
     global _xhat, _yhat, _thetahat
-    print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
-        _xhat, _yhat, _thetahat)
+    # print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
+    #     _xhat, _yhat, _thetahat)
     _xhat = msg.x
     _yhat = msg.y
     _thetahat = msg.theta
 
 
 def _handle_desired_position(msg):
-    print 'desired_pos: {}'.format(msg)
+    # print 'desired_pos: {}'.format(msg)
     Controller.set_commanded_position(msg.x, msg.y, msg.theta)
 
 
@@ -51,7 +51,7 @@ def main():
 
         (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
 
-        print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)
+        # print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)
         # Publish Velocity Commands
         msg = Twist()
         msg.linear.x = vx
