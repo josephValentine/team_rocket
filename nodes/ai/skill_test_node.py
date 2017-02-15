@@ -2,17 +2,14 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
-from soccerref.msg import GameState
+from Geometry.Models import Position, Point, Angle
+# from soccerref.msg import GameState
 
 import numpy as np
 
 from SkillTest import SkillTest
 
 #### Global vars ####
-
-# create a blank GameState message
-# to keep track of current state
-_game_state = GameState()
 
 # initialize vision positions
 _me = Pose2D()
@@ -61,7 +58,7 @@ def main():
 
       # Based on the state of the game and the positions of the players,
       # run the SKILL_TEST and return commanded positions for this robot
-      skill_test.update(_me, _ball, _game_state)
+      skill_test.update(_pose2d_to_pos(_me), _pose2d_to_pos(_ball))
       pos = skill_test.get_commanded_position('spin')
       # print pos
       cmds = _pos2cmd(pos)
@@ -81,6 +78,14 @@ def main():
 
 def _pos2cmd(pos):
    return (pos.point.x, pos.point.y, pos.angle.radian)
+
+
+def _pose2d_to_pos(pose2d):
+   return Position(Point(pose2d.x, pose2d.y), Angle(pose2d.theta, True))
+
+
+def _pos_to_pose2d(pos):
+   return Pose2D(pos.point.x, pos.point.y, pos.angle.degree)
 
 
 if __name__ == '__main__':

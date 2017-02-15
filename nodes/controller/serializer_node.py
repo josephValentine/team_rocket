@@ -44,7 +44,8 @@ def main():
 
       # get wheel speeds
       wz = _twist.angular.z
-      w1, w2, w3 = FrameConverter.get_wheel_speeds(vx_b, vy_b, wz)
+      w1, w2, w3 = FrameConverter._convert_world_to_body_velocities(
+          vx_b, vy_b, wz)
 
       # update the speeds
       ser.set_speed(w1, w2, w3)

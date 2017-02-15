@@ -1,16 +1,20 @@
 from Geometry.Models import Angle, Position, Point
-from Models import GameState, Field, GameInfo
+# from Models import GameState, Field, GameInfo
+from geometry_msgs.msg import Pose2D
 
 class SkillTest(object):
    def __init__(self):
       super(SkillTest, self).__init__()
-      self.game_state = GameState(Field(), GameInfo('away'))
       self.timer = 0
-   def update(self, me, ball, game_state):
+      self.me = Pose2D()
+      self.ball = Pose2D()
+   def update(self, me, ball):
       # print me, ally, opp1, opp2, ball, game_state, type(game_state)
-      f = self.game_state.field
-      f.ally1.position = _pose2d_to_position(me)
-      f.ball.point = _pose2d_to_point(ball)
+      # f = self.game_state.field
+      # f.ally1.position = _pose2d_to_position(me)
+      # f.ball.point = _pose2d_to_point(ball)
+      self.me = me
+      self.ball = ball
       self.timer += 1
    def get_commanded_position(self, skill):
       if skill == 'spin':
@@ -22,11 +26,10 @@ class SkillTest(object):
       else:
          return self.spin()
    def spin(self):
-      f = self.game_state.field
+      # f = self.game_state.field
       # set desired angle to 5 degrees off from where we are
       dtheta = Angle(5, True)
-      my_pos = f.ally1.position
-      return Position(my_pos.point, my_pos.angle + dtheta)
+      return Position(self.me.point, self.me.angle + dtheta)
    def go_to_center(self):
       # set desired position to be center facing goal
       center_point = Point(0,0)
