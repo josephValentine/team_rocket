@@ -60,7 +60,7 @@ def main():
       # speedsM3.append(speed[2]/pulsePerRotation)
 
    # shutdown
-   disengage()
+   ser.disengage()
 
 
 if __name__ == '__main__':
