@@ -42,10 +42,10 @@ def disengage():
 totalTime = 3   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
-pulsePerRotation = 4955 #Old motors
-speedM1 = 0.1
-speedM2 = 0.1
-speedM3 = 0.1
+pulsePerRotation = 10000 #Old motors
+speedM1 = 1
+speedM2 = 1
+speedM3 = 1
 
 # Set the PIDQ values for all motors
 #setPID(0, 1, 1, 800)
