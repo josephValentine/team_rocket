@@ -16,13 +16,15 @@ def _convert_world_to_body_velocities(vx_w, vy_w, curAngle):
     vy_b = math.cos(curAngle) * vy_w - math.sin(curAngle) * vx_w
     return vx_b, vy_b
 
-def _convert_world_to_motor_velocities(vx_w, vy_w, curAngle):
+def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     """ Converts world velocities to motor velocities.
     vx_w is the world x velocity.
     vy_w is the world y velocity.
+    wz is the angular speed of the robot.
     curAngle is the current bearing of the robot in the world coordinate system.
 
     returns numpy matrix of wheel speeds(omega)
+    wz is in radians/second.
     curAngle is in radians.
     converts inch measurements to meters
     """
@@ -56,7 +58,7 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, curAngle):
     v_world = np.matrix([
         [vx_w],
         [vy_w],
-        [curAngle]
+        [wz]
     ])
     M = (1/R) * np.matrix([
         [sbx1, sby1, (sby1*rbx1 - sbx1*rby1)],
