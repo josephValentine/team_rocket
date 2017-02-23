@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import math
 import numpy as np
 # from geometry_msgs.msg import Pose2D
@@ -81,4 +79,4 @@ def test():
 
 if __name__ == '__main__':
    test()
->>>>>>> 09732407875aaab8b78d768311467f1e74afda44
+

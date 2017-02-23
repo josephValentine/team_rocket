@@ -22,8 +22,9 @@ def _handle_img(msg):
    #    print 'msg:', dir(msg)
    global _img
    _img = _ros2cv(msg)
-   #_show_raw(_ros2cv(msg))
-   _show_filter_rt(_ros2cv(msg))
+   # _show_raw(_ros2cv(msg))
+   _apply_filter(_ros2cv(msg))
+   # _color_calibration(_ros2cv(msg))
 
 def _ros2cv(msg):
    try:
@@ -40,21 +41,136 @@ def _nothing(x):
     pass
 
 
-def _show_filter_rt(image):
-  # define the list of boundaries
+def _apply_filter(image):
+
    cv2.namedWindow("Control")
    rate = rospy.Rate(100)
-   # loop over the boundaries
 
+   # create the filter color params
+   cv2.createTrackbar('hueMax','Control',227,255,_nothing)
+   cv2.createTrackbar('satMax','Control',234,255,_nothing)
+   cv2.createTrackbar('volMax','Control',255,255,_nothing)
+   cv2.createTrackbar('hueMin','Control',70,255,_nothing)
+   cv2.createTrackbar('satMin','Control',167,255,_nothing)
+   cv2.createTrackbar('volMin','Control',224,255,_nothing)
+   # loop over the boundaries
+   
    # create NumPy arrays from the boundaries
-   Rup = 116
-   Gup = 236
-   Bup = 235
-   Rdn = 50
-   Gdn = 158
-   Bdn = 158
-   lower= [Bdn, Gdn, Rdn]
-   upper = [Bup, Gup, Rup]
+   hueMax = cv2.getTrackbarPos('hueMax','Control')
+   satMax = cv2.getTrackbarPos('satMax','Control')
+   volMax = cv2.getTrackbarPos('volMax','Control')
+   hueMin = cv2.getTrackbarPos('hueMin','Control')
+   satMin = cv2.getTrackbarPos('satMin','Control')
+   volMin = cv2.getTrackbarPos('volMin','Control')
+
+   lower= [volMin, satMin, hueMin]
+   upper = [volMax, satMax, hueMax]
+   lower = np.array(lower, dtype = "uint8")
+   upper = np.array(upper, dtype = "uint8")
+
+   #resize the image to reduce process time, fx and fy are the scale factors in those axis
+   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7) 
+
+   # find the colors within the specified boundaries and apply
+   # the mask
+   mask = cv2.inRange(image, lower, upper)
+   out1 = cv2.bitwise_and(image, image, mask = mask)
+   #remove noise
+   kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
+   out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
+   out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
+
+   #find contours of objects
+   out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
+   # ret,thresh = cv2.threshold(out4,127,255,0)
+   (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+   smallest = 1000
+   indexOfSmallestObj = 0
+   objects=[]
+   for c in cnts:
+      pt,radius = cv2.minEnclosingCircle(c)
+      cv2.drawContours(out4, [c],0,(0,128,255),1)
+      objects.append((pt[0],pt[1],radius))
+  
+   if len(objects) >= 2:
+      sorted(objects,key=lambda x: x[2])
+      angle = np.arctan2((objects[1][1]-objects[0][1]), (objects[1][0]-objects[0][0]))*180/np.pi + 180
+      x = (objects[0][0]+objects[1][0])/2
+      y = (objects[0][1]+objects[1][1])/2
+      print(x,y,angle)
+
+
+   # # show the images
+
+   # cv2.imshow("Control", np.hstack([image, out3]))
+   cv2.imshow("Control",out3)
+   cv2.waitKey(2)
+
+'''used to find the threshhold values to locate our robot'''
+def _color_calibration(image):
+   # define the list of boundaries
+   # boundaries = [
+   #    #([17, 15, 100], [50, 56, 200]),
+   #    #([86, 31, 4], [220, 88, 50]),
+   #    #([25, 146, 190], [62, 174, 250]),
+   #    ([110, 50, 50], [130, 255, 255]),
+   #    ([103, 86, 65], [145, 133, 128])
+   # ]
+   # cv2.namedWindow("Control")
+
+   # cv2.createTrackbar('Rup','Control',0,255,_nothing)
+   # cv2.createTrackbar('Gup','Control',0,255,_nothing)
+   # cv2.createTrackbar('Bup','Control',0,255,_nothing)
+   # cv2.createTrackbar('Rdn','Control',0,255,_nothing)
+   # cv2.createTrackbar('Gdn','Control',0,255,_nothing)
+   # cv2.createTrackbar('Bdn','Control',0,255,_nothing)
+   # # loop over the boundaries
+   # while(1):
+   #    # create NumPy arrays from the boundaries
+   #    Rup = cv2.getTrackbarPos('Rup','Control')
+   #    Gup = cv2.getTrackbarPos('Gup','Control')
+   #    Bup = cv2.getTrackbarPos('Bup','Control')
+   #    Rdn = cv2.getTrackbarPos('Rdn','Control')
+   #    Gdn = cv2.getTrackbarPos('Gdn','Control')
+   #    Bdn = cv2.getTrackbarPos('Bdn','Control')
+   #    lower= [Bdn, Gdn, Rdn]
+   #    upper = [Bup, Gup, Rup]
+   #    lower = np.array(lower, dtype = "uint8")
+   #    upper = np.array(upper, dtype = "uint8")
+
+   #       # find the colors within the specified boundaries and apply
+   #       # the mask
+   #    mask = cv2.inRange(image, lower, upper)
+   #    output = cv2.bitwise_and(image, image, mask = mask)
+
+   #    # show the images
+
+   #    cv2.imshow("Control", np.hstack([image, output]))
+
+   #    cv2.waitKey(0)
+
+
+
+   cv2.namedWindow("Control")
+
+   cv2.createTrackbar('hueMax','Control',0,255,_nothing)
+   cv2.createTrackbar('satMax','Control',0,255,_nothing)
+   cv2.createTrackbar('volMax','Control',0,255,_nothing)
+   cv2.createTrackbar('hueMin','Control',0,255,_nothing)
+   cv2.createTrackbar('satMin','Control',0,255,_nothing)
+   cv2.createTrackbar('volMin','Control',0,255,_nothing)
+   # loop over the boundaries
+   
+   # create NumPy arrays from the boundaries
+   hueMax = cv2.getTrackbarPos('hueMax','Control')
+   satMax = cv2.getTrackbarPos('satMax','Control')
+   volMax = cv2.getTrackbarPos('volMax','Control')
+   hueMin = cv2.getTrackbarPos('hueMin','Control')
+   satMin = cv2.getTrackbarPos('satMin','Control')
+   volMin = cv2.getTrackbarPos('volMin','Control')
+   lower= [volMin, satMin, hueMin]
+   upper = [volMax, satMax, hueMax]
+  
    lower = np.array(lower, dtype = "uint8")
    upper = np.array(upper, dtype = "uint8")
 
@@ -68,49 +184,6 @@ def _show_filter_rt(image):
    cv2.imshow("Control", np.hstack([image, output]))
 
    cv2.waitKey(2)
-
-def _show_filter(image):
-  # define the list of boundaries
-   boundaries = [
-      #([17, 15, 100], [50, 56, 200]),
-      #([86, 31, 4], [220, 88, 50]),
-      #([25, 146, 190], [62, 174, 250]),
-      ([110, 50, 50], [130, 255, 255]),
-      ([103, 86, 65], [145, 133, 128])
-   ]
-   cv2.namedWindow("Control")
-
-   cv2.createTrackbar('Rup','Control',0,255,_nothing)
-   cv2.createTrackbar('Gup','Control',0,255,_nothing)
-   cv2.createTrackbar('Bup','Control',0,255,_nothing)
-   cv2.createTrackbar('Rdn','Control',0,255,_nothing)
-   cv2.createTrackbar('Gdn','Control',0,255,_nothing)
-   cv2.createTrackbar('Bdn','Control',0,255,_nothing)
-   # loop over the boundaries
-   while(1):
-      # create NumPy arrays from the boundaries
-      Rup = cv2.getTrackbarPos('Rup','Control')
-      Gup = cv2.getTrackbarPos('Gup','Control')
-      Bup = cv2.getTrackbarPos('Bup','Control')
-      Rdn = cv2.getTrackbarPos('Rdn','Control')
-      Gdn = cv2.getTrackbarPos('Gdn','Control')
-      Bdn = cv2.getTrackbarPos('Bdn','Control')
-      lower= [Bdn, Gdn, Rdn]
-      upper = [Bup, Gup, Rup]
-      lower = np.array(lower, dtype = "uint8")
-      upper = np.array(upper, dtype = "uint8")
-
-         # find the colors within the specified boundaries and apply
-         # the mask
-      mask = cv2.inRange(image, lower, upper)
-      output = cv2.bitwise_and(image, image, mask = mask)
-
-      # show the images
-
-      cv2.imshow("Control", np.hstack([image, output]))
-
-      cv2.waitKey(0)
-
 
 def main():
    rospy.init_node('ai', anonymous=False)
