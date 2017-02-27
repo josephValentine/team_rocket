@@ -23,7 +23,9 @@ def _handle_img(msg):
    global _img
    _img = _ros2cv(msg)
    # _show_raw(_ros2cv(msg))
-   _apply_filter(_ros2cv(msg))
+   # _ourRobot1(_ros2cv(msg))
+   # _ball(_ros2cv(msg))
+   _process_img(_ros2cv(msg))
    # _color_calibration(_ros2cv(msg))
 
 def _ros2cv(msg):
@@ -40,28 +42,50 @@ def _show_raw(cv_image):
 def _nothing(x):
     pass
 
+#publish the raw coordinate data of the objects
+def _process_img(image):
+   fieldColor=[229,216,241,204,195,222]
+   ourRobot1Color=[229,216,241,204,195,222]
+   ourRobot2Color=[229,216,241,204,195,222]
+   ballColor=[246, 249, 236, 215, 220, 163]
+   opponent1Color=[229,216,241,204,195,222]
+   opponent2Color=[229,216,241,204,195,222]
+   
+   field = _field(image, fieldColor)
+   ourRobot1=convert_coordinates(_ourRobot1(image, ourRobot1Color), field)
+   # ourRobot2=convert_coordinates(_ourRobot2(image, ourRobot2Color), field)
+   ball=convert_coordinates(_ball(image, ballColor), field)
+   # opponent1=convert_coordinates(_opponent1(image, opponent1Color), field)
+   # opponent2=convert_coordinates(_opponent2(image, opponent2Color), field)
 
-def _apply_filter(image):
+   #publish
 
-   cv2.namedWindow("Control")
-   rate = rospy.Rate(100)
+   
 
+def convert_coordinates(objData, field):
+   # This assumes the field position is the bottom-left of the field.
+   # objData[0], field[0] are x-coordinates
+   # objData[1], field[1] are y-coordinates
+   # return (objData[0]-field[0], objData[1]-field[1])
+   return objData
+
+def _color_mask(controlWindow, color):
    # create the filter color params
-   cv2.createTrackbar('hueMax','Control',227,255,_nothing)
-   cv2.createTrackbar('satMax','Control',234,255,_nothing)
-   cv2.createTrackbar('volMax','Control',255,255,_nothing)
-   cv2.createTrackbar('hueMin','Control',70,255,_nothing)
-   cv2.createTrackbar('satMin','Control',167,255,_nothing)
-   cv2.createTrackbar('volMin','Control',224,255,_nothing)
+   cv2.createTrackbar('hueMax',controlWindow,color[0],255,_nothing)
+   cv2.createTrackbar('satMax',controlWindow,color[0],255,_nothing)
+   cv2.createTrackbar('volMax',controlWindow,color[0],255,_nothing)
+   cv2.createTrackbar('hueMin',controlWindow,color[0],255,_nothing)
+   cv2.createTrackbar('satMin',controlWindow,color[0],255,_nothing)
+   cv2.createTrackbar('volMin',controlWindow,color[0],255,_nothing)
    # loop over the boundaries
    
    # create NumPy arrays from the boundaries
-   hueMax = cv2.getTrackbarPos('hueMax','Control')
-   satMax = cv2.getTrackbarPos('satMax','Control')
-   volMax = cv2.getTrackbarPos('volMax','Control')
-   hueMin = cv2.getTrackbarPos('hueMin','Control')
-   satMin = cv2.getTrackbarPos('satMin','Control')
-   volMin = cv2.getTrackbarPos('volMin','Control')
+   hueMax = cv2.getTrackbarPos('hueMax',controlWindow)
+   satMax = cv2.getTrackbarPos('satMax',controlWindow)
+   volMax = cv2.getTrackbarPos('volMax',controlWindow)
+   hueMin = cv2.getTrackbarPos('hueMin',controlWindow)
+   satMin = cv2.getTrackbarPos('satMin',controlWindow)
+   volMin = cv2.getTrackbarPos('volMin',controlWindow)
 
    lower= [volMin, satMin, hueMin]
    upper = [volMax, satMax, hueMax]
@@ -75,6 +99,14 @@ def _apply_filter(image):
    # the mask
    mask = cv2.inRange(image, lower, upper)
    out1 = cv2.bitwise_and(image, image, mask = mask)
+   return out1
+
+def _ourRobot1(image, color):
+
+   cv2.namedWindow("ourRobot1")
+   rate = rospy.Rate(100)
+
+   out1 = _color_mask('ourRobot1',color)
    #remove noise
    kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
@@ -84,105 +116,90 @@ def _apply_filter(image):
    out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
    # ret,thresh = cv2.threshold(out4,127,255,0)
    (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-   smallest = 1000
-   indexOfSmallestObj = 0
+
    objects=[]
    for c in cnts:
       pt,radius = cv2.minEnclosingCircle(c)
-      cv2.drawContours(out4, [c],0,(0,128,255),1)
+      # cv2.drawContours(out4, [c],0,(0,128,255),1)
       objects.append((pt[0],pt[1],radius))
   
    if len(objects) >= 2:
-      sorted(objects,key=lambda x: x[2])
-      angle = np.arctan2((objects[1][1]-objects[0][1]), (objects[1][0]-objects[0][0]))*180/np.pi + 180
-      x = (objects[0][0]+objects[1][0])/2
-      y = (objects[0][1]+objects[1][1])/2
+      sortedObj = sorted(objects,key=lambda x: x[2])
+      angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
+      x = (sortedObj[0][0]+sortedObj[1][0])/2
+      y = (sortedObj[0][1]+sortedObj[1][1])/2
       print(x,y,angle)
+      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), -1)
+      cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), -1)
 
 
    # # show the images
-
    # cv2.imshow("Control", np.hstack([image, out3]))
-   cv2.imshow("Control",out3)
+   cv2.imshow("ourRobot1",out3)
    cv2.waitKey(2)
 
-'''used to find the threshhold values to locate our robot'''
-def _color_calibration(image):
-   # define the list of boundaries
-   # boundaries = [
-   #    #([17, 15, 100], [50, 56, 200]),
-   #    #([86, 31, 4], [220, 88, 50]),
-   #    #([25, 146, 190], [62, 174, 250]),
-   #    ([110, 50, 50], [130, 255, 255]),
-   #    ([103, 86, 65], [145, 133, 128])
-   # ]
-   # cv2.namedWindow("Control")
+def _field(image, color):
 
-   # cv2.createTrackbar('Rup','Control',0,255,_nothing)
-   # cv2.createTrackbar('Gup','Control',0,255,_nothing)
-   # cv2.createTrackbar('Bup','Control',0,255,_nothing)
-   # cv2.createTrackbar('Rdn','Control',0,255,_nothing)
-   # cv2.createTrackbar('Gdn','Control',0,255,_nothing)
-   # cv2.createTrackbar('Bdn','Control',0,255,_nothing)
-   # # loop over the boundaries
-   # while(1):
-   #    # create NumPy arrays from the boundaries
-   #    Rup = cv2.getTrackbarPos('Rup','Control')
-   #    Gup = cv2.getTrackbarPos('Gup','Control')
-   #    Bup = cv2.getTrackbarPos('Bup','Control')
-   #    Rdn = cv2.getTrackbarPos('Rdn','Control')
-   #    Gdn = cv2.getTrackbarPos('Gdn','Control')
-   #    Bdn = cv2.getTrackbarPos('Bdn','Control')
-   #    lower= [Bdn, Gdn, Rdn]
-   #    upper = [Bup, Gup, Rup]
-   #    lower = np.array(lower, dtype = "uint8")
-   #    upper = np.array(upper, dtype = "uint8")
+   cv2.namedWindow("field")
+   rate = rospy.Rate(100)
 
-   #       # find the colors within the specified boundaries and apply
-   #       # the mask
-   #    mask = cv2.inRange(image, lower, upper)
-   #    output = cv2.bitwise_and(image, image, mask = mask)
+   out1 = _color_mask('field',color)
+   #remove noise
+   kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
+   out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
+   out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
 
-   #    # show the images
+   #find contours of objects
+   out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
+   # ret,thresh = cv2.threshold(out4,127,255,0)
+   (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-   #    cv2.imshow("Control", np.hstack([image, output]))
-
-   #    cv2.waitKey(0)
-
-
-
-   cv2.namedWindow("Control")
-
-   cv2.createTrackbar('hueMax','Control',0,255,_nothing)
-   cv2.createTrackbar('satMax','Control',0,255,_nothing)
-   cv2.createTrackbar('volMax','Control',0,255,_nothing)
-   cv2.createTrackbar('hueMin','Control',0,255,_nothing)
-   cv2.createTrackbar('satMin','Control',0,255,_nothing)
-   cv2.createTrackbar('volMin','Control',0,255,_nothing)
-   # loop over the boundaries
-   
-   # create NumPy arrays from the boundaries
-   hueMax = cv2.getTrackbarPos('hueMax','Control')
-   satMax = cv2.getTrackbarPos('satMax','Control')
-   volMax = cv2.getTrackbarPos('volMax','Control')
-   hueMin = cv2.getTrackbarPos('hueMin','Control')
-   satMin = cv2.getTrackbarPos('satMin','Control')
-   volMin = cv2.getTrackbarPos('volMin','Control')
-   lower= [volMin, satMin, hueMin]
-   upper = [volMax, satMax, hueMax]
+   objects=[]
+   for c in cnts:
+      x,y,w,h = cv2.boundingRect(c)
+      # cv2.drawContours(out4, [c],0,(0,128,255),1)
+      objects.append((x,y,w,h))
   
-   lower = np.array(lower, dtype = "uint8")
-   upper = np.array(upper, dtype = "uint8")
+   if len(objects) >= 1:
+      x = objects[0][0]
+      y = objects[0][1]
+      w = objects[0][2]
+      h = objects[0][3]
+      print(x,y,w,h)
+      cv2.rectangle(out3, (int(x), int(y)), (int(x+w), int(y+h)), (0,255,0), -1)
 
-   # find the colors within the specified boundaries and apply
-   # the mask
-   mask = cv2.inRange(image, lower, upper)
-   output = cv2.bitwise_and(image, image, mask = mask)
+   # # show the images
+   # cv2.imshow("Control", np.hstack([image, out3]))
+   cv2.imshow("field",out3)
+   cv2.waitKey(2)
 
-   # show the images
+def _ball(image, color):
 
-   cv2.imshow("Control", np.hstack([image, output]))
+   cv2.namedWindow("ball")
+   rate = rospy.Rate(100)
 
+   out1 = _color_mask('ball',color)
+   #remove noise
+   kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
+   out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
+   out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
+
+   #find contours of objects
+   out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
+   # ret,thresh = cv2.threshold(out4,127,255,0)
+   (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+   objects=[]
+   for c in cnts:
+      pt,radius = cv2.minEnclosingCircle(c)
+      # cv2.drawContours(out4, [c],0,(0,128,255),1)
+      objects.append((pt[0],pt[1],radius))
+  
+   if len(objects) >= 1:
+      sortedObj=sorted(objects,key=lambda x: x[2])
+      print(objects[0][0],objects[0][1],0)
+      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (100,100,255), -1)
+   cv2.imshow("ball",out3)
    cv2.waitKey(2)
 
 def main():

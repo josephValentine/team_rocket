@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <launch>
     <!-- declare arg to be passed in -->
-    <arg name="team_side" default="away" />
+    <arg name="team_side" default="home" />
 
     <!-- using which side of the field we are on, determine the appropriate -->
     <!-- connections to the output of the vision system -->
     <arg name="other_side" value="away" if="$(eval team_side == 'home')" />
     <arg name="other_side" value="home" if="$(eval team_side == 'away')" />
     
-    <!-- Hardware agnostic code -->
-    <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
+    <group ns="teamrocket_$(arg team_side)">
+      <!-- Hardware agnostic code -->
+      <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
         <remap from="camera" to="/usb_cam_away/image_raw" />
-    </node>
+      </node>
+    </group>
 
 </launch>
