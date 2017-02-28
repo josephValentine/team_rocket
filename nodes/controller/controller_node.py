@@ -65,7 +65,9 @@ def main():
     rospy.Subscriber('desired_position', Pose2D, _handle_desired_position)
 
     # Publish velocity commands from PID controller
+    # and the estimated state of the robot
     pub = rospy.Publisher('vel_cmds', Twist, queue_size=10)
+    pubState = rospy.Publisher('est_state', Pose2D, queue_size=10)
 
     # initialize the controller
     Controller.init()
@@ -89,6 +91,13 @@ def main():
         msg.linear.y = vy
         msg.angular.z = w
         pub.publish(msg)
+        
+        # Publish estimated state of robot
+        state = Pose2D()
+        state.x = _xhat
+        state.y = _yhat
+        state.theta = _thetahat
+        pubState.publish(state)
 
         # Wait however long it takes to make this tick at proper control period
         rate.sleep()
