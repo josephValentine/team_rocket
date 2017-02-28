@@ -15,140 +15,60 @@ _alpha = 0.1
 _beta  = 0.1
 
 # Flag to indicate when a message is received
-_msg_received_us1 = False
-_msg_received_us2 = False
-_msg_received_them1 = False
-_msg_received_them2 = False
-_msg_received_ball = False
+_msg_received = False
 
 # Measured positions
-_us1_measured = Pose2D()
-_us2_measured = Pose2D()
-_them1_measured = Pose2D()
-_them2_measured = Pose2D()
-_ball_measured = Pose2D()
+_measured = Pose2D()
 
 # Predicted positions
-_us1_hat = Pose2D()
-_us2_hat = Pose2D()
-_them1_hat = Pose2D()
-_them2_hat = Pose2D()
-_ball_hat = Pose2D()
+_hat = Pose2D()
 
 # Predicted velocities
-_us1_vel = Twist()
-_us2_vel = Twist()
-_them1_vel = Twist()
-_them2_vel = Twist()
-_ball_vel = Twist()
+_vel = Twist()
 
 # -------------------
 
-def _handle_us1(msg):
-    global _us1_measured, _msg_received_us1
-    _us1_measured = msg
-    _msg_received_us1 = True
+def _handle(msg):
+    global _measured, _msg_received
+    _measured = msg
+    _msg_received = True
     
-def _handle_us2(msg):
-    global _us2_measured, _msg_received_us2
-    _us2_measured = msg
-    _msg_received_us2 = True
     
-def _handle_them1(msg):
-    global _them1_measured, _msg_received_them1
-    _them1_measured = msg
-    _msg_received_them1 = True
-    
-def _handle_them2(msg):
-    global _them2_measured, _msg_received_them2
-    _them2_measured = msg
-    _msg_received_them2 = True
-    
-def _handle_ball(msg):
-    global _ball_measured, _msg_received_ball
-    _ball_measured = msg
-    _msg_received_ball = True
-    
-def _estimate_opponent1():
-    global _them1_hat, _them1_vel, _msg_received_them1
-    if _msg_received_them1:
-        _them1_vel.linear.x = _beta * _them1_vel.linear.x + (1 - _beta) * (_them1_measured.x - _them1_hat.x) / _ctrl_period
-        _them1_vel.linear.y = _beta * _them1_vel.linear.y + (1 - _beta) * (_them1_measured.y - _them1_hat.y) / _ctrl_period
+def _estimate():
+    global _hat, _vel, _msg_received
+    if _msg_received:
+        _vel.linear.x = _beta * _vel.linear.x + (1 - _beta) * (_measured.x - _hat.x) / _ctrl_period
+        _vel.linear.y = _beta * _vel.linear.y + (1 - _beta) * (_measured.y - _hat.y) / _ctrl_period
         
-        _them1_hat.x = _them1_hat.x + _ctrl_period * _them1_vel.linear.x
-        _them1_hat.y = _them1_hat.y + _ctrl_period * _them1_vel.linear.y
+        _hat.x = _hat.x + _ctrl_period * _vel.linear.x
+        _hat.y = _hat.y + _ctrl_period * _vel.linear.y
         
-        _them1_hat.x = _alpha * _them1_hat.x + (1 - _alpha) * _them1_measured.x
-        _them1_hat.y = _alpha * _them1_hat.y + (1 - _alpha) * _them1_measured.y
+        _hat.x = _alpha * _hat.x + (1 - _alpha) * _measured.x
+        _hat.y = _alpha * _hat.y + (1 - _alpha) * _measured.y
         
-        _msg_received_them1 = False
+        _msg_received = False
         
     else:
-        _them1_hat.x = _them1_hat.x + _ctrl_period * _them1_vel.linear.x
-        _them1_hat.y = _them1_hat.y + _ctrl_period * _them1_vel.linear.y
-        
-
-def _estimate_opponent2():
-    global _them2_hat, _them2_vel, _msg_received_them2
-    if _msg_received_them2:
-        _them2_vel.linear.x = _beta * _them2_vel.linear.x + (1 - _beta) * (_them2_measured.x - _them2_hat.x) / _ctrl_period
-        _them2_vel.linear.y = _beta * _them2_vel.linear.y + (1 - _beta) * (_them2_measured.y - _them2_hat.y) / _ctrl_period
-        
-        _them2_hat.x = _them2_hat.x + _ctrl_period * _them2_vel.linear.x
-        _them2_hat.y = _them2_hat.y + _ctrl_period * _them2_vel.linear.y
-        
-        _them2_hat.x = _alpha * _them2_hat.x + (1 - _alpha) * _them2_measured.x
-        _them2_hat.y = _alpha * _them2_hat.y + (1 - _alpha) * _them2_measured.y
-        
-        _msg_received_them2 = False
-        
-    else:
-        _them2_hat.x = _them2_hat.x + _ctrl_period * _them2_vel.linear.x
-        _them2_hat.y = _them2_hat.y + _ctrl_period * _them2_vel.linear.y
-
-
-def _estimate_ball():
-    global _ball_hat, _ball_vel, _msg_received_ball
-    if _msg_received_ball:
-        _ball_vel.linear.x = _beta * _ball_vel.linear.x + (1 - _beta) * (_ball_measured.x - _ball_hat.x) / _ctrl_period
-        _ball_vel.linear.y = _beta * _ball_vel.linear.y + (1 - _beta) * (_ball_measured.y - _ball_hat.y) / _ctrl_period
-        
-        _ball_hat.x = _ball_hat.x + _ctrl_period * _ball_vel.linear.x
-        _ball_hat.y = _ball_hat.y + _ctrl_period * _ball_vel.linear.y
-        
-        _ball_hat.x = _alpha * _ball_hat.x + (1 - _alpha) * _ball_measured.x
-        _ball_hat.y = _alpha * _ball_hat.y + (1 - _alpha) * _ball_measured.y
-        
-        _msg_received_ball = False
-        
-    else:
-        _ball_hat.x = _ball_hat.x + _ctrl_period * _ball_vel.linear.x
-        _ball_hat.y = _ball_hat.y + _ctrl_period * _ball_vel.linear.y
+        _hat.x = _hat.x + _ctrl_period * _vel.linear.x
+        _hat.y = _hat.y + _ctrl_period * _vel.linear.y
 
         
 def main():
     rospy.init_node('estimator', anonymous=False)
 
-    # Subscribe to the positions of all the objects on the field (from vision)
-    rospy.Subscriber('us1', Pose2D, _handle_us1)
-    rospy.Subscriber('us2', Pose2D, _handle_us2)
-    rospy.Subscriber('them1', Pose2D, _handle_them1)
-    rospy.Subscriber('them2', Pose2D, _handle_them2)
-    rospy.Subscriber('ball', Pose2D, _handle_ball)
+    # Subscribe to the position of the object on the field (from vision)
+    rospy.Subscriber('data', Pose2D, _handle)
 
     # Publish estimated states
-    
-
+    pub = rospy.Publisher('estimated_state', Pose2D, queue_size=10)
 
     rate = rospy.Rate(int(1/_ctrl_period))
     while not rospy.is_shutdown():
 
-        _estimate_opponent1()
-        _estimate_opponent2()
-        _estimate_ball()
+        _estimate()
 
         # Publish estimated states
-        
+        pub.publish(_hat)
 
         # Wait however long it takes to make this tick at proper control period
         rate.sleep()

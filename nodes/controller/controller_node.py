@@ -67,7 +67,7 @@ def main():
     # Publish velocity commands from PID controller
     # and the estimated state of the robot
     pub = rospy.Publisher('vel_cmds', Twist, queue_size=10)
-    pubState = rospy.Publisher('est_state', Pose2D, queue_size=10)
+    pubState = rospy.Publisher('estimated_state', Pose2D, queue_size=10)
 
     # initialize the controller
     Controller.init()
