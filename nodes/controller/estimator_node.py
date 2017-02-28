@@ -10,6 +10,7 @@ import numpy as np
 _ctrl_period = 1.0/100
 
 # Lowpass filter constants
+# Need to be tuned
 _alpha = 0.1
 _beta  = 0.1
 
