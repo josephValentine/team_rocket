@@ -9,28 +9,6 @@ from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
-#### Global vars ####
-
-# _img = Image()
-
-# _tmp_cnt = 0
-# def _handle_img(msg):
-   # global _tmp_cnt
-   #print "handle_img"
-   # _tmp_cnt = (_tmp_cnt + 1) % 100
-   # if _tmp_cnt == 0:
-   #    print 'msg:', dir(msg)
-   # global _img
-
-   
-
-   # _img = _ros2cv(msg)
-   # _show_raw(_ros2cv(msg))
-   # _ourRobot1(_ros2cv(msg))
-   # _ball(_ros2cv(msg))
-   # _process_img(_ros2cv(msg))
-   # _color_calibration(_ros2cv(msg))
-
 def _ros2cv(msg):
    try:
       cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
@@ -39,8 +17,15 @@ def _ros2cv(msg):
       print(e)
 
 def _show_raw(cv_image):
-   cv2.imshow("Image window", cv_image)
-   cv2.waitKey(3)
+    # create a CLAHE object (Arguments are optional).
+   clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+   b, g, r = cv2.split(cv_image)
+   clb = clahe.apply(b)
+   clg = clahe.apply(g)
+   clr = clahe.apply(r)
+   img=cv2.merge((clb, clg, clr))
+   cv2.imshow("Control", np.hstack([cv_image, img]))
+   # cv2.imshow("Image window", cv_image)
 
 def _nothing(x):
     pass
@@ -48,41 +33,43 @@ def _nothing(x):
 #publish the raw coordinate data of the objects
 def _process_img(msg):
 
+   # print 'hello everyone'
+   # return
+
    image = _ros2cv(msg)
    _show_raw(image)
 
-    # publish locations
-   us1_pub   = rospy.Publisher('us1', Pose2D, queue_size=10)
-   # us2_pub   = rospy.Publisher('us2', Pose2D, queue_size=10)
-   # them1_pub = rospy.Publisher('them1', Pose2D, queue_size=10)
-   # them2_pub = rospy.Publisher('them2', Pose2D, queue_size=10)
-   ball_pub  = rospy.Publisher('ball', Pose2D, queue_size=10)
-
-   fieldColor=[200,200,200,50,100,50]
-   ourRobot1Color=[229,216,241,204,195,222]
+   fieldColor=[189,108,215,123,25,31]
+   ourRobot1Color=[235,50,184,214,18,69]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[246, 249, 236, 215, 220, 163]
+   ballColor=[255, 88, 31, 166, 10, 0]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
    field = _field(image, fieldColor)
-   # ourRobot1 = _ourRobot1(image, ourRobot1Color)
-   # if ourRobot1:
-   #    us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
-   #    us1_pub.publish(us1_msg)
+   global us1_pub, ball_pub
 
-   # ourRobot2=convert_coordinates(_ourRobot2(image, ourRobot2Color), field)
-   # ball = _ball(image, ballColor)
-   # if ball:
-   #    ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
-   #    ball_pub.publish(ball_msg)
+   if all(field):
+      ourRobot1 = _ourRobot1(image, ourRobot1Color)
+      if (ourRobot1[0] is not None and ourRobot1[1] is not None):#angle can be zero so cant use all() func
+         us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
+         us1_pub.publish(us1_msg)
+
+      
+      ball = _ball(image, ballColor)
+      if (ball[0] is not None and ball[1] is not None):
+         ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
+         ball_pub.publish(ball_msg)
    
+   cv2.waitKey(3)#the windows dont stay open if this isnt here...
+
    
    
 
 def convert_coordinates(x,y,theta, field):
    # This assumes the field position zero is top left
    # field param is (x,y,w,h)
+   # may need to rotate angles...
    realW = 3.40
    scaleW = realW / field[2]
    realH = 2.38
@@ -121,16 +108,16 @@ def _color_mask(image, controlWindow, color):
 
    # find the colors within the specified boundaries and apply
    # the mask
-   mask = cv2.inRange(image, lower, upper)
+   hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+   mask = cv2.inRange(hsv, lower, upper)
    out1 = cv2.bitwise_and(image, image, mask = mask)
    return out1
 
 def _ourRobot1(image, color):
 
    cv2.namedWindow("ourRobot1")
-   rate = rospy.Rate(100)
-
    out1 = _color_mask(image,'ourRobot1',color)
+   
    #remove noise
    kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
@@ -146,30 +133,29 @@ def _ourRobot1(image, color):
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       objects.append((pt[0],pt[1],radius))
-  
+   
+   x=None
+   y=None
+   angle=None
    if len(objects) >= 2:
       sortedObj = sorted(objects,key=lambda x: x[2])
       angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
       x = (sortedObj[0][0]+sortedObj[1][0])/2
       y = (sortedObj[0][1]+sortedObj[1][1])/2
-      print(x,y,angle)
+      # print(x,y,angle)
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), -1)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), -1)
-      return (x,y,angle)
-
-   # # show the images
-   # cv2.imshow("Control", np.hstack([image, out3]))
+      
    cv2.imshow("ourRobot1",out3)
-   cv2.waitKey(2)
+   return (x,y,angle)
 
 def _field(image, color):
 
    cv2.namedWindow("field")
-   # rate = rospy.Rate(100)
-
    out1 = _color_mask(image, 'field',color)
+   
    #remove noise
-   kernel = np.ones((30,30),np.uint8) #sets size of holes accepted i think?
+   kernel = np.ones((10,10),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
    out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
 
@@ -184,6 +170,10 @@ def _field(image, color):
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       objects.append((x,y,w,h))
   
+   x=None
+   y=None
+   w=None
+   h=None
    if len(objects) >= 1:
       sortedObj = sorted(objects,key=lambda x: x[2])
       x = sortedObj[len(objects) - 1][0]
@@ -192,20 +182,16 @@ def _field(image, color):
       h = sortedObj[len(objects) - 1][3]
       # print(x,y,w,h)
       cv2.rectangle(out3, (int(x), int(y)), (int(x+w), int(y+h)), (0,255,0), 2)
-      return (x,y,w,h)
-   # # show the images
-   # cv2.imshow("Control", np.hstack([image, out3]))
+
    cv2.imshow("field",out3)
-   # cv2.waitKey(2)
+   return (x,y,w,h)
 
 def _ball(image, color):
 
    cv2.namedWindow("ball")
-   rate = rospy.Rate(100)
-
    out1 = _color_mask(image, 'ball',color)
    #remove noise
-   kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
+   kernel = np.ones((2,2),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
    out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
 
@@ -218,54 +204,39 @@ def _ball(image, color):
    for c in cnts:
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
-      objects.append((pt[0],pt[1],radius))
+      if radius > 2.5 and radius < 3:
+         objects.append((pt[0],pt[1],radius))
   
+   x=None
+   y=None
    if len(objects) >= 1:
       sortedObj=sorted(objects,key=lambda x: x[2])
       x=sortedObj[0][0]
       y=sortedObj[0][1]
-      # print('ball',x,y)
+      print('ball',x,y,sortedObj[0][2])
       cv2.circle(out3, (int(x), int(y)), int(sortedObj[0][2]), (100,100,255), -1)
-      return (x,y,0)
    
    cv2.imshow("ball",out3)
-   cv2.waitKey(2)
+   return (x,y,0)
 
 def main():
    rospy.init_node('ai', anonymous=False)
 
    # subscribe to camera
    rospy.Subscriber('camera', Image, _process_img)
-   
-   # us1_pub   = rospy.Publisher('us1', Pose2D, queue_size=10)
+
+   global us1_pub, ball_pub
+   # publish locations
+   us1_pub   = rospy.Publisher('us1', Pose2D, queue_size=10)
    # us2_pub   = rospy.Publisher('us2', Pose2D, queue_size=10)
    # them1_pub = rospy.Publisher('them1', Pose2D, queue_size=10)
    # them2_pub = rospy.Publisher('them2', Pose2D, queue_size=10)
-   # ball_pub  = rospy.Publisher('ball', Pose2D, queue_size=10)
-   
+   ball_pub  = rospy.Publisher('ball', Pose2D, queue_size=10)
+
+   rospy.spin()
    rate = rospy.Rate(100) # 100 Hz
    while not rospy.is_shutdown():
 
-      # Get a message ready to send
-      # us1_msg   = Pose2D()
-      # us2_msg   = Pose2D()
-      # them1_msg = Pose2D()
-      # them2_msg = Pose2D()
-      # ball_msg  = Pose2D()
-
-      # # do vision stuff
-      # us1_msg.x, us1_msg.y, us1_msg.theta       = -0.25, 0.0, 0.0
-      # us2_msg.x, us2_msg.y, us2_msg.theta       = -0.5, 0.0, 0.0
-      # them1_msg.x, them1_msg.y, them1_msg.theta = 0.25, 0.0, 180.0
-      # them2_msg.x, them2_msg.y, them2_msg.theta = 0.5, 0.0, 180.0
-      # ball_msg.x, ball_msg.y, ball_msg.theta    = 0.0, 0.0, 0.0
-
-      # # publish
-      # us1_pub.publish(us1_msg)
-      # us2_pub.publish(us2_msg)
-      # them1_pub.publish(them1_msg)
-      # them2_pub.publish(them2_msg)
-      # ball_pub.publish(ball_msg)
 
       # Wait however long it takes to make this tick at 100Hz
       rate.sleep()
