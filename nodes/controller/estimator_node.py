@@ -104,7 +104,26 @@ def _estimate_opponent2():
     else:
         _them2_hat.x = _them2_hat.x + _ctrl_period * _them2_vel.linear.x
         _them2_hat.y = _them2_hat.y + _ctrl_period * _them2_vel.linear.y
+
+
+def _estimate_ball():
+    global _ball_hat, _ball_vel, _msg_received_ball
+    if _msg_received_ball:
+        _ball_vel.linear.x = _beta * _ball_vel.linear.x + (1 - _beta) * (_ball_measured.x - _ball_hat.x) / _ctrl_period
+        _ball_vel.linear.y = _beta * _ball_vel.linear.y + (1 - _beta) * (_ball_measured.y - _ball_hat.y) / _ctrl_period
         
+        _ball_hat.x = _ball_hat.x + _ctrl_period * _ball_vel.linear.x
+        _ball_hat.y = _ball_hat.y + _ctrl_period * _ball_vel.linear.y
+        
+        _ball_hat.x = _alpha * _ball_hat.x + (1 - _alpha) * _ball_measured.x
+        _ball_hat.y = _alpha * _ball_hat.y + (1 - _alpha) * _ball_measured.y
+        
+        _msg_received_ball = False
+        
+    else:
+        _ball_hat.x = _ball_hat.x + _ctrl_period * _ball_vel.linear.x
+        _ball_hat.y = _ball_hat.y + _ctrl_period * _ball_vel.linear.y
+
         
 def main():
     rospy.init_node('estimator', anonymous=False)
@@ -125,6 +144,7 @@ def main():
 
         _estimate_opponent1()
         _estimate_opponent2()
+        _estimate_ball()
 
         # Publish estimated states
         
