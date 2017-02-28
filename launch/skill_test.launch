@@ -34,7 +34,7 @@
       <node name="serializer" pkg="teamrocket" type="serializer_node.py"
             output="screen">
         <!-- The serializer needs to know which vision msg to listen to -->
-        <remap from="me" to="vision/us1" />
+        <remap from="me" to="controller/est_state" />
         <!-- For simulation, remap the output -->
         <!-- <remap from="vel_cmds" -->
         <!--        to="/$(arg team_side)$(arg my_number)/command" /> -->
