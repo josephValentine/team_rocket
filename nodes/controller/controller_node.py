@@ -27,7 +27,7 @@ _thetahat = 0
 # -------------------
 
 def _handle_me(msg):
-    global _xmeas, _ymeas, _thetameas
+    global _xmeas, _ymeas, _thetameas, _msg_received
     # print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
     #     _xhat, _yhat, _thetahat)
     _xmeas = msg.x
