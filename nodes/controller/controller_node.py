@@ -100,7 +100,11 @@ def main():
         msg = Twist()
         msg.linear.x = vx
         msg.linear.y = vy
-        msg.angular.z = w
+        # msg.angular.z = w
+        # staying at same angle, i.e. angular velocity of 0
+        # cont_factor = 5
+        # msg.linear.x, msg.linear.y = vx*cont_factor, vy*cont_factor
+        msg.angular.z = 0
         # print 'Controller Before: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
         # print 'Controller Twist:  vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(
         #     msg.linear.x,msg.linear.y,msg.angular.z)
