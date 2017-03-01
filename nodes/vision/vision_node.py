@@ -24,7 +24,7 @@ def _show_raw(cv_image):
    clg = clahe.apply(g)
    clr = clahe.apply(r)
    img=cv2.merge((clb, clg, clr))
-   cv2.imshow("Control", np.hstack([cv_image, img]))
+   # cv2.imshow("Control", np.hstack([cv_image, img]))
    # cv2.imshow("Image window", cv_image)
 
 def _nothing(x):
@@ -80,23 +80,38 @@ def convert_coordinates(x,y,theta, field):
    rval.theta = theta
    return rval
 
-def _color_mask(image, controlWindow, color):
+
+field_first = True
+ball_first = True
+ourRobot1_first = True
+
+def _color_mask(image, controlWindow, color, first=False):
    # create the filter color params
-   cv2.createTrackbar('hueMax',controlWindow,color[0],255,_nothing)
-   cv2.createTrackbar('satMax',controlWindow,color[1],255,_nothing)
-   cv2.createTrackbar('volMax',controlWindow,color[2],255,_nothing)
-   cv2.createTrackbar('hueMin',controlWindow,color[3],255,_nothing)
-   cv2.createTrackbar('satMin',controlWindow,color[4],255,_nothing)
-   cv2.createTrackbar('volMin',controlWindow,color[5],255,_nothing)
-   # loop over the boundaries
+   if first:
+      print 'first for %s' % controlWindow
+      first = False
+      cv2.createTrackbar('hueMax',controlWindow,color[0],255,_nothing)
+      cv2.createTrackbar('satMax',controlWindow,color[1],255,_nothing)
+      cv2.createTrackbar('volMax',controlWindow,color[2],255,_nothing)
+      cv2.createTrackbar('hueMin',controlWindow,color[3],255,_nothing)
+      cv2.createTrackbar('satMin',controlWindow,color[4],255,_nothing)
+      cv2.createTrackbar('volMin',controlWindow,color[5],255,_nothing)
+   # # loop over the boundaries
    
-   # create NumPy arrays from the boundaries
+   # # create NumPy arrays from the boundaries
    hueMax = cv2.getTrackbarPos('hueMax',controlWindow)
    satMax = cv2.getTrackbarPos('satMax',controlWindow)
    volMax = cv2.getTrackbarPos('volMax',controlWindow)
    hueMin = cv2.getTrackbarPos('hueMin',controlWindow)
    satMin = cv2.getTrackbarPos('satMin',controlWindow)
    volMin = cv2.getTrackbarPos('volMin',controlWindow)
+
+   # hueMax = color[0]
+   # satMax = color[1]
+   # volMax = color[2]
+   # hueMin = color[3]
+   # satMin = color[4]
+   # volMin = color[5]
 
    lower= [volMin, satMin, hueMin]
    upper = [volMax, satMax, hueMax]
@@ -116,7 +131,9 @@ def _color_mask(image, controlWindow, color):
 def _ourRobot1(image, color):
 
    cv2.namedWindow("ourRobot1")
-   out1 = _color_mask(image,'ourRobot1',color)
+   global ourRobot1_first
+   out1 = _color_mask(image,'ourRobot1',color,ourRobot1_first)
+   ourRobot1_first = False
    
    #remove noise
    kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
@@ -152,7 +169,9 @@ def _ourRobot1(image, color):
 def _field(image, color):
 
    cv2.namedWindow("field")
-   out1 = _color_mask(image, 'field',color)
+   global field_first
+   out1 = _color_mask(image, 'field',color,field_first)
+   field_first = False
    
    #remove noise
    kernel = np.ones((10,10),np.uint8) #sets size of holes accepted i think?
@@ -189,7 +208,10 @@ def _field(image, color):
 def _ball(image, color):
 
    cv2.namedWindow("ball")
-   out1 = _color_mask(image, 'ball',color)
+   global ball_first
+   out1 = _color_mask(image, 'ball',color,ball_first)
+   ball_first = False
+
    #remove noise
    kernel = np.ones((2,2),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
