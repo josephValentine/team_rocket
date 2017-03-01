@@ -28,37 +28,37 @@ _ball = Pose2D()
 # -------------------
 
 def _handle_me(msg):
-    print "handle_me"
+    # print "handle_me"
     global _me
     _me = msg
 
 
 def _handle_ally(msg):
-    print "handle_ally"
+    # print "handle_ally"
     global _ally
     _ally = msg
 
 
 def _handle_opp1(msg):
-    print "handle_opp1"
+    # print "handle_opp1"
     global _opp1
     _opp1 = msg
 
 
 def _handle_opp2(msg):
-    print "handle_opp2"
+    # print "handle_opp2"
     global _opp2
     _opp2 = msg
 
 
 def _handle_ball(msg):
-    print "handle_ball"
+    # print "handle_ball"
     global _ball
     _ball = msg
 
 
 def _handle_game_state(msg):
-    print "handle_game_state"
+    # print "handle_game_state"
     global _game_state
     _game_state = msg
 

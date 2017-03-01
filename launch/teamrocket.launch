@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <!-- declare arg to be passed in -->
-    <arg name="team_side" default="home" />
+    <arg name="team_side" default="away" />
     <arg name="sim_mode" default="true" />
     <arg name="two_robots" default="true" />
 

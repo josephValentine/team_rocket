@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <!-- declare arg to be passed in -->
-    <arg name="team_side" default="home" />
+    <arg name="team_side" default="away" />
 
     <!-- using which side of the field we are on, determine the appropriate -->
     <!-- connections to the output of the vision system -->

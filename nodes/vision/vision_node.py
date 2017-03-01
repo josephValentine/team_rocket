@@ -235,7 +235,7 @@ def _ball(image, color):
       sortedObj=sorted(objects,key=lambda x: x[2])
       x=sortedObj[0][0]
       y=sortedObj[0][1]
-      print('ball',x,y,sortedObj[0][2])
+      # print('ball',x,y,sortedObj[0][2])
       cv2.circle(out3, (int(x), int(y)), int(sortedObj[0][2]), (100,100,255), -1)
    
    cv2.imshow("ball",out3)

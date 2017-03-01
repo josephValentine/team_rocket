@@ -86,7 +86,7 @@ def get_smart_goalie_position(game_state, distance):
       goal_point = Point(goal_center_point.x, ball_point.y)
    vec    = ball_point - goal_point
    angle  = vec.get_angle()
-   print "commanded angle: %s" % angle
+   # print "commanded angle: %s" % angle
    offset = angle.get_normalized_vector().get_scaled(distance)
    return Position(goal_point + offset, angle)
 

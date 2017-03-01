@@ -20,6 +20,7 @@ class AI(object):
         self.team_side = team_side
         # Am I ally1?
         self.ally1 = (ally_number == 1)
+        print 'I am ally %d' % ally_number
 
 
     def update(self, me, ally, opp1, opp2, ball, game_state):
@@ -36,7 +37,7 @@ class AI(object):
         f.ball.point = _pose2d_to_point(ball)
 
         role_str = 'ally1' if self.ally1 else 'ally2'
-        print self.team_side, role_str, (me.x, me.y, me.theta)
+        # print self.team_side, role_str, (me.x, me.y, me.theta)
         # update game state
         # print game_state
         # home_score, away_score, home_bot_count, away_bot_count,
@@ -63,17 +64,17 @@ class AI(object):
             # print self.team_side, "goalie pos: ", \
             #     _position_to_pose2d(self.game_state.field.ally2.position)
 
-        print self.team_side
+        # print self.team_side
         # if self.team_side != 'home':
         #     print 'flip (before =', cmds, ',',
         #     cmds = _flip_coordinate_system(cmds)
         #     print 'after =', cmds, ')'
 
         pos_str = "forward" if self.ally1 else "goalie"
-        print self.team_side, pos_str, "cmds:", cmds
+        # print self.team_side, pos_str, "cmds:", cmds
         my_pos = self.game_state.field.ally1.position if self.ally1 else \
                  self.game_state.field.ally2.position
-        print self.team_side, pos_str, "pos: ", my_pos
+        # print self.team_side, pos_str, "pos: ", my_pos
 
         return cmds
 
@@ -151,7 +152,7 @@ def test():
     import Constants
     ai = AI('home', 2)
     cmds = ai.strategize()
-    print cmds
+    # print cmds
     ai.update(_position_to_pose2d(ai.game_state.field.ally2.position),
               _position_to_pose2d(ai.game_state.field.ally1.position),
               _position_to_pose2d(ai.game_state.field.opp1.position),
@@ -161,7 +162,7 @@ def test():
               ())
     ai.game_state.game_info.side = Constants.right_side
     cmds = ai.strategize()
-    print cmds
+    # print cmds
 
 
 def _position_to_pose2d(position):

@@ -24,9 +24,15 @@ _xhat = 0
 _yhat = 0
 _thetahat = 0
 
+# Lowpass filter constants
+# Need to be tuned
+_alpha = 0.1
+_beta  = 0.1
+
 # -------------------
 
 def _handle_me(msg):
+    print 'Controller: _handle_me'
     global _xmeas, _ymeas, _thetameas, _msg_received
     # print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
     #     _xhat, _yhat, _thetahat)
@@ -37,18 +43,21 @@ def _handle_me(msg):
 
 
 def _handle_desired_position(msg):
+    print 'Controller: _handle_desired_position'
     # print 'desired_pos: {}'.format(msg)
     Controller.set_commanded_position(msg.x, msg.y, msg.theta)
 
 
 def _estimate_state(vx, vy, w):
-    global _xhat, _yhat, _thetahat, _msg_received
+    print 'Controller: estimating state'
+    global _xhat, _yhat, _thetahat, _msg_received, _alpha
     
     _xhat = _xhat + _ctrl_period * vx
     _yhat = _yhat + _ctrl_period * vy
     _thetahat = _thetahat + _ctrl_period * w
     
     if _msg_received:
+        print '\tmessage received'
         _xhat = _alpha * _xhat + (1 - _alpha) * _xmeas
         _yhat = _alpha * _yhat + (1 - _alpha) * _ymeas
         _thetahat = _alpha * _thetahat + (1 - _alpha) * _thetameas
@@ -94,9 +103,13 @@ def main():
         
         # Publish estimated state of robot
         state = Pose2D()
-        state.x = _xhat
-        state.y = _yhat
-        state.theta = _thetahat
+        # state.x = _xhat
+        # state.y = _yhat
+        # state.theta = _thetahat
+        # right now the estimator isn't working, using measured values
+        state.x = _xmeas
+        state.y = _ymeas
+        state.theta = _thetameas
         pubState.publish(state)
 
         # Wait however long it takes to make this tick at proper control period
