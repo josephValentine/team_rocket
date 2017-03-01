@@ -14,8 +14,10 @@
         <!-- <remap from="camera" to="/usb_cam_$(team_side)/image_raw" /> -->
       <!-- </node> -->
     <!-- </group> -->
-    <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
-        <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
-    </node>
-
+    <group ns="teamrocket_$(arg team_side)">
+        <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
+            <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
+        </node>
+    </group>
+    
 </launch>
