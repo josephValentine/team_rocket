@@ -99,6 +99,7 @@ def main():
         msg.linear.x = vx
         msg.linear.y = vy
         msg.angular.z = w
+        print 'Controller: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
         pub.publish(msg)
         
         # Publish estimated state of robot
