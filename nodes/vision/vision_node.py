@@ -9,6 +9,9 @@ from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
+# change this if we're live (on the pi)
+_live = True
+
 def _ros2cv(msg):
    try:
       cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
@@ -60,8 +63,9 @@ def _process_img(msg):
       if (ball[0] is not None and ball[1] is not None):
          ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
          ball_pub.publish(ball_msg)
-   
-   cv2.waitKey(3)#the windows dont stay open if this isnt here...
+
+   if not _live:
+      cv2.waitKey(3)#the windows dont stay open if this isnt here...
 
    
    
@@ -87,32 +91,36 @@ ball_first = True
 ourRobot1_first = True
 
 def _color_mask(image, controlWindow, color, first=False):
-   # create the filter color params
-   if first:
-      print 'first for %s' % controlWindow
-      first = False
-      cv2.createTrackbar('hueMax',controlWindow,color[0],255,_nothing)
-      cv2.createTrackbar('satMax',controlWindow,color[1],255,_nothing)
-      cv2.createTrackbar('volMax',controlWindow,color[2],255,_nothing)
-      cv2.createTrackbar('hueMin',controlWindow,color[3],255,_nothing)
-      cv2.createTrackbar('satMin',controlWindow,color[4],255,_nothing)
-      cv2.createTrackbar('volMin',controlWindow,color[5],255,_nothing)
-   # # loop over the boundaries
-   
-   # # create NumPy arrays from the boundaries
-   hueMax = cv2.getTrackbarPos('hueMax',controlWindow)
-   satMax = cv2.getTrackbarPos('satMax',controlWindow)
-   volMax = cv2.getTrackbarPos('volMax',controlWindow)
-   hueMin = cv2.getTrackbarPos('hueMin',controlWindow)
-   satMin = cv2.getTrackbarPos('satMin',controlWindow)
-   volMin = cv2.getTrackbarPos('volMin',controlWindow)
 
-   # hueMax = color[0]
-   # satMax = color[1]
-   # volMax = color[2]
-   # hueMin = color[3]
-   # satMin = color[4]
-   # volMin = color[5]
+   if not _live:
+      # create the filter color params
+      if first:
+         print 'first for %s' % controlWindow
+         first = False
+         cv2.createTrackbar('hueMax',controlWindow,color[0],255,_nothing)
+         cv2.createTrackbar('satMax',controlWindow,color[1],255,_nothing)
+         cv2.createTrackbar('volMax',controlWindow,color[2],255,_nothing)
+         cv2.createTrackbar('hueMin',controlWindow,color[3],255,_nothing)
+         cv2.createTrackbar('satMin',controlWindow,color[4],255,_nothing)
+         cv2.createTrackbar('volMin',controlWindow,color[5],255,_nothing)
+      # # loop over the boundaries
+
+      # # create NumPy arrays from the boundaries
+      hueMax = cv2.getTrackbarPos('hueMax',controlWindow)
+      satMax = cv2.getTrackbarPos('satMax',controlWindow)
+      volMax = cv2.getTrackbarPos('volMax',controlWindow)
+      hueMin = cv2.getTrackbarPos('hueMin',controlWindow)
+      satMin = cv2.getTrackbarPos('satMin',controlWindow)
+      volMin = cv2.getTrackbarPos('volMin',controlWindow)
+
+   # if live
+   else:
+      hueMax = color[0]
+      satMax = color[1]
+      volMax = color[2]
+      hueMin = color[3]
+      satMin = color[4]
+      volMin = color[5]
 
    lower= [volMin, satMin, hueMin]
    upper = [volMax, satMax, hueMax]
@@ -131,7 +139,8 @@ def _color_mask(image, controlWindow, color, first=False):
 
 def _ourRobot1(image, color):
 
-   cv2.namedWindow("ourRobot1")
+   if not _live:
+      cv2.namedWindow("ourRobot1")
    global ourRobot1_first
    out1 = _color_mask(image,'ourRobot1',color,ourRobot1_first)
    ourRobot1_first = False
@@ -169,7 +178,8 @@ def _ourRobot1(image, color):
 
 def _field(image, color):
 
-   cv2.namedWindow("field")
+   if not _live:
+      cv2.namedWindow("field")
    global field_first
    out1 = _color_mask(image, 'field',color,field_first)
    field_first = False
@@ -208,7 +218,8 @@ def _field(image, color):
 
 def _ball(image, color):
 
-   cv2.namedWindow("ball")
+   if not _live:
+      cv2.namedWindow("ball")
    global ball_first
    out1 = _color_mask(image, 'ball',color,ball_first)
    ball_first = False
