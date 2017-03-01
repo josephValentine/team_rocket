@@ -13,11 +13,12 @@
 
     <group ns="teamrocket_$(arg team_side)">
 
+        <!-- Running vision on computer instead of pi -->
         <!-- Vision -->
         <!-- Start the vision up -->
-        <include file="$(find teamrocket)/launch/vision.launch">
-          <arg name="team_side" value="$(arg team_side)" />
-        </include>
+        <!-- <include file="$(find teamrocket)/launch/vision.launch"> -->
+          <!-- <arg name="team_side" value="$(arg team_side)" /> -->
+        <!-- </include> -->
 
         <!-- Orienter -->
         <!-- Start the orienter up -->
