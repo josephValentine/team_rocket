@@ -10,7 +10,7 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
 # change this if we're live (on the pi)
-_live = True
+_live = False
 
 def _ros2cv(msg):
    try:
@@ -27,7 +27,8 @@ def _show_raw(cv_image):
    clg = clahe.apply(g)
    clr = clahe.apply(r)
    img=cv2.merge((clb, clg, clr))
-   cv2.imshow("Control", np.hstack([cv_image, img]))
+   if not _live:
+      cv2.imshow("Control", np.hstack([cv_image, img]))
    # cv2.imshow("Image window", cv_image)
 
 def _nothing(x):
@@ -45,7 +46,7 @@ def _process_img(msg):
    fieldColor=[189,108,215,123,25,31]
    ourRobot1Color=[241,50,184,207,18,69]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 145, 238, 177, 6, 167]
+   ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -173,7 +174,8 @@ def _ourRobot1(image, color):
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), -1)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), -1)
       
-   cv2.imshow("ourRobot1",out3)
+   if not _live:
+      cv2.imshow("ourRobot1",out3)
    return (x,y,angle)
 
 def _field(image, color):
@@ -213,7 +215,8 @@ def _field(image, color):
       # print(x,y,w,h)
       cv2.rectangle(out3, (int(x), int(y)), (int(x+w), int(y+h)), (0,255,0), 2)
 
-   cv2.imshow("field",out3)
+   if not _live:
+      cv2.imshow("field",out3)
    return (x,y,w,h)
 
 def _ball(image, color):
@@ -250,7 +253,8 @@ def _ball(image, color):
       # print('ball',x,y,sortedObj[0][2])
       cv2.circle(out3, (int(x), int(y)), int(sortedObj[0][2]), (100,100,255), -1)
    
-   cv2.imshow("ball",out3)
+   if not _live:
+      cv2.imshow("ball",out3)
    return (x,y,0)
 
 def main():
