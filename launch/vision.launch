@@ -8,11 +8,14 @@
     <arg name="other_side" value="away" if="$(eval team_side == 'home')" />
     <arg name="other_side" value="home" if="$(eval team_side == 'away')" />
     
-    <group ns="teamrocket_$(arg team_side)">
+    <!-- <group ns="teamrocket_$(arg team_side)"> -->
       <!-- Hardware agnostic code -->
-      <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
-        <remap from="camera" to="/usb_cam_away/image_raw" />
-      </node>
-    </group>
+      <!-- <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen"> -->
+        <!-- <remap from="camera" to="/usb_cam_$(team_side)/image_raw" /> -->
+      <!-- </node> -->
+    <!-- </group> -->
+    <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
+        <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
+    </node>
 
 </launch>

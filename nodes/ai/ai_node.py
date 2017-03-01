@@ -75,13 +75,14 @@ def main():
     global _ally_number
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
-    _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
+    # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
+    _ally_number = '1'
 
     # Subscribe to Robot and Ball positions
     rospy.Subscriber('me',   Pose2D, _handle_me  )
-    rospy.Subscriber('ally', Pose2D, _handle_ally)
-    rospy.Subscriber('opp1', Pose2D, _handle_opp1)
-    rospy.Subscriber('opp2', Pose2D, _handle_opp2)
+    # rospy.Subscriber('ally', Pose2D, _handle_ally)
+    # rospy.Subscriber('opp1', Pose2D, _handle_opp1)
+    # rospy.Subscriber('opp2', Pose2D, _handle_opp2)
     rospy.Subscriber('ball', Pose2D, _handle_ball)
 
     # This message comes from the soccerref and

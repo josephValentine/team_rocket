@@ -31,10 +31,10 @@ _team_side = _home_side
 #              _ball_key  : _ball_msg}
              
 # Publishers
-_pub_home1 = rospy.Publisher('orienter/home1', Pose2D, queue_size=10)
-_pub_home2 = rospy.Publisher('orienter/home2', Pose2D, queue_size=10)
-_pub_away1 = rospy.Publisher('orienter/away1', Pose2D, queue_size=10)
-_pub_away2 = rospy.Publisher('orienter/away2', Pose2D, queue_size=10)
+_pub_us1 = rospy.Publisher('orienter/us1', Pose2D, queue_size=10)
+_pub_us2 = rospy.Publisher('orienter/us2', Pose2D, queue_size=10)
+_pub_them1 = rospy.Publisher('orienter/them1', Pose2D, queue_size=10)
+_pub_them2 = rospy.Publisher('orienter/them2', Pose2D, queue_size=10)
 _pub_ball  = rospy.Publisher('orienter/ball',  Pose2D, queue_size=10)
 
 
@@ -48,24 +48,24 @@ def _flip_coordinates(data):
     
 
 # Handlers
-def _handle_home1(msg):
+def _handle_us1(msg):
     oriented = _flip_coordinates(msg)
-    _pub_home1.publish(oriented)
+    _pub_us1.publish(oriented)
 
 
-def _handle_home2(msg):
+def _handle_us2(msg):
     oriented = _flip_coordinates(msg)
-    _pub_home2.publish(oriented)
+    _pub_us2.publish(oriented)
 
 
-def _handle_away1(msg):
+def _handle_them1(msg):
     oriented = _flip_coordinates(msg)
-    _pub_away1.publish(oriented)
+    _pub_them1.publish(oriented)
 
 
-def _handle_away2(msg):
+def _handle_them2(msg):
     oriented = _flip_coordinates(msg)
-    _pub_away2.publish(oriented)
+    _pub_them2.publish(oriented)
 
 
 def _handle_ball(msg):
@@ -82,11 +82,11 @@ def main():
     rospy.init_node('orienter', anonymous=False)
 
     # Subscribers
-    rospy.Subscriber('/vision/home1', Pose2D, _handle_home1)
-    rospy.Subscriber('/vision/home2', Pose2D, _handle_home2)
-    rospy.Subscriber('/vision/away1', Pose2D, _handle_away1)
-    rospy.Subscriber('/vision/away2', Pose2D, _handle_away2)
-    rospy.Subscriber('/vision/ball',  Pose2D, _handle_ball)
+    rospy.Subscriber('vision/us1', Pose2D, _handle_us1)
+    rospy.Subscriber('vision/us2', Pose2D, _handle_us2)
+    rospy.Subscriber('vision/them1', Pose2D, _handle_them1)
+    rospy.Subscriber('vision/them2', Pose2D, _handle_them2)
+    rospy.Subscriber('vision/ball',  Pose2D, _handle_ball)
 
     # all_pubs = {_home1_key : pub_home1, _home2_key : pub_home2,
     #             _away1_key : pub_away1, _away2_key : pub_away2,

@@ -28,7 +28,7 @@ def main():
 
    # subscribe to the velocities message
    rospy.Subscriber('vel_cmds', Twist, _handle_twist)
-   rospy.Subscriber('me', Pose2D, _handle_me)
+   # rospy.Subscriber('me', Pose2D, _handle_me)
 
    # create a serializer object
    ser = Serializer()

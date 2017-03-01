@@ -242,18 +242,18 @@ def _ball(image, color):
    return (x,y,0)
 
 def main():
-   rospy.init_node('ai', anonymous=False)
+   rospy.init_node('vision', anonymous=False)
 
    # subscribe to camera
    rospy.Subscriber('camera', Image, _process_img)
 
    global us1_pub, ball_pub
    # publish locations
-   us1_pub   = rospy.Publisher('us1', Pose2D, queue_size=10)
+   us1_pub   = rospy.Publisher('vision/us1', Pose2D, queue_size=10)
    # us2_pub   = rospy.Publisher('us2', Pose2D, queue_size=10)
    # them1_pub = rospy.Publisher('them1', Pose2D, queue_size=10)
    # them2_pub = rospy.Publisher('them2', Pose2D, queue_size=10)
-   ball_pub  = rospy.Publisher('ball', Pose2D, queue_size=10)
+   ball_pub  = rospy.Publisher('vision/ball', Pose2D, queue_size=10)
 
    rospy.spin()
    rate = rospy.Rate(100) # 100 Hz
