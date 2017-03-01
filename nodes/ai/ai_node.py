@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
-from soccerref.msg import GameState
+# from soccerref.msg import GameState
 
 import numpy as np
 
@@ -16,7 +16,7 @@ _ally_number = 1
 
 # create a blank GameState message
 # to keep track of current state
-_game_state = GameState()
+# _game_state = GameState()
 
 # initialize vision positions
 _me = Pose2D()
@@ -57,10 +57,10 @@ def _handle_ball(msg):
     _ball = msg
 
 
-def _handle_game_state(msg):
-    # print "handle_game_state"
-    global _game_state
-    _game_state = msg
+# def _handle_game_state(msg):
+#     print "handle_game_state"
+#     global _game_state
+#     _game_state = msg
 
 
 def main():
@@ -87,7 +87,7 @@ def main():
 
     # This message comes from the soccerref and
     # tells us if we should be playing or not
-    rospy.Subscriber('/game_state', GameState, _handle_game_state)
+    # rospy.Subscriber('/game_state', GameState, _handle_game_state)
 
     # This is our publisher that tells the controller where we want to be
     pub = rospy.Publisher('desired_position', Pose2D, queue_size=10)
@@ -100,25 +100,27 @@ def main():
 
         # Based on the state of the game and the positions of the players,
         # run the AI and return commanded positions for this robot
-        ai.update(_me, _ally, _opp1, _opp2, _ball, _game_state)
+        # ai.update(_me, _ally, _opp1, _opp2, _ball, _game_state)
+        ai.update(_me, _ally, _opp1, _opp2, _ball, None)
         cmds = ai.strategize()
         
         # Get a message ready to send
         msg = Pose2D()           
 
-        if _game_state.reset_field:
-            # Send robot to home
-            if _ally_number == 1:
-                msg.x = -0.5
-                msg.y = 0
-                msg.theta = 0
+        # if _game_state.reset_field:
+        #     # Send robot to home
+        #     if _ally_number == 1:
+        #         msg.x = -0.5
+        #         msg.y = 0
+        #         msg.theta = 0
 
-            elif _ally_number == 2:
-                msg.x = -1
-                msg.y = 0
-                msg.theta = 0
+        #     elif _ally_number == 2:
+        #         msg.x = -1
+        #         msg.y = 0
+        #         msg.theta = 0
 
-        else:
+        # else:
+        if True:
             # Run AI as normal
             msg.x = cmds[0]
             msg.y = cmds[1]
@@ -127,7 +129,8 @@ def main():
 
         # If we shouldn't play and the field doesn't need to be
         # reset, then the AI node is out of a job.
-        if _game_state.play or _game_state.reset_field:
+        # if _game_state.play or _game_state.reset_field:
+        if True:
             pub.publish(msg)
 
         # Wait however long it takes to make this tick at 100Hz
