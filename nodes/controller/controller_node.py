@@ -36,8 +36,8 @@ def _handle_me(msg):
     global _xmeas, _ymeas, _thetameas, _msg_received
     # print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
     #     _xhat, _yhat, _thetahat)
-    print 'Controller: _handle_me'
-    print '\tme: {}'.format(msg)
+    # print 'Controller: _handle_me'
+    # print '\tme: {}'.format(msg)
     _xmeas = msg.x
     _ymeas = msg.y
     _thetameas = msg.theta
@@ -45,8 +45,8 @@ def _handle_me(msg):
 
 
 def _handle_desired_position(msg):
-    print 'Controller: _handle_desired_position'
-    print '\tdesired_pos: {}'.format(msg)
+    # print 'Controller: _handle_desired_position'
+    # print '\tdesired_pos: {}'.format(msg)
     Controller.set_commanded_position(msg.x, msg.y, msg.theta)
 
 
@@ -101,7 +101,9 @@ def main():
         msg.linear.x = vx
         msg.linear.y = vy
         msg.angular.z = w
-        print 'Controller: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
+        # print 'Controller Before: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
+        # print 'Controller Twist:  vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(
+        #     msg.linear.x,msg.linear.y,msg.angular.z)
         pub.publish(msg)
         
         # Publish estimated state of robot
