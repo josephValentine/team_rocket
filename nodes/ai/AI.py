@@ -19,7 +19,7 @@ class AI(object):
         self.game_state.game_info.side = team_side
         self.team_side = team_side
         # Am I ally1?
-        self.ally1 = (ally_number == 1)
+        self.ally1 = (ally_number == "1")
         print 'I am ally %s' % ally_number
 
 

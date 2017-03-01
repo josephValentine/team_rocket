@@ -35,6 +35,8 @@ def main():
 
    # loop until shutdown
    rate = rospy.Rate(100) # 100 Hz
+
+   cntr = 0
    while not rospy.is_shutdown():
 
       # get body frame speeds
@@ -52,10 +54,14 @@ def main():
       w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
           vx_w, vy_w, wz, curAngle)
 
-      ser_factor = 80
+      ser_factor = 50
       w1, w2, w3 = w1*ser_factor, w2*ser_factor, w3*ser_factor
 
-      print 'Serializer: w1: {:.3f}\tw2: {:.3f}\tw3: {:.3f}'.format(w1, w2, w3)
+      if cntr == 20:
+          print 'Serializer: w1: {:.3f}\tw2: {:.3f}\tw3: {:.3f}'.format(
+              w1, w2, w3)
+          cntr = 0
+      cntr += 1
       # update the speeds
       ser.set_speed(w1, w2, w3)
 
