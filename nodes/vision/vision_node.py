@@ -42,7 +42,7 @@ def _process_img(msg):
    fieldColor=[189,108,215,123,25,31]
    ourRobot1Color=[241,50,184,207,18,69]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 145, 238, 177, 6, 160]
+   ballColor=[255, 145, 238, 177, 6, 167]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -75,8 +75,9 @@ def convert_coordinates(x,y,theta, field):
    realH = 2.38
    scaleH = realH / field[3]
    rval = Pose2D()
-   rval.x = (x - field[0])*scaleW
-   rval.y = (y - field[1])*scaleH
+   # subtract half the width/height to make 0,0 at center of field
+   rval.x = (x - field[0])*scaleW - realW/2
+   rval.y = (y - field[1])*scaleH - realH/2
    rval.theta = theta
    return rval
 

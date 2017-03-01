@@ -106,7 +106,7 @@ def main():
         
         # Get a message ready to send
         msg = Pose2D()
-        print 'ai_node: msg = %s' % msg
+        # print 'ai_node: msg = %s' % msg
 
         # if _game_state.reset_field:
         #     # Send robot to home
