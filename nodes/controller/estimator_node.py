@@ -68,7 +68,9 @@ def main():
         _estimate()
 
         # Publish estimated states
-        pub.publish(_hat)
+        # right now the estimator isn't working, using measured values
+        # pub.publish(_hat)
+        pub.publish(_measured)
 
         # Wait however long it takes to make this tick at proper control period
         rate.sleep()

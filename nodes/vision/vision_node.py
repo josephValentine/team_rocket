@@ -40,9 +40,9 @@ def _process_img(msg):
    # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[241,50,184,214,18,69]
+   ourRobot1Color=[241,50,184,207,18,69]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 88, 31, 166, 10, 0]
+   ballColor=[255, 145, 238, 177, 6, 160]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -155,7 +155,7 @@ def _ourRobot1(image, color):
    y=None
    angle=None
    if len(objects) >= 2:
-      sortedObj = sorted(objects,key=lambda x: x[2])
+      sortedObj = sorted(objects,key=lambda x: x[2],reverse=True)
       angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
       x = (sortedObj[0][0]+sortedObj[1][0])/2
       y = (sortedObj[0][1]+sortedObj[1][1])/2
@@ -226,7 +226,7 @@ def _ball(image, color):
    for c in cnts:
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
-      if radius > 2.5 and radius < 3:
+      if radius > 2.0 and radius < 3:
          objects.append((pt[0],pt[1],radius))
   
    x=None

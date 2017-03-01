@@ -32,7 +32,7 @@ _beta  = 0.1
 # -------------------
 
 def _handle_me(msg):
-    print 'Controller: _handle_me'
+    # print 'Controller: _handle_me'
     global _xmeas, _ymeas, _thetameas, _msg_received
     # print 'xhat: {}\nyhat: {}\nthetahat: {}'.format(
     #     _xhat, _yhat, _thetahat)
@@ -43,13 +43,13 @@ def _handle_me(msg):
 
 
 def _handle_desired_position(msg):
-    print 'Controller: _handle_desired_position'
+    # print 'Controller: _handle_desired_position'
     # print 'desired_pos: {}'.format(msg)
     Controller.set_commanded_position(msg.x, msg.y, msg.theta)
 
 
 def _estimate_state(vx, vy, w):
-    print 'Controller: estimating state'
+    # print 'Controller: estimating state'
     global _xhat, _yhat, _thetahat, _msg_received, _alpha
     
     _xhat = _xhat + _ctrl_period * vx
@@ -57,7 +57,7 @@ def _estimate_state(vx, vy, w):
     _thetahat = _thetahat + _ctrl_period * w
     
     if _msg_received:
-        print '\tmessage received'
+        # print '\tmessage received'
         _xhat = _alpha * _xhat + (1 - _alpha) * _xmeas
         _yhat = _alpha * _yhat + (1 - _alpha) * _ymeas
         _thetahat = _alpha * _thetahat + (1 - _alpha) * _thetameas

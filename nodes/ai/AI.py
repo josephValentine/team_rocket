@@ -20,7 +20,7 @@ class AI(object):
         self.team_side = team_side
         # Am I ally1?
         self.ally1 = (ally_number == 1)
-        print 'I am ally %d' % ally_number
+        print 'I am ally %s' % ally_number
 
 
     def update(self, me, ally, opp1, opp2, ball, game_state):
