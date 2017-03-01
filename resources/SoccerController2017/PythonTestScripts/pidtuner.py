@@ -17,6 +17,7 @@ def setPower(p1, p2, p3):
         writeFloat(p3)
 def setSpeed(s1, s2, s3):
         ser.write('s')
+        print 'setSpeed(%f, %f, %f)' % (s1, s2, s3)
         writeFloat(s1)
         writeFloat(s2)
         writeFloat(s3)
