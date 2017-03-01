@@ -171,8 +171,8 @@ def _ourRobot1(image, color):
       x = (sortedObj[0][0]+sortedObj[1][0])/2
       y = (sortedObj[0][1]+sortedObj[1][1])/2
       # print(x,y,angle)
-      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), -1)
-      cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), -1)
+      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
+      cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
       
    if not _live:
       cv2.imshow("ourRobot1",out3)
