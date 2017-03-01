@@ -24,7 +24,7 @@ def _show_raw(cv_image):
    clg = clahe.apply(g)
    clr = clahe.apply(r)
    img=cv2.merge((clb, clg, clr))
-   # cv2.imshow("Control", np.hstack([cv_image, img]))
+   cv2.imshow("Control", np.hstack([cv_image, img]))
    # cv2.imshow("Image window", cv_image)
 
 def _nothing(x):
@@ -37,10 +37,10 @@ def _process_img(msg):
    # return
 
    image = _ros2cv(msg)
-   _show_raw(image)
+   # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[235,50,184,214,18,69]
+   ourRobot1Color=[241,50,184,214,18,69]
    ourRobot2Color=[229,216,241,204,195,222]
    ballColor=[255, 88, 31, 166, 10, 0]
    opponent1Color=[229,216,241,204,195,222]
