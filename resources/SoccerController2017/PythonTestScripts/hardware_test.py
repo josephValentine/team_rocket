@@ -40,7 +40,8 @@ def getEncoderCount():
 def disengage():
         ser.write('d')
 
-totalTime = 3   #seconds
+# totalTime = 3   #seconds
+totalTime = 2   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
 pulsePerRotation = 200 #Old motors
@@ -62,32 +63,36 @@ speedsM2 = []
 speedsM3 = []
 
 
-def record_speed():
-for i in range(totalTime * sampleRate):
-        time.sleep(1.0/sampleRate)
-        times.append(i*1.0/sampleRate)
-        speed = getSpeed()
-        speedsM1.append(speed[0]/pulsePerRotation)
-        speedsM2.append(speed[1]/pulsePerRotation)
-        speedsM3.append(speed[2]/pulsePerRotation)
+def record_speed(starti):
+        for i in range(totalTime * sampleRate):
+                time.sleep(1.0/sampleRate)
+                times.append((starti + i)*1.0/sampleRate)
+                speed = getSpeed()
+                speedsM1.append(speed[0]/pulsePerRotation)
+                speedsM2.append(speed[1]/pulsePerRotation)
+                speedsM3.append(speed[2]/pulsePerRotation)
+        return starti + totalTime * sampleRate
 
+
+def runSpeed(speed1, speed2, speed3, starti):
+        setSpeed(speed1*pulsePerRotation, speed2*pulsePerRotation,
+                 speed3*pulsePerRotation)
+        starti = record_speed(starti)
+        setSpeed(0, 0, 0)
+        time.sleep(1.0)
+        return starti
 
 #setPower(80, 80, 80)
 #setSpeed(0, 0, 0)
-setSpeed(speedM1*pulsePerRotation, speedM2*pulsePerRotation, 0)
-record_speed()
-setSpeed(0, 0, 0)
-time.sleep(totalTime/10)
+starti = 0
 
-setSpeed(speedM1*pulsePerRotation, 0, speedM3*pulsePerRotation)
-record_speed()
-setSpeed(0, 0, 0)
-time.sleep(totalTime/10)
+starti = runSpeed(speedM1, -speedM2, 0, starti)
+starti = runSpeed(-speedM1, 0, speedM3, starti)
+starti = runSpeed(0, speedM2, -speedM3, starti)
+starti = runSpeed(speedM1, 0, 0, starti)
+starti = runSpeed(0, speedM2, 0, starti)
+starti = runSpeed(0, 0, speedM3, starti)
 
-setSpeed(0, speedM2*pulsePerRotation, speedM3*pulsePerRotation)
-record_speed()
-setSpeed(0, 0, 0)
-time.sleep(totalTime/10)
 
 # for i in range(0,totalTime * sampleRate):
 #         time.sleep(1.0/sampleRate)
@@ -102,7 +107,7 @@ plt.plot(times, speedsM1) #blue
 plt.plot(times, speedsM2) #green
 plt.plot(times, speedsM3) #red
 plt.legend(['motor1', 'motor2', 'motor3'], loc='lower right')
-plt.plot([0, totalTime], [speedM1, speedM1])
+plt.plot([0, starti/sampleRate], [speedM1, speedM1])
 
 
 plt.ylabel('Rotations per second for ' + str(len(speedsM1)) + ' samples')
