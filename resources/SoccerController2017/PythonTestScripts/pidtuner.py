@@ -65,6 +65,10 @@ speedsM1 = []
 speedsM2 = []
 speedsM3 = []
 
+# reset the buffers, this might help with the times when it doesn't work
+ser.reset_input_buffer()
+ser.reset_output_buffer()
+
 #setPower(80, 80, 80)
 #setSpeed(0, 0, 0)
 setSpeed(speedM1*pulsePerRotation, speedM2*pulsePerRotation, speedM3*pulsePerRotation)
