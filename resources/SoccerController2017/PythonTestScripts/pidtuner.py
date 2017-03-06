@@ -10,6 +10,10 @@ def writeFloat(f):
         ser.write(struct.pack('>i', int(f*1000)))
 def readFloat():
         return float(struct.unpack('>i', ser.read(4))[0])/1000
+        for _ in range(100):
+            if ser.in_waiting() == 4:
+                return float(struct.unpack('>i', ser.read(4))[0])/1000
+            time.sleep(1)
 def setPower(p1, p2, p3):
         ser.write('p')
         writeFloat(p1)
