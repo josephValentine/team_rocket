@@ -28,7 +28,7 @@ def main():
 
    # subscribe to the velocities message
    rospy.Subscriber('vel_cmds', Twist, _handle_twist)
-   # rospy.Subscriber('me', Pose2D, _handle_me)
+   rospy.Subscriber('me', Pose2D, _handle_me)
 
    # create a serializer object
    ser = Serializer()
@@ -43,8 +43,8 @@ def main():
       # get body frame speeds
       vx_w, vy_w = _twist.linear.x, _twist.linear.y
       curAngle   = _me.theta
-      vx_b, vy_b = FrameConverter._convert_world_to_body_velocities(
-         vx_w, vy_w, curAngle)
+      # vx_b, vy_b = FrameConverter._convert_world_to_body_velocities(
+      #    vx_w, vy_w, curAngle)
 
       # get wheel speeds
       wz = _twist.angular.z
