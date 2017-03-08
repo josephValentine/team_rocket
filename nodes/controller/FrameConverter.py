@@ -16,6 +16,29 @@ def _convert_world_to_body_velocities(vx_w, vy_w, curAngle):
     vy_b = math.cos(curAngle) * vy_w - math.sin(curAngle) * vx_w
     return vx_b, vy_b
 
+in2m=0.0254
+#radius of wheels
+R = 1
+
+#velocity vectors of wheels
+sbx1 = in2m * np.sqrt(3)/2
+sbx2 = in2m * -np.sqrt(3)/2
+sbx3 = in2m * 0
+
+sby1 = in2m * -0.5
+sby2 = in2m * -0.5
+sby3 = in2m * 1
+
+#distance from center of robot to wheel
+rbx1 = in2m * 3.5 * np.cos(np.pi/3)
+rbx2 = in2m * 3.5 * np.cos(-np.pi/3)
+rbx3 = in2m * -3.5
+
+rby1 = in2m * 3.5 * np.sin(np.pi/3)
+rby2 = in2m * 3.5 * np.sin(-np.pi/3)
+rby3 = in2m * 0
+
+count = 0
 def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     """ Converts world velocities to motor velocities.
     vx_w is the world x velocity.
@@ -28,27 +51,28 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     curAngle is in radians.
     converts inch measurements to meters
     """
-    in2m=0.0254
-    #radius of wheels
-    R = 1
+    curAngle = np.radians(curAngle)
+    # in2m=0.0254
+    # #radius of wheels
+    # R = 1
 
-    #velocity vectors of wheels
-    sbx1 = in2m * np.sqrt(3)/2
-    sbx2 = in2m * -np.sqrt(3)/2
-    sbx3 = in2m * 0
+    # #velocity vectors of wheels
+    # sbx1 = in2m * np.sqrt(3)/2
+    # sbx2 = in2m * -np.sqrt(3)/2
+    # sbx3 = in2m * 0
 
-    sby1 = in2m * -0.5
-    sby2 = in2m * -0.5
-    sby3 = in2m * 1
+    # sby1 = in2m * -0.5
+    # sby2 = in2m * -0.5
+    # sby3 = in2m * 1
 
-    #distance from center of robot to wheel
-    rbx1 = in2m * 3.5 * np.cos(np.pi/3)
-    rbx2 = in2m * 3.5 * np.cos(-np.pi/3)
-    rbx3 = in2m * -3.5
+    # #distance from center of robot to wheel
+    # rbx1 = in2m * 3.5 * np.cos(np.pi/3)
+    # rbx2 = in2m * 3.5 * np.cos(-np.pi/3)
+    # rbx3 = in2m * -3.5
 
-    rby1 = in2m * 3.5 * np.sin(np.pi/3)
-    rby2 = in2m * 3.5 * np.sin(-np.pi/3)
-    rby3 = in2m * 0
+    # rby1 = in2m * 3.5 * np.sin(np.pi/3)
+    # rby2 = in2m * 3.5 * np.sin(-np.pi/3)
+    # rby3 = in2m * 0
 
     r_theta = np.matrix([
         [np.cos(curAngle), np.sin(curAngle), 0],
@@ -67,6 +91,14 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     ])
 
     omega = np.dot(np.dot(M,r_theta), v_world)
+
+    global count
+    if count == 0:
+        print "_convert_world_to_motor_velocities(%f,%f,%f,%f)" % (vx_w, vy_w, wz, curAngle)
+        print "r_theta:\n%s" % r_theta
+        print "v_world:\n%s" % v_world
+        print "M:\n%s" % M
+    count = (count + 1) % 100
     # print 'omega: {}\nrepr: {}\ntype: {}'.format(
     #     omega, repr(omega), type(omega))
     # print '[0]: {}\n[0][0]: {}'.format(omega[0], omega[0][0])
