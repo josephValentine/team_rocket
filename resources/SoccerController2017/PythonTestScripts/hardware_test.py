@@ -41,17 +41,17 @@ def disengage():
         ser.write('d')
 
 # totalTime = 3   #seconds
-totalTime = 2   #seconds
+totalTime = 1   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
-pulsePerRotation = 200 #Old motors
-speedM1 = 2
-speedM2 = 2
-speedM3 = 2
+pulsePerRotation = 4955 #Old motors
+speedM1 = 5
+speedM2 = 5
+speedM3 = 5
 
 # Set the PIDQ values for all motors
 #setPID(0, 1, 1, 800)
-setPID(0, 1, 0, 800)
+setPID(0, 1.5, 3, 100000)
 
 # Set tick period (triggers PID control) and velocity filter corner frequency
 setT(20, 50)
@@ -79,7 +79,7 @@ def runSpeed(speed1, speed2, speed3, starti):
                  speed3*pulsePerRotation)
         starti = record_speed(starti)
         setSpeed(0, 0, 0)
-        time.sleep(1.0)
+        time.sleep(4.0)
         return starti
 
 #setPower(80, 80, 80)
