@@ -8,7 +8,7 @@ from geometry_msgs.msg import Pose2D
 class Serializer(object):
    def __init__(self):
       self.sampleRate = 50 #samples per second
-      self.pulsePerRotation = 25000 #Old motors
+      self.pulsePerRotation = 4955 #Old motors
       self.ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=None) #linux
    def set_speed(self, vw1, vw2, vw3):
       self.setSpeed(vw1*self.pulsePerRotation, vw2*self.pulsePerRotation,
@@ -54,7 +54,7 @@ def main():
 
    # Set the PIDQ values for all motors
    #setPID(0, 1, 1, 800)
-   ser.setPID(0, 1, 0, 800)
+   ser.setPID(0, 1.5, 3, 100000)
 
    # Set tick period (triggers PID control) and velocity filter corner frequency
    ser.setT(20, 50)
