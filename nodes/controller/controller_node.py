@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import rospy
-import Constants as cst
 from geometry_msgs.msg import Twist, Pose2D
 
 import numpy as np
@@ -45,11 +44,14 @@ def _handle_me(msg):
     _msg_received = True
 
 
+# See Constants.py
+field_length        = 3.40 # (134 in)  ## Old field was 3.68 # (12ft)
+field_width         = 2.38 # (93.875 in) ## Old field was 2.62 # (8.58 ft)
 def _handle_desired_position(msg):
     # print 'Controller: _handle_desired_position'
     # print '\tdesired_pos: {}'.format(msg)
     # Controller.set_commanded_position(msg.x, msg.y, msg.theta)
-    Controller.set_commanded_position(cst.field_length/2, cst.field_width/2, 0)
+    Controller.set_commanded_position(field_length/2, field_width/2, 0)
 
 
 def _estimate_state(vx, vy, w):
