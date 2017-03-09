@@ -97,18 +97,18 @@ def main():
         
         _estimate_state(vx, vy, w)
 
-        (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
+        (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
 
         # print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)
         # Publish Velocity Commands
         msg = Twist()
         msg.linear.x = vx
         msg.linear.y = vy
-        # msg.angular.z = w
+        msg.angular.z = w
         # staying at same angle, i.e. angular velocity of 0
         # cont_factor = 5
         # msg.linear.x, msg.linear.y = vx*cont_factor, vy*cont_factor
-        msg.angular.z = 0
+        # msg.angular.z = 0
         # print 'Controller Before: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
         # print 'Controller Twist:  vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(
         #     msg.linear.x,msg.linear.y,msg.angular.z)
