@@ -51,7 +51,8 @@ def _handle_desired_position(msg):
     # print 'Controller: _handle_desired_position'
     # print '\tdesired_pos: {}'.format(msg)
     # Controller.set_commanded_position(msg.x, msg.y, msg.theta)
-    Controller.set_commanded_position(field_length/2, field_width/2, 0)
+    # Controller.set_commanded_position(field_length/2, field_width/2, 0)
+    Controller.set_commanded_position(0, 0, 0)
 
 
 def _estimate_state(vx, vy, w):
