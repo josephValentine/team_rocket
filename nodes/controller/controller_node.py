@@ -26,8 +26,8 @@ _thetahat = 0
 
 # Lowpass filter constants
 # Need to be tuned
-_alpha = 0.1
-_beta  = 0.1
+_alpha = 0.9
+_beta  = 0.9
 
 # -------------------
 
@@ -97,7 +97,9 @@ def main():
         
         _estimate_state(vx, vy, w)
 
-        (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
+        # (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
+        (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
+
 
         # print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)
         # Publish Velocity Commands
@@ -116,13 +118,13 @@ def main():
         
         # Publish estimated state of robot
         state = Pose2D()
-        # state.x = _xhat
-        # state.y = _yhat
-        # state.theta = _thetahat
+        state.x = _xhat
+        state.y = _yhat
+        state.theta = _thetahat
         # right now the estimator isn't working, using measured values
-        state.x = _xmeas
-        state.y = _ymeas
-        state.theta = _thetameas
+        # state.x = _xmeas
+        # state.y = _ymeas
+        # state.theta = _thetameas
         pubState.publish(state)
 
         # Wait however long it takes to make this tick at proper control period
