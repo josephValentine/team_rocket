@@ -104,7 +104,7 @@ def main():
         msg = Twist()
         msg.linear.x = vx
         msg.linear.y = vy
-        msg.angular.z = w
+        msg.angular.z = w #this is wierd, i assume this is supposed to be angular velocity but it seems to be spitting out
         # staying at same angle, i.e. angular velocity of 0
         # cont_factor = 5
         # msg.linear.x, msg.linear.y = vx*cont_factor, vy*cont_factor

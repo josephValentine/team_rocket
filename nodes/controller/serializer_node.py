@@ -55,7 +55,7 @@ def main():
       w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
           vx_w, vy_w, wz, curAngle)
 
-      ser_factor = 50
+      ser_factor = 1#50
       w1, w2, w3 = w1*ser_factor, w2*ser_factor, w3*ser_factor
 
       if cntr == 20:
