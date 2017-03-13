@@ -52,6 +52,7 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     converts inch measurements to meters
     """
     curAngle = np.radians(curAngle)
+    wz = np.radians(wz)
     # in2m=0.0254
     # #radius of wheels
     # R = 1
