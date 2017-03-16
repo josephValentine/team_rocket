@@ -123,12 +123,12 @@ def main():
         # else:
         if True:
             # Run AI as normal
-            # msg.x = cmds[0]
-            # msg.y = cmds[1]
-            # msg.theta = cmds[2]
-            msg.x = 0
-            msg.y = 0
-            msg.theta = _me.theta
+            msg.x = cmds[0]
+            msg.y = cmds[1]
+            msg.theta = cmds[2]
+            # msg.x = 0
+            # msg.y = 0
+            # msg.theta = _me.theta
 
 
         # If we shouldn't play and the field doesn't need to be
