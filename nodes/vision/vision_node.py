@@ -35,8 +35,10 @@ def _nothing(x):
     pass
 
 #publish the raw coordinate data of the objects
+isFirst = True
 def _process_img(msg):
 
+   global isFirst
    # print 'hello everyone'
    # return
 
@@ -50,23 +52,28 @@ def _process_img(msg):
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
-   field = _field(image, fieldColor)
-   global us1_pub, ball_pub
+   field = _field(image, fieldColor, isFirst)
+   global us1_pub, us2_pub, ball_pub
 
    if all(field):
-      ourRobot1 = _ourRobot1(image, ourRobot1Color)
+      ourRobot1 = _findRobot(image, ourRobot1Color, "ourRobot1", isFirst, (3,3))
       if (ourRobot1[0] is not None and ourRobot1[1] is not None):#angle can be zero so cant use all() func
          us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
          us1_pub.publish(us1_msg)
 
+      ourRobot2 = _findRobot(image, ourRobot2Color, "ourRobot2", isFirst, (3,3))
+      if (ourRobot2[0] is not None and ourRobot2[1] is not None):#angle can be zero so cant use all() func
+         us2_msg = convert_coordinates(ourRobot2[0],ourRobot2[1],ourRobot2[2], field)
+         us2_pub.publish(us2_msg)
       
-      ball = _ball(image, ballColor)
+      ball = _ball(image, ballColor, isFirst)
       if (ball[0] is not None and ball[1] is not None):
          ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
          ball_pub.publish(ball_msg)
 
    if not _live:
       cv2.waitKey(3)#the windows dont stay open if this isnt here...
+   isFirst = False
 
    
    
@@ -84,12 +91,11 @@ def convert_coordinates(x,y,theta, field):
    rval.x = (x - field[0])*scaleW - realW/2
    rval.y = (y - field[1])*scaleH - realH/2
    rval.theta = theta
+   # flip y because image says y is down
+   rval.y = -rval.y
+   rval.theta = (-rval.theta) % 360
    return rval
 
-
-field_first = True
-ball_first = True
-ourRobot1_first = True
 
 def _color_mask(image, controlWindow, color, first=False):
 
@@ -139,13 +145,71 @@ def _color_mask(image, controlWindow, color, first=False):
 
    return out1
 
-def _ourRobot1(image, color):
+
+def _findRobot(image, color, name, isFirst, size):
+   """
+   image: image
+   color: array of color values for mask (6)
+   name: name of object, window (string)
+   isFirst: True if this is the first time (so we can initialize sliders)
+   size: tuple of dimensions (2)
+
+   """
+   if not _live:
+      cv2.namedWindow(name)
+   out1 = _color_mask(image,name,color,isFirst)
+   
+   #remove noise
+   kernel = np.ones(size,np.uint8) #sets size of holes accepted i think?
+   out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
+   out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
+
+   #find contours of objects
+   out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
+   # ret,thresh = cv2.threshold(out4,127,255,0)
+   (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+   objects=[]
+   for c in cnts:
+      pt,radius = cv2.minEnclosingCircle(c)
+      # cv2.drawContours(out4, [c],0,(0,128,255),1)
+      objects.append((pt[0],pt[1],radius))
+   
+   x=None
+   y=None
+   angle=None
+   if len(objects) >= 2:
+      sortedObj = sorted(objects,key=lambda x: x[2],reverse=True)
+      biggerObject, smallerObject = sortedObj[0], sortedObj[1]
+      biggerX, biggerY = biggerObject[0], biggerObject[1]
+      smallerX, smallerY = smallerObject[0], smallerObject[1]
+      deltaX = smallerX - biggerX
+      deltaY = smallerY - biggerY
+      # # because image domain says positive Y is down
+      # deltaY = -deltaY
+      # angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
+      # x = (sortedObj[0][0]+sortedObj[1][0])/2
+      # y = (sortedObj[0][1]+sortedObj[1][1])/2
+      angle = (np.arctan2(deltaY, deltaX)*180/np.pi) % 360
+      x = (biggerX+smallerX)/2
+      y = (biggerY+smallerY)/2
+      # # because image domain says positive Y is down
+      # y = -y
+      # print(x,y,angle)
+      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
+      cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
+      
+   if not _live:
+      cv2.imshow(name,out3)
+   return (x,y,angle)
+
+
+def _ourRobot1(image, color, isFirst):
+   return _findRobot(image, color, "ourRobot1", isFirst, (3,3))
 
    if not _live:
       cv2.namedWindow("ourRobot1")
-   global ourRobot1_first
-   out1 = _color_mask(image,'ourRobot1',color,ourRobot1_first)
-   ourRobot1_first = False
+   out1 = _color_mask(image,'ourRobot1',color,isFirst)
    
    #remove noise
    kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
@@ -173,14 +237,16 @@ def _ourRobot1(image, color):
       smallerX, smallerY = smallerObject[0], smallerObject[1]
       deltaX = smallerX - biggerX
       deltaY = smallerY - biggerY
-      # because image domain says positive Y is down
-      deltaY = -deltaY
+      # # because image domain says positive Y is down
+      # deltaY = -deltaY
       # angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
       # x = (sortedObj[0][0]+sortedObj[1][0])/2
       # y = (sortedObj[0][1]+sortedObj[1][1])/2
       angle = (np.arctan2(deltaY, deltaX)*180/np.pi) % 360
       x = (biggerX+smallerX)/2
       y = (biggerY+smallerY)/2
+      # # because image domain says positive Y is down
+      # y = -y
       # print(x,y,angle)
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
@@ -189,13 +255,11 @@ def _ourRobot1(image, color):
       cv2.imshow("ourRobot1",out3)
    return (x,y,angle)
 
-def _field(image, color):
+def _field(image, color, isFirst):
 
    if not _live:
       cv2.namedWindow("field")
-   global field_first
-   out1 = _color_mask(image, 'field',color,field_first)
-   field_first = False
+   out1 = _color_mask(image, 'field',color,isFirst)
    
    #remove noise
    kernel = np.ones((10,10),np.uint8) #sets size of holes accepted i think?
@@ -230,13 +294,11 @@ def _field(image, color):
       cv2.imshow("field",out3)
    return (x,y,w,h)
 
-def _ball(image, color):
+def _ball(image, color, isFirst):
 
    if not _live:
       cv2.namedWindow("ball")
-   global ball_first
-   out1 = _color_mask(image, 'ball',color,ball_first)
-   ball_first = False
+   out1 = _color_mask(image, 'ball',color,isFirst)
 
    #remove noise
    kernel = np.ones((2,2),np.uint8) #sets size of holes accepted i think?
@@ -274,12 +336,12 @@ def main():
    # subscribe to camera
    rospy.Subscriber('camera', Image, _process_img)
 
-   global us1_pub, ball_pub
+   global us1_pub, us2_pub, ball_pub
    # publish locations
    us1_pub   = rospy.Publisher('vision/us1', Pose2D, queue_size=10)
-   # us2_pub   = rospy.Publisher('us2', Pose2D, queue_size=10)
-   # them1_pub = rospy.Publisher('them1', Pose2D, queue_size=10)
-   # them2_pub = rospy.Publisher('them2', Pose2D, queue_size=10)
+   us2_pub   = rospy.Publisher('vision/us2', Pose2D, queue_size=10)
+   # them1_pub = rospy.Publisher('vison/them1', Pose2D, queue_size=10)
+   # them2_pub = rospy.Publisher('vision/them2', Pose2D, queue_size=10)
    ball_pub  = rospy.Publisher('vision/ball', Pose2D, queue_size=10)
 
    rospy.spin()
