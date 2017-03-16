@@ -116,7 +116,7 @@ def main():
         # print 'Controller Twist:  vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(
         #     msg.linear.x,msg.linear.y,msg.angular.z)
         # testing to just go in one direction
-        msg.linear.x, msg.linear.y, msg.angular.z = 0, 3, 0
+        # msg.linear.x, msg.linear.y, msg.angular.z = 0, 3, 0
         pub.publish(msg)
         
         # Publish estimated state of robot
