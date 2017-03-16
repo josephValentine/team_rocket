@@ -94,12 +94,12 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     omega = np.dot(np.dot(M,r_theta), v_world)
 
     global count
-    if count == 0:
-        print "_convert_world_to_motor_velocities(%f,%f,%f,%f)" % (vx_w, vy_w, wz, curAngle)
-        print "r_theta:\n%s" % r_theta
-        print "v_world:\n%s" % v_world
-        print "M:\n%s" % M
-    count = (count + 1) % 100
+    # if count == 0:
+    #     print "_convert_world_to_motor_velocities(%f,%f,%f,%f)" % (vx_w, vy_w, wz, curAngle)
+    #     print "r_theta:\n%s" % r_theta
+    #     print "v_world:\n%s" % v_world
+    #     print "M:\n%s" % M
+    # count = (count + 1) % 100
     # print 'omega: {}\nrepr: {}\ntype: {}'.format(
     #     omega, repr(omega), type(omega))
     # print '[0]: {}\n[0][0]: {}'.format(omega[0], omega[0][0])

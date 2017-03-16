@@ -40,10 +40,11 @@ _pub_ball  = rospy.Publisher('orienter/ball',  Pose2D, queue_size=10)
 
 def _flip_coordinates(data):
     oriented = data
-    if _team_side == _away_side:
-        oriented.x = -oriented.x
-        oriented.y = -oriented.y
-        oriented.theta = (oriented.theta + 180) % 360
+    # camera is already flipped...so we don't actually need this node
+    # if _team_side == _away_side:
+    #     oriented.x = -oriented.x
+    #     oriented.y = -oriented.y
+    #     oriented.theta = (oriented.theta + 180) % 360
     return oriented
     
 

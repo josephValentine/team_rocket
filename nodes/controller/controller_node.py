@@ -115,17 +115,19 @@ def main():
         # print 'Controller Before: vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(vx,vy,w)
         # print 'Controller Twist:  vx: {:.3f}\tvy: {:.3f}\t w: {:.3f}'.format(
         #     msg.linear.x,msg.linear.y,msg.angular.z)
+        # testing to just go in one direction
+        msg.linear.x, msg.linear.y, msg.angular.z = 0, 3, 0
         pub.publish(msg)
         
         # Publish estimated state of robot
         state = Pose2D()
-        state.x = _xhat
-        state.y = _yhat
-        state.theta = _thetahat
+        # state.x = _xhat
+        # state.y = _yhat
+        # state.theta = _thetahat
         # right now the estimator isn't working, using measured values
-        # state.x = _xmeas
-        # state.y = _ymeas
-        # state.theta = _thetameas
+        state.x = _xmeas
+        state.y = _ymeas
+        state.theta = _thetameas
         pubState.publish(state)
 
         # Wait however long it takes to make this tick at proper control period
