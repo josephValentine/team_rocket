@@ -40,8 +40,8 @@ def getEncoderCount():
 def disengage():
         ser.write('d')
 
-# totalTime = 3   #seconds
-totalTime = 1   #seconds
+totalTime = 3   #seconds
+# totalTime = 1   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
 pulsePerRotation = 4955 #Old motors
@@ -87,11 +87,11 @@ def runSpeed(speed1, speed2, speed3, starti):
 starti = 0
 
 starti = runSpeed(speedM1, -speedM2, 0, starti)
-starti = runSpeed(-speedM1, 0, speedM3, starti)
-starti = runSpeed(0, speedM2, -speedM3, starti)
-starti = runSpeed(speedM1, 0, 0, starti)
-starti = runSpeed(0, speedM2, 0, starti)
-starti = runSpeed(0, 0, speedM3, starti)
+# starti = runSpeed(-speedM1, 0, speedM3, starti)
+# starti = runSpeed(0, speedM2, -speedM3, starti)
+# starti = runSpeed(speedM1, 0, 0, starti)
+# starti = runSpeed(0, speedM2, 0, starti)
+# starti = runSpeed(0, 0, speedM3, starti)
 
 
 # for i in range(0,totalTime * sampleRate):
