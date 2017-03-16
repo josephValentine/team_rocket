@@ -44,7 +44,7 @@ def _process_img(msg):
    # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[241,50,184,207,18,69]
+   ourRobot1Color=[255,89,128,159,54,98]
    ourRobot2Color=[229,216,241,204,195,222]
    ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
@@ -136,6 +136,7 @@ def _color_mask(image, controlWindow, color, first=False):
    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
    mask = cv2.inRange(hsv, lower, upper)
    out1 = cv2.bitwise_and(image, image, mask = mask)
+
    return out1
 
 def _ourRobot1(image, color):
@@ -167,9 +168,19 @@ def _ourRobot1(image, color):
    angle=None
    if len(objects) >= 2:
       sortedObj = sorted(objects,key=lambda x: x[2],reverse=True)
-      angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
-      x = (sortedObj[0][0]+sortedObj[1][0])/2
-      y = (sortedObj[0][1]+sortedObj[1][1])/2
+      biggerObject, smallerObject = sortedObj[0], sortedObj[1]
+      biggerX, biggerY = biggerObject[0], biggerObject[1]
+      smallerX, smallerY = smallerObject[0], smallerObject[1]
+      deltaX = smallerX - biggerX
+      deltaY = smallerY - biggerY
+      # because image domain says positive Y is down
+      deltaY = -deltaY
+      # angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
+      # x = (sortedObj[0][0]+sortedObj[1][0])/2
+      # y = (sortedObj[0][1]+sortedObj[1][1])/2
+      angle = (np.arctan2(deltaY, deltaX)*180/np.pi) % 360
+      x = (biggerX+smallerX)/2
+      y = (biggerY+smallerY)/2
       # print(x,y,angle)
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
