@@ -183,18 +183,12 @@ def _findRobot(image, color, name, isFirst, size):
       biggerObject, smallerObject = sortedObj[0], sortedObj[1]
       biggerX, biggerY = biggerObject[0], biggerObject[1]
       smallerX, smallerY = smallerObject[0], smallerObject[1]
+      # go from bigger to smaller
       deltaX = smallerX - biggerX
       deltaY = smallerY - biggerY
-      # # because image domain says positive Y is down
-      # deltaY = -deltaY
-      # angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
-      # x = (sortedObj[0][0]+sortedObj[1][0])/2
-      # y = (sortedObj[0][1]+sortedObj[1][1])/2
       angle = (np.arctan2(deltaY, deltaX)*180/np.pi) % 360
       x = (biggerX+smallerX)/2
       y = (biggerY+smallerY)/2
-      # # because image domain says positive Y is down
-      # y = -y
       # print(x,y,angle)
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
@@ -203,57 +197,6 @@ def _findRobot(image, color, name, isFirst, size):
       cv2.imshow(name,out3)
    return (x,y,angle)
 
-
-def _ourRobot1(image, color, isFirst):
-   return _findRobot(image, color, "ourRobot1", isFirst, (3,3))
-
-   if not _live:
-      cv2.namedWindow("ourRobot1")
-   out1 = _color_mask(image,'ourRobot1',color,isFirst)
-   
-   #remove noise
-   kernel = np.ones((3,3),np.uint8) #sets size of holes accepted i think?
-   out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
-   out3 = cv2.morphologyEx(out2, cv2.MORPH_CLOSE, kernel)
-
-   #find contours of objects
-   out4= cv2.cvtColor(out3, cv2.COLOR_BGR2GRAY)
-   # ret,thresh = cv2.threshold(out4,127,255,0)
-   (_,cnts, _) = cv2.findContours(out4, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-   objects=[]
-   for c in cnts:
-      pt,radius = cv2.minEnclosingCircle(c)
-      # cv2.drawContours(out4, [c],0,(0,128,255),1)
-      objects.append((pt[0],pt[1],radius))
-   
-   x=None
-   y=None
-   angle=None
-   if len(objects) >= 2:
-      sortedObj = sorted(objects,key=lambda x: x[2],reverse=True)
-      biggerObject, smallerObject = sortedObj[0], sortedObj[1]
-      biggerX, biggerY = biggerObject[0], biggerObject[1]
-      smallerX, smallerY = smallerObject[0], smallerObject[1]
-      deltaX = smallerX - biggerX
-      deltaY = smallerY - biggerY
-      # # because image domain says positive Y is down
-      # deltaY = -deltaY
-      # angle = np.arctan2((sortedObj[1][1]-sortedObj[0][1]), (sortedObj[1][0]-sortedObj[0][0]))*180/np.pi + 180
-      # x = (sortedObj[0][0]+sortedObj[1][0])/2
-      # y = (sortedObj[0][1]+sortedObj[1][1])/2
-      angle = (np.arctan2(deltaY, deltaX)*180/np.pi) % 360
-      x = (biggerX+smallerX)/2
-      y = (biggerY+smallerY)/2
-      # # because image domain says positive Y is down
-      # y = -y
-      # print(x,y,angle)
-      cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
-      cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
-      
-   if not _live:
-      cv2.imshow("ourRobot1",out3)
-   return (x,y,angle)
 
 def _field(image, color, isFirst):
 
@@ -340,7 +283,7 @@ def main():
    # publish locations
    us1_pub   = rospy.Publisher('vision/us1', Pose2D, queue_size=10)
    us2_pub   = rospy.Publisher('vision/us2', Pose2D, queue_size=10)
-   # them1_pub = rospy.Publisher('vison/them1', Pose2D, queue_size=10)
+   # them1_pub = rospy.Publisher('vision/them1', Pose2D, queue_size=10)
    # them2_pub = rospy.Publisher('vision/them2', Pose2D, queue_size=10)
    ball_pub  = rospy.Publisher('vision/ball', Pose2D, queue_size=10)
 
