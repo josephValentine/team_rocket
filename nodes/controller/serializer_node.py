@@ -54,7 +54,7 @@ def main():
       #     vx_w, vy_w, curAngle)
 
       # Try going straight forward at 0.5 m/s
-      vx_w, vy_w, wz, curAngle = 0.5, 0, 0, 0
+      # vx_w, vy_w, wz, curAngle = 0.5, 0, 0, 0
       w1, w2, w3 = FrameConverter._convert_world_to_motor_velocities(
           vx_w, vy_w, wz, curAngle)
 
