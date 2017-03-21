@@ -20,16 +20,9 @@ def _ros2cv(msg):
       print(e)
 
 def _show_raw(cv_image):
-    # create a CLAHE object (Arguments are optional).
-   clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-   b, g, r = cv2.split(cv_image)
-   clb = clahe.apply(b)
-   clg = clahe.apply(g)
-   clr = clahe.apply(r)
-   img=cv2.merge((clb, clg, clr))
    if not _live:
-      cv2.imshow("Control", np.hstack([cv_image, img]))
-   # cv2.imshow("Image window", cv_image)
+      cv2.imshow("Image window", cv_image)
+      cv2.waitKey(3)
 
 def _nothing(x):
     pass

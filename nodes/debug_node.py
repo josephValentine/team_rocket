@@ -11,6 +11,13 @@ from std_msgs.msg import String
 
 # change this if we're live (on the pi)
 _live = False
+global image
+isFirst = True
+us1Vision = Pose2D()
+us1Estimated = Pose2D()
+us1Commanded = Pose2D()
+
+
 
 def _ros2cv(msg):
    try:
@@ -20,24 +27,34 @@ def _ros2cv(msg):
       print(e)
 
 
-def _show_raw(cv_image):
-    # create a CLAHE object (Arguments are optional).
-   clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-   b, g, r = cv2.split(cv_image)
-   clb = clahe.apply(b)
-   clg = clahe.apply(g)
-   clr = clahe.apply(r)
-   img=cv2.merge((clb, clg, clr))
+def _process_camera(msg):
+   global image, isFirst
+   image = _ros2cv(msg)
+   _draw(image, isFirst)
+   isFirst = False
+
+
+def _draw(image, isFirst):
    if not _live:
-      cv2.imshow("Control", np.hstack([cv_image, img]))
-   # cv2.imshow("Image window", cv_image)
+      if isFirst:
+         cv2.namedWindow("debug")
+      us1VisionX,us1VisionY,us1VisionTheta = convert_coordinates_back(us1Vision)
+      cv2.putText(image, 'us1V', (us1VisionX,us1VisionY), cv2.FONT_ITALIC, 0.3, (0,0,255))
+
+      us1EstimatedX,us1EstimatedY,us1EstimatedTheta = convert_coordinates_back(us1Estimated)
+      cv2.putText(image, 'us1E', (us1EstimatedX,us1EstimatedY), cv2.FONT_ITALIC, 0.3, (255,0,0))
+
+      us1CommandedX,us1CommandedY,us1CommandedTheta = convert_coordinates_back(us1Commanded)
+      cv2.putText(image, 'us1C', (us1CommandedX,us1CommandedY), cv2.FONT_ITALIC, 0.3, (0,255,255))
+
+      cv2.imshow("debug",image)
+      cv2.waitKey(3)
 
 
 def _nothing(x):
     pass
 
 
-isFirst = True
 
 def convert_coordinates(x,y,theta, field):
    # This assumes the field position zero is top left
@@ -70,60 +87,75 @@ def convert_coordinates_back(rval):
 
 
 def _process_measured_us1(msg):
-   pass
+   global us1Vision 
+   us1Vision = msg
+   
 
 def _process_measured_us2(msg):
+   global image
    pass
 
 def _process_measured_them1(msg):
+   global image
    pass
 
 def _process_measured_them2(msg):
+   global image
    pass
 
 def _process_measured_ball(msg):
+   global image
    pass
 
 def _process_estimated_us1(msg):
-   pass
+   global us1Estimated
+   us1Estimated = msg
 
 def _process_estimated_us2(msg):
+   global image
    pass
 
 def _process_estimated_them1(msg):
+   global image
    pass
 
 def _process_estimated_them2(msg):
+   global image
    pass
 
 def _process_estimated_ball(msg):
+   global image
    pass
 
 def _process_commanded_us1(msg):
-   pass
+   global us1Commanded
+   us1Commanded = msg
 
 def _process_commanded_us2(msg):
+   global image
    pass
 
 def main():
+   rospy.init_node('debug', anonymous=False)
+
+   #get camera to overlay images on
+   rospy.Subscriber('camera', Image, _process_camera)
 
    # subscribe to locations
    rospy.Subscriber('vision/us1',   Pose2D, _process_measured_us1)
-   rospy.Subscriber('vision/us2',   Pose2D, _process_measured_us2)
-   rospy.Subscriber('vision/them1', Pose2D, _process_measured_them1)
-   rospy.Subscriber('vision/them2', Pose2D, _process_measured_them2)
-   rospy.Subscriber('vision/ball',  Pose2D, _process_measured_ball)
+   # rospy.Subscriber('vision/us2',   Pose2D, _process_measured_us2)
+   # rospy.Subscriber('vision/them1', Pose2D, _process_measured_them1)
+   # rospy.Subscriber('vision/them2', Pose2D, _process_measured_them2)
+   # rospy.Subscriber('vision/ball',  Pose2D, _process_measured_ball)
 
    rospy.Subscriber('controller/us1',  Pose2D, _process_estimated_us1)
-   rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
-   rospy.Subscriber('estimator/them1', Pose2D, _process_estimated_them1)
-   rospy.Subscriber('estimator/them2', Pose2D, _process_estimated_them2)
-   rospy.Subscriber('estimator/ball',  Pose2D, _process_estimated_ball)
+   # rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
+   # rospy.Subscriber('estimator/them1', Pose2D, _process_estimated_them1)
+   # rospy.Subscriber('estimator/them2', Pose2D, _process_estimated_them2)
+   # rospy.Subscriber('estimator/ball',  Pose2D, _process_estimated_ball)
 
    rospy.Subscriber('desired_position/us1', Pose2D, _process_commanded_us1)
-   rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)
-
-   cv2.namedWindow("debug")
+   # rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)
 
    
    rospy.spin()
