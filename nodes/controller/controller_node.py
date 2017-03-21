@@ -61,7 +61,7 @@ def _estimate_state(vx, vy, w):
     
     _xhat = _xhat + _ctrl_period * vx
     _yhat = _yhat + _ctrl_period * vy
-    _thetahat = _thetahat + _ctrl_period * w
+    _thetahat = (_thetahat + _ctrl_period * w) % 360
     
     if _msg_received:
         # print '\tmessage received'

@@ -18,16 +18,18 @@ def _convert_world_to_body_velocities(vx_w, vy_w, curAngle):
 
 in2m=0.0254
 #radius of wheels
-R = 1
+# We forgot to convert the wheel radius. Now we're good.
+R = in2m * 1
 
 #velocity vectors of wheels
-sbx1 = in2m * np.sqrt(3)/2
-sbx2 = in2m * -np.sqrt(3)/2
-sbx3 = in2m * 0
+# Does not need in2m because they are unitless
+sbx1 = np.sqrt(3)/2
+sbx2 = -np.sqrt(3)/2
+sbx3 = 0
 
-sby1 = in2m * -0.5
-sby2 = in2m * -0.5
-sby3 = in2m * 1
+sby1 = -0.5
+sby2 = -0.5
+sby3 = 1
 
 #distance from center of robot to wheel
 rbx1 = in2m * 3.5 * np.cos(np.pi/3)
@@ -41,14 +43,15 @@ rby3 = in2m * 0
 count = 0
 def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     """ Converts world velocities to motor velocities.
-    vx_w is the world x velocity.
-    vy_w is the world y velocity.
-    wz is the angular speed of the robot.
+    vx_w is the world x velocity in m/s (because vision reports positions in 
+         units of meters).
+    vy_w is the world y velocity in m/s.
+    wz is the angular speed of the robot in degrees/s.
     curAngle is the current bearing of the robot in the world coordinate system.
 
     returns numpy matrix of wheel speeds(omega)
-    wz is in radians/second.
-    curAngle is in radians.
+    wz is in degrees/second.
+    curAngle is in degrees.
     converts inch measurements to meters
     """
     curAngle = np.radians(curAngle)
@@ -107,7 +110,7 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
     return omega.item(0,0), omega.item(1,0), omega.item(2,0)
 
 def test():
-    omega = _convert_world_to_motor_velocities(10,0,3.14)
+    omega = _convert_world_to_motor_velocities(0.2,0.2,30,180)
     print(omega)
 
 if __name__ == '__main__':

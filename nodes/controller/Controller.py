@@ -32,9 +32,11 @@ def init(gains=None):
     thetaI = 0
     thetaD = 0
 
-    PID_x = PID(xP, xI, xD, 2, 0.05, integrator_limit=0.05)
-    PID_y = PID(yP, yI, yD, 2, 0.05, integrator_limit=0.05)
-    PID_theta = PID(thetaP, thetaI, thetaD, 180, 0.05, integrator_limit=0.05)
+    # The limits that we pass in are limits to how fast the robot can go.
+    # Limit x and y velocities to 0.5 m/s, angular velocity to 30 deg/s.
+    PID_x = PID(xP, xI, xD, 0.5, 0.05, integrator_limit=0.05)
+    PID_y = PID(yP, yI, yD, 0.5, 0.05, integrator_limit=0.05)
+    PID_theta = PID(thetaP, thetaI, thetaD, 30, 0.05, integrator_limit=0.05)
 
 def set_commanded_position(x, y, theta):
     """Set Commanded Position
