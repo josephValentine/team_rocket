@@ -4,6 +4,11 @@
     <arg name="team_side" default="away" />
     <arg name="sim_mode" default="true" />
     <arg name="two_robots" default="true" />
+    <!-- Set to false if you're not debugging
+         This creates a window to show us where it thinks the robot is and where
+         it's trying to go. -->
+    <!-- Actually right now we're only doing debugging in vision, not here -->
+    <!-- <arg name="debug" default="true" /> -->
 
     <!-- Outputs to either real world or simulation -->
     <!-- <arg name="vel_cmd_ally1" default="vel_cmds" /> -->
@@ -34,7 +39,7 @@
 
         <!-- Set ROS parameters that the code can access -->
         <param name="team_side" type="string" value="$(arg team_side)" />
-        
+
         <!-- <group ns="ally1"> -->
             <!-- Start the robot up -->
             <include file="$(find teamrocket)/launch/robot.launch">

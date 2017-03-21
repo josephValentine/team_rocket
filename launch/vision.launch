@@ -2,12 +2,16 @@
 <launch>
     <!-- declare arg to be passed in -->
     <arg name="team_side" default="away" />
+    <!-- Set to false if you're not debugging
+         This creates a window to show us where it thinks the robot is and where
+         it's trying to go. -->
+    <arg name="debug" default="true" />
 
     <!-- using which side of the field we are on, determine the appropriate -->
     <!-- connections to the output of the vision system -->
     <arg name="other_side" value="away" if="$(eval team_side == 'home')" />
     <arg name="other_side" value="home" if="$(eval team_side == 'away')" />
-    
+
     <!-- <group ns="teamrocket_$(arg team_side)"> -->
       <!-- Hardware agnostic code -->
       <!-- <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen"> -->
@@ -15,9 +19,18 @@
       <!-- </node> -->
     <!-- </group> -->
     <group ns="teamrocket_$(arg team_side)">
+
         <node name="vision" pkg="teamrocket" type="vision_node.py" output="screen">
             <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
         </node>
+
+        <!-- Start the debug windows up (maybe) -->
+        <node name="debug" pkg="teamrocket" type="debug_node.py" output="screen"
+              if="$(arg debug)">
+              <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
+        </node>
+
     </group>
-    
+
+
 </launch>
