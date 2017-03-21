@@ -26,7 +26,7 @@ _thetahat = 0
 
 # Lowpass filter constants
 # Need to be tuned
-_alpha = 0.9
+_alpha = 0.5
 _beta  = 0.9
 
 # -------------------
@@ -98,8 +98,8 @@ def main():
         
         _estimate_state(vx, vy, w)
 
-        # (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
-        (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
+        (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
+        # (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
 
 
         # print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)

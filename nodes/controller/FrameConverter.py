@@ -94,7 +94,7 @@ def _convert_world_to_motor_velocities(vx_w, vy_w, wz, curAngle):
         [sbx3, sby3, (sby3*rbx3 - sbx3*rby3)]
     ])
 
-    omega = np.dot(np.dot(M,r_theta), v_world)
+    omega = np.dot(np.dot(M,r_theta), v_world) / (2 * np.pi)
 
     global count
     # if count == 0:

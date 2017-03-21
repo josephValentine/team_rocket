@@ -20,23 +20,23 @@ velocities = (0, 0, 0)
 def init(gains=None):
     global PID_x, PID_y, PID_theta
 
-    xP = 5
+    xP = 1.1
     xI = 0
     xD = 0
 
-    yP = 5
+    yP = 1.1
     yI = 0
     yD = 0
 
-    thetaP = 3
+    thetaP = 0.3
     thetaI = 0
     thetaD = 0
 
     # The limits that we pass in are limits to how fast the robot can go.
     # Limit x and y velocities to 0.5 m/s, angular velocity to 30 deg/s.
-    PID_x = PID(xP, xI, xD, 0.5, 0.05, integrator_limit=0.05)
-    PID_y = PID(yP, yI, yD, 0.5, 0.05, integrator_limit=0.05)
-    PID_theta = PID(thetaP, thetaI, thetaD, 30, 0.05, integrator_limit=0.05)
+    PID_x = PID(xP, xI, xD, 1, 0.05, integrator_limit=0.05)
+    PID_y = PID(yP, yI, yD, 1, 0.05, integrator_limit=0.05)
+    PID_theta = PID(thetaP, thetaI, thetaD, 90, 0.05, integrator_limit=0.05)
 
 def set_commanded_position(x, y, theta):
     """Set Commanded Position
