@@ -26,7 +26,7 @@ _thetahat = 0
 
 # Lowpass filter constants
 # Need to be tuned
-_alpha = 0.9
+_alpha = 0.5
 _beta  = 0.9
 
 # -------------------

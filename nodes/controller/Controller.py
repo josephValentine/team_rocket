@@ -20,11 +20,11 @@ velocities = (0, 0, 0)
 def init(gains=None):
     global PID_x, PID_y, PID_theta
 
-    xP = 1
+    xP = 1.1
     xI = 0
     xD = 0
 
-    yP = 1
+    yP = 1.1
     yI = 0
     yD = 0
 
