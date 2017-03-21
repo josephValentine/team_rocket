@@ -98,8 +98,8 @@ def main():
         
         _estimate_state(vx, vy, w)
 
-        # (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
-        (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
+        (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
+        # (vx, vy, w) = Controller.update(_ctrl_period, _xhat, _yhat, _thetahat)
 
 
         # print 'vx: {}\nvy: {}\nw: {}'.format(vx, vy, w)
