@@ -21,6 +21,7 @@ class AI(object):
         # Am I ally1?
         self.ally1 = (ally_number == "1")
         print 'I am ally %s' % ally_number
+        self.timer = 0
 
 
     def update(self, me, ally, opp1, opp2, ball, game_state):
@@ -110,17 +111,23 @@ class AI(object):
         # print 'mevec:', mevec
         # print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
         if dist_to_ball < 0.21:
-            # print 'Close enough to drive to goal'
-            cmdvec = goalvec
+            if self.timer > 25:
+                # print 'Close enough to drive to goal'
+                cmdvec = goalvec
+            else:
+                self.timer += 1
+                # try to get stable first before driving
+                cmdvec = p
             # Addition
-            if dist_to_ball < 0.11:
-                # print 'Close enough to kick!'
-                # kick!
-                try:
-                    self.kick()
-                except Exception as e:
-                    print e
+            # if dist_to_ball < 0.11:
+            #     # print 'Close enough to kick!'
+            #     # kick!
+            #     try:
+            #         self.kick()
+            #     except Exception as e:
+            #         print e
         else:
+            self.timer = 0
             # print 'Get behind ball'
             cmdvec = p
 
