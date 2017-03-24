@@ -7,7 +7,9 @@ from Models import GameState, Field, GameInfo
 from Geometry.Models import Position, Point, Angle
 from geometry_msgs.msg import Pose2D
 
-field_width = 3.53
+#field_width = 3.53
+field_width = 3.40
+field_height = 2.38
 no_attack = False
 
 class AI(object):
@@ -98,40 +100,92 @@ class AI(object):
         if self.game_state.game_info.side == 'home':
             goalvec = -goalvec
 
-        # unit vector from ball to goal
-        uv = goalvec - ballvec
-        uv = uv/np.linalg.norm(uv)
-
-        # compute a position 20cm behind ball, but aligned with goal
-        p = ballvec - 0.30*uv
-
-        # If I am sufficiently close to the point behind the ball,
-        # or in other words, once I am 21cm behind the ball, just
-        # drive to the goal.
-        dist_to_ball = np.linalg.norm(p - mevec)
-        # print 'p:', p
-        # print 'mevec:', mevec
-        # print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
-        if dist_to_ball < 0.31:
-            if self.timer > 25:
-                # print 'Close enough to drive to goal'
-                cmdvec = goalvec
-            else:
-                self.timer += 1
-                # try to get stable first before driving
-                cmdvec = p
-            # Addition
-            # if dist_to_ball < 0.11:
-            #     # print 'Close enough to kick!'
-            #     # kick!
-            #     try:
-            #         self.kick()
-            #     except Exception as e:
-            #         print e
+        # Check if ball is between us and goal. If so, go to goal.
+        me2ballvec = (ballvec - mevec) * 1000
+        goalTopvec = np.array([[field_width/2], [field_height/2]])
+        goalBottomvec = np.array([[field_width/2], [-field_height/2]])
+        command = _intersection(mevec, mevec + me2ballvec, goalBottomvec, goalTopvec)
+        if command != None:
+            cmdvec = command
         else:
-            self.timer = 0
-            # print 'Get behind ball'
+            # Get vectors away from ball along the principle axes.
+            # These will be used to get around the ball instead of
+            # driving the ball into our own goal.
+            # 20 cm away from the ball
+            b_posXvec = ballvec + np.array([[ 0.20], [  0.0]])
+            b_posYvec = ballvec + np.array([[  0.0], [ 0.20]])
+            b_negXvec = ballvec + np.array([[-0.20], [  0.0]])
+            b_negYvec = ballvec + np.array([[  0.0], [-0.20]])
+
+            # unit vector from ball to goal
+            uv = goalvec - ballvec
+            uv = uv/np.linalg.norm(uv)
+
+            # compute a position 20cm behind ball, but aligned with goal
+            p = ballvec - 0.30*uv
+
+            # Compute vector from me to commanded position
+            me2comvec = p - mevec
+
+            # Find the closest ball vector that me2comvec intersects
+            # Initialize closest distances to 50 meters
+            close_dist = 50
+            dist = 50
+            closest = _intersection(mevec, p, ballvec, b_posXvec)
+            if closest != None:
+                close_dist = np.linalg.norm(mevec - closest)
+                p = ballvec + b_posXvec
+            intersect = _intersection(mevec, p, ballvec, b_posYvec)
+            if intersect != None:
+                dist = np.linalg.norm(mevec - intersect)
+            if dist < close_dist:
+                closest = intersect
+                close_dist = dist
+                p = ballvec + b_posYvec
+            intersect = _intersection(mevec, p, ballvec, b_negXvec)
+            if intersect != None:
+                dist = np.linalg.norm(mevec - intersect)
+            if dist < close_dist:
+                closest = intersect
+                close_dist = dist
+                p = ballvec + b_negXvec
+            intersect = _intersection(mevec, p, ballvec, b_negYvec)
+            if intersect != None:
+                dist = np.linalg.norm(mevec - intersect)
+            if dist < close_dist:
+                closest = intersect
+                close_dist = dist
+                p = ballvec + b_negYvec
+
+
             cmdvec = p
+            # # If I am sufficiently close to the point behind the ball,
+            # # or in other words, once I am 21cm behind the ball, just
+            # # drive to the goal.
+            # dist_to_ball = np.linalg.norm(p - mevec)
+            # # print 'p:', p
+            # # print 'mevec:', mevec
+            # # print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
+            # if dist_to_ball < 0.31:
+            #     if self.timer > 25:
+            #         # print 'Close enough to drive to goal'
+            #         cmdvec = goalvec
+            #     else:
+            #         self.timer += 1
+            #         # try to get stable first before driving
+            #         cmdvec = p
+            #     # Addition
+            #     # if dist_to_ball < 0.11:
+            #     #     # print 'Close enough to kick!'
+            #     #     # kick!
+            #     #     try:
+            #     #         self.kick()
+            #     #     except Exception as e:
+            #     #         print e
+            # else:
+            #     self.timer = 0
+            #     # print 'Get behind ball'
+            #     cmdvec = p
 
         return (cmdvec.flatten()[0], cmdvec.flatten()[1], 0)
 
@@ -197,6 +251,36 @@ def _position_to_tuple(position):
 def _flip_coordinate_system(cmds):
     return cmds
     # return (-cmds[0], -cmds[1], (cmds[2]+180) % 360)
+
+def _intersection(a1, a2, b1, b2):#s1, s2):
+    left = max(min(a1[0], a2[0]), min(b1[0], b2[0]))
+    right = min(max(a1[0], a2[0]), max(b1[0], b2[0]))
+    top = max(min(a1[1], a2[1]), min(b1[1], b2[1]))
+    bottom = min(max(a1[1], a2[1]), max(b1[1], b2[1]))
+
+    if top > bottom or left > right:
+        return None # No intersection
+    if (top,left) == (bottom,right):
+        return np.array([[left],[top]])
+    return None # Lines overlap; shouldn't ever happen
+
+def _perp(a):
+    b = empty_like(a)
+    b[0] = -a[1]
+    b[1] = a[0]
+    return b
+
+def _seg_intersect(a1, a2, b1, b2):
+    da = a2 - a1
+    db = b2 - b1
+    dp = a1 - b1
+    dap = _perp(da)
+    denom = dot(dap, db)
+    num = dot(dap, dp)
+    # This could potentially cause a divide by 0 error if the
+    # lines are parallel
+    intersect = (num / denom.astype(float)) * db + b1
+    return intersect
 
 if __name__ == '__main__':
    test()
