@@ -105,7 +105,7 @@ class AI(object):
         goalTopvec = np.array([[field_width/2], [field_height/2]])
         goalBottomvec = np.array([[field_width/2], [-field_height/2]])
         command = _intersection(mevec, mevec + me2ballvec, goalBottomvec, goalTopvec)
-        if command != None:
+        if command is not None:
             cmdvec = command
         else:
             # Get vectors away from ball along the principle axes.
@@ -132,26 +132,30 @@ class AI(object):
             close_dist = 50
             dist = 50
             closest = _intersection(mevec, p, ballvec, b_posXvec)
-            if closest != None:
+            if closest is not None:
                 close_dist = np.linalg.norm(mevec - closest)
+                print 'dist to b_posXvec = {}'.format(close_dist)
                 p = ballvec + b_posXvec
             intersect = _intersection(mevec, p, ballvec, b_posYvec)
-            if intersect != None:
+            if intersect is not None:
                 dist = np.linalg.norm(mevec - intersect)
+                print 'dist to b_posYvec = {}'.format(dist)
             if dist < close_dist:
                 closest = intersect
                 close_dist = dist
                 p = ballvec + b_posYvec
             intersect = _intersection(mevec, p, ballvec, b_negXvec)
-            if intersect != None:
+            if intersect is not None:
                 dist = np.linalg.norm(mevec - intersect)
+                print 'dist to b_negXvec = {}'.format(dist)
             if dist < close_dist:
                 closest = intersect
                 close_dist = dist
                 p = ballvec + b_negXvec
             intersect = _intersection(mevec, p, ballvec, b_negYvec)
-            if intersect != None:
+            if intersect is not None:
                 dist = np.linalg.norm(mevec - intersect)
+                print 'dist to b_negYvec = {}'.format(dist)
             if dist < close_dist:
                 closest = intersect
                 close_dist = dist
