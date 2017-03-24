@@ -31,7 +31,7 @@ def _nothing(x):
 isFirst = True
 def _process_img(msg):
 
-   global isFirst
+   global isFirst, field
    # print 'hello everyone'
    # return
 
@@ -45,13 +45,25 @@ def _process_img(msg):
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
-   field = _field(image, fieldColor, isFirst)
-   global us1_pub, us2_pub, ball_pub
+   if isFirst:
+      field = _field(image, fieldColor, isFirst)
+   global us1_pub, us2_pub, ball_pub, field_dim_pub, field_pos_pub
+   dim_msg = Pose2D()
+   dim_msg.x = field[2]
+   dim_msg.y = field[3]
+   dim_msg.theta = 0
+   field_dim_pub.publish(dim_msg)
+   pos_msg = Pose2D()
+   pos_msg.x = field[0]
+   pos_msg.y = field[1]
+   pos_msg.theta = 0
+   field_pos_pub.publish(pos_msg)
 
    if all(field):
       ourRobot1 = _findRobot(image, ourRobot1Color, "ourRobot1", isFirst, (3,3))
       if (ourRobot1[0] is not None and ourRobot1[1] is not None):#angle can be zero so cant use all() func
          us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
+         # print 'x_old = {}, y_old = {}'.format(ourRobot1[0], ourRobot1[1])
          us1_pub.publish(us1_msg)
 
       ourRobot2 = _findRobot(image, ourRobot2Color, "ourRobot2", isFirst, (3,3))
@@ -272,13 +284,15 @@ def main():
    # subscribe to camera
    rospy.Subscriber('camera', Image, _process_img)
 
-   global us1_pub, us2_pub, ball_pub
+   global us1_pub, us2_pub, ball_pub, field_dim_pub, field_pos_pub
    # publish locations
    us1_pub   = rospy.Publisher('vision/us1', Pose2D, queue_size=10)
    us2_pub   = rospy.Publisher('vision/us2', Pose2D, queue_size=10)
    # them1_pub = rospy.Publisher('vision/them1', Pose2D, queue_size=10)
    # them2_pub = rospy.Publisher('vision/them2', Pose2D, queue_size=10)
    ball_pub  = rospy.Publisher('vision/ball', Pose2D, queue_size=10)
+   field_dim_pub = rospy.Publisher('vision/field_dim', Pose2D, queue_size=10)
+   field_pos_pub = rospy.Publisher('vision/field_pos', Pose2D, queue_size=10)
 
    rospy.spin()
    rate = rospy.Rate(100) # 100 Hz

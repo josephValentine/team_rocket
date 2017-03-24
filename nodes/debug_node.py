@@ -16,6 +16,10 @@ isFirst = True
 us1Vision = Pose2D()
 us1Estimated = Pose2D()
 us1Commanded = Pose2D()
+field_dim = Pose2D()
+field_dim.x = 1 # avoid dividing by zero the first couple of times
+field_dim.y = 1
+field_pos = Pose2D()
 
 
 
@@ -30,6 +34,8 @@ def _ros2cv(msg):
 def _process_camera(msg):
    global image, isFirst
    image = _ros2cv(msg)
+   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7) 
+
    _draw(image, isFirst)
    isFirst = False
 
@@ -77,12 +83,19 @@ def convert_coordinates(x,y,theta, field):
 
 def convert_coordinates_back(rval):
    realW = 3.40
-   scaleW = 1.0/200 # m/pixel
+   scaleW = realW / field_dim.x # m/pixel
+   # scaleW = 1.0/200
    realH = 2.38
-   scaleH = 1.0/200 # m/pixel
-   x = int((realW/2 + rval.x)/scaleW)  # field[0] is 0,0 for our image
-   y = int((realH/2 + -rval.y)/scaleH) # field[0] is 0,0 for our image
+   scaleH = realH / field_dim.y # m/pixel
+   # scaleH = 1.0/200
+   x = int((realW/2 + rval.x)/scaleW + field_pos.x)  # field[0] is 0,0 for our image
+   # negate y to flip to image coordinates again (y is down)
+   y = int((realH/2 + -rval.y)/scaleH + field_pos.y) # field[0] is 0,0 for our image
+   x = max(x,0) # make sure we don't get negative values
+   y = max(y,0)
+   # flip coordinates
    theta = (-rval.theta) % 360
+   # print 'x_new = {}, y_new = {}'.format(x, y)
    return x,y,theta
 
 
@@ -135,6 +148,14 @@ def _process_commanded_us2(msg):
    global image
    pass
 
+def _process_field_dim(msg):
+   global field_dim
+   field_dim = msg
+
+def _process_field_pos(msg):
+   global field_pos
+   field_pos = msg
+
 def main():
    rospy.init_node('debug', anonymous=False)
 
@@ -156,6 +177,9 @@ def main():
 
    rospy.Subscriber('desired_position/us1', Pose2D, _process_commanded_us1)
    # rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)
+
+   rospy.Subscriber('vision/field_dim', Pose2D, _process_field_dim)
+   rospy.Subscriber('vision/field_pos', Pose2D, _process_field_pos)
 
    
    rospy.spin()
