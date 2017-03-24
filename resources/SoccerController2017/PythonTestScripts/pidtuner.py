@@ -54,6 +54,11 @@ speedM3 = 5
 
 # Set the PIDQ values for all motors
 setPID(0, 1.5, 3, 100000)
+
+#setPID(1, 1.6, 3, 100000)
+#setPID(2, 1.5, 3, 100000)
+#setPID(3, 1.4, 3, 100000)
+
 #setPID(2, 1.5, 0, 100000)
 #setPID(3, 1.5, 0, 100000)
 #setPID(0, 1, 0, 800)
