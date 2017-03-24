@@ -95,13 +95,15 @@ class AI(object):
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
         goalvec = np.array([[field_width/2], [0]])
+        if self.game_state.game_info.side == 'home':
+            goalvec = -goalvec
 
         # unit vector from ball to goal
         uv = goalvec - ballvec
         uv = uv/np.linalg.norm(uv)
 
         # compute a position 20cm behind ball, but aligned with goal
-        p = ballvec - 0.20*uv
+        p = ballvec - 0.30*uv
 
         # If I am sufficiently close to the point behind the ball,
         # or in other words, once I am 21cm behind the ball, just
@@ -110,7 +112,7 @@ class AI(object):
         # print 'p:', p
         # print 'mevec:', mevec
         # print 'distance to ball: ', dist_to_ball, type(dist_to_ball)
-        if dist_to_ball < 0.21:
+        if dist_to_ball < 0.31:
             if self.timer > 25:
                 # print 'Close enough to drive to goal'
                 cmdvec = goalvec

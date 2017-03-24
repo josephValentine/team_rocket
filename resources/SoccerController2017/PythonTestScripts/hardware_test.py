@@ -45,9 +45,9 @@ totalTime = 3   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
 pulsePerRotation = 4955 #Old motors
-speedM1 = 5
-speedM2 = 5
-speedM3 = 5
+speedM1 = 3.5
+speedM2 = 3.5
+speedM3 = 3.5
 
 # Set the PIDQ values for all motors
 #setPID(0, 1, 1, 800)
@@ -87,8 +87,8 @@ def runSpeed(speed1, speed2, speed3, starti):
 starti = 0
 
 starti = runSpeed(speedM1, -speedM2, 0, starti)
-# starti = runSpeed(-speedM1, 0, speedM3, starti)
-# starti = runSpeed(0, speedM2, -speedM3, starti)
+starti = runSpeed(-speedM1, 0, speedM3, starti)
+starti = runSpeed(0, speedM2, -speedM3, starti)
 # starti = runSpeed(speedM1, 0, 0, starti)
 # starti = runSpeed(0, speedM2, 0, starti)
 # starti = runSpeed(0, 0, speedM3, starti)
