@@ -58,7 +58,7 @@ def _handle_ball(msg):
 
 
 def _handle_game_state(msg):
-    # print "handle_game_state"
+    print "handle_game_state"
     global _game_state
     _game_state = msg
 
@@ -101,12 +101,18 @@ def main():
     ai = AI(_team_side, _ally_number)
 
     rate = rospy.Rate(100) # 100 Hz
+    count = 0
     while not rospy.is_shutdown():
 
         # Get a message ready to send
         msg = Pose2D()
         # print 'ai_node: msg = %s' % msg
 
+        count = (count + 1) % 100
+        if count == 0:
+            # print _game_state
+            pass
+        
         if _game_state.reset_field:
             # Send robot to home
             if _ally_number == 1:
@@ -119,8 +125,8 @@ def main():
                 msg.y = 0
                 msg.theta = 0
 
-        elif _game_state.play:
-        # if True:
+        # elif _game_state.play:
+        elif True:
             # Run AI as normal
             # Based on the state of the game and the positions of the players,
             # run the AI and return commanded positions for this robot
@@ -137,8 +143,8 @@ def main():
 
         # If we shouldn't play and the field doesn't need to be
         # reset, then the AI node is out of a job.
-        if _game_state.play or _game_state.reset_field:
-        # if True:
+        # if _game_state.play or _game_state.reset_field:
+        if True:
             pub.publish(msg)
 
         # Wait however long it takes to make this tick at 100Hz
