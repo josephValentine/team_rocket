@@ -75,11 +75,20 @@ def main():
     _team_side = rospy.get_param(team_param_name, 'home')
 
     # which ally are we?
+    global _my_number
     global _ally_number
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
-    number_param_name = rospy.search_param('team_side')
-    _team_side = rospy.get_param(number_param_name, '1')
+    my_number_param_name = rospy.search_param('my_number')
+    _my_number = rospy.get_param(my_number_param_name, '1')
+    ally_number_param_name = rospy.search_param('ally_number')
+    _ally_number = rospy.get_param(ally_number_param_name, '2')
+    print 'team_param_name', team_param_name
+    print '_team_side', _team_side
+    print 'my_number_param_name', my_number_param_name
+    print '_my_number', _my_number
+    print 'ally_number_param_name', ally_number_param_name
+    print '_ally_number', _ally_number
     # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
     # _ally_number = '1'
 
@@ -98,7 +107,7 @@ def main():
     pub = rospy.Publisher('desired_position', Pose2D, queue_size=10)
 
     # Create the AI object
-    ai = AI(_team_side, _ally_number)
+    ai = AI(_team_side, _my_number)
 
     rate = rospy.Rate(100) # 100 Hz
     count = 0

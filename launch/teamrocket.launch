@@ -38,14 +38,16 @@
         </include>
 
         <!-- Set ROS parameters that the code can access -->
-        <param name="team_side" type="string" value="$(arg team_side)" />
+        <!-- <param name="my_number" type="string" /> -->
+        <!-- <param name="ally_number" type="string" /> -->
+        <!-- <param name="team_side" type="string" value="$(arg team_side)" /> -->
 
         <!-- <group ns="ally1"> -->
             <!-- Start the robot up -->
             <include file="$(find teamrocket)/launch/robot.launch">
-                <arg name="my_number" value="1" />
+                <arg name="my_number"	value="1" />
                 <arg name="ally_number" value="2" />
-                <!-- <arg name="team_side" value="$(arg team_side)" /> -->
+                <arg name="team_side"	value="$(arg team_side)" />
             </include>
         <!-- </group> -->
 
