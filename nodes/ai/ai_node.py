@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
-# from soccerref.msg import GameState
+from soccerref.msg import GameState
 
 import numpy as np
 
@@ -68,14 +68,16 @@ def main():
 
     # are we home or away?
     global _team_side
-    param_name = rospy.search_param('team_side')
-    _team_side = rospy.get_param(param_name, 'home')
+    team_param_name = rospy.search_param('team_side')
+    _team_side = rospy.get_param(team_param_name, 'home')
 
     # which ally are we?
     global _ally_number
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
-    _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
+    number_param_name = rospy.search_param('team_side')
+    _team_side = rospy.get_param(number_param_name, '1')
+    # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
     # _ally_number = '1'
 
     # Subscribe to Robot and Ball positions
@@ -114,7 +116,7 @@ def main():
                 msg.y = 0
                 msg.theta = 0
 
-        else if _game_state.play:
+        elif _game_state.play:
         # if True:
             # Run AI as normal
             # Based on the state of the game and the positions of the players,
