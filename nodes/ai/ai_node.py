@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
-# from soccerref.msg import GameState
+from soccerref.msg import GameState
 
 import numpy as np
 
@@ -114,7 +114,7 @@ def main():
                 msg.y = 0
                 msg.theta = 0
 
-        else if _game_state.play:
+        elif _game_state.play:
         # if True:
             # Run AI as normal
             # Based on the state of the game and the positions of the players,

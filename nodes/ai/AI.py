@@ -132,7 +132,7 @@ class AI(object):
 
             # compute a position 20cm behind ball, but aligned with goal
             p = ballvec - 0.30*uv
-            print('p: {} ({})'.format(p, type(p)))
+            # print('p: {} ({})'.format(p, type(p)))
 
             # Compute vector from me to commanded position
             me2comvec = p - mevec
@@ -142,33 +142,33 @@ class AI(object):
             close_dist = 50
             dist = 50
 
-            print 'mevec: {}, ballvec: {}'.format(mevec, ballvec)
-            print 'mevec->p: {}'.format(p - mevec)
+            # print 'mevec: {}, ballvec: {}'.format(mevec, ballvec)
+            # print 'mevec->p: {}'.format(p - mevec)
             closest_intersection = None
             closest_distance = float('inf')
             closest_intersection_vec = None
             for vec in [b_posXvec, b_posYvec, b_negXvec, b_negYvec]:
-                print 'vec:', vec
+                # print 'vec:', vec
                 did_intersect = _do_intersect(mevec, p, ballvec, vec)
                 if did_intersect:
-                    print '\tIntersect with: {}'.format(vec)
+                    # print '\tIntersect with: {}'.format(vec)
                     intersection = _seg_intersect(mevec, p, ballvec, vec)
                     distance = np.linalg.norm(mevec - intersection)
-                    print '\tintersection: {}\n\tdistance: {}'.format(
-                        intersection, distance)
+                    # print '\tintersection: {}\n\tdistance: {}'.format(
+                    #     intersection, distance)
                     if distance < closest_distance:
                         closest_intersection = intersection
                         closest_distance = distance
                         closest_intersection_vec = vec
-                print
+                # print
 
             if closest_intersection is not None:
                 p = ballvec + closest_intersection_vec
-                print('p: {} ({})'.format(p, type(p)))
+                # print('p: {} ({})'.format(p, type(p)))
 
-            print('p: {} ({})'.format(p, type(p)))
+            # print('p: {} ({})'.format(p, type(p)))
             cmdvec = p
-            print('p: {} ({})'.format(p, type(p)))
+            # print('p: {} ({})'.format(p, type(p)))
 
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
@@ -257,16 +257,16 @@ def _seg_intersect(a1, a2, b1, b2):
     db = b2 - b1
     dp = a1 - b1
     dap = _perp(da)
-    print '\tdb: {} ({})'.format(db, type(db))
-    print '\tdap: {} ({})'.format(dap, type(dap))
+    # print '\tdb: {} ({})'.format(db, type(db))
+    # print '\tdap: {} ({})'.format(dap, type(dap))
     denom = np.asscalar(np.dot(dap.T, db))
     num = np.asscalar(np.dot(dap.T, dp))
-    print '\tdenom: {} ({})'.format(denom, type(denom))
+    # print '\tdenom: {} ({})'.format(denom, type(denom))
     # This could potentially cause a divide by 0 error if the
     # lines are parallel
     # if denom[0][0] == 0:
     if denom == 0:
-        print '\t_seg_intersect(...): denom == 0'
+        # print '\t_seg_intersect(...): denom == 0'
         return ((a1[0] + a2[0]) / 2, (a1[1] + a2[1]) / 2)
     intersect = (num / denom) * db + b1
     return intersect
