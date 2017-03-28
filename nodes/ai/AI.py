@@ -10,6 +10,7 @@ from geometry_msgs.msg import Pose2D
 #field_width = 3.53
 field_width = 3.40
 field_height = 2.38
+goal_height = 0.619
 no_attack = False
 
 class AI(object):
@@ -97,25 +98,29 @@ class AI(object):
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
         goalvec = np.array([[field_width/2], [0]])
+        goalTopvec = np.array([[field_width/2], [goal_height/4]])
+        goalBottomvec = np.array([[field_width/2], [-goal_height/4]])
+        # If we are home the goal we score on is on the other side.
         if self.game_state.game_info.side == 'home':
             goalvec = -goalvec
+            goalTopvec = -goalTopvec
+            goalBottomvec = -goalBottomvec
 
         # Check if ball is between us and goal. If so, go to goal.
         me2ballvec = (ballvec - mevec) * 1000
-        goalTopvec = np.array([[field_width/2], [field_height/2]])
-        goalBottomvec = np.array([[field_width/2], [-field_height/2]])
         command = _intersection(mevec, mevec + me2ballvec, goalBottomvec, goalTopvec)
         if command is not None:
+            print 'Going to goal.'
             cmdvec = command
         else:
             # Get vectors away from ball along the principle axes.
             # These will be used to get around the ball instead of
             # driving the ball into our own goal.
             # 20 cm away from the ball
-            b_posXvec = ballvec + np.array([[ 0.20], [  0.0]])
-            b_posYvec = ballvec + np.array([[  0.0], [ 0.20]])
-            b_negXvec = ballvec + np.array([[-0.20], [  0.0]])
-            b_negYvec = ballvec + np.array([[  0.0], [-0.20]])
+            b_posXvec = ballvec + np.array([[ 0.20], [ 0.00]])
+            b_posYvec = ballvec + np.array([[ 0.00], [ 0.20]])
+            b_negXvec = ballvec + np.array([[-0.20], [ 0.00]])
+            b_negYvec = ballvec + np.array([[ 0.00], [-0.20]])
 
             # unit vector from ball to goal
             uv = goalvec - ballvec
@@ -257,19 +262,41 @@ def _flip_coordinate_system(cmds):
     # return (-cmds[0], -cmds[1], (cmds[2]+180) % 360)
 
 def _intersection(a1, a2, b1, b2):#s1, s2):
+    print 'a1 = ({},{})'.format(a1[0], a1[1])
+    print 'a2 = ({},{})'.format(a2[0], a2[1])
+    print 'b1 = ({},{})'.format(b1[0], b1[1])
+    print 'b2 = ({},{})'.format(b2[0], b2[1])
+
+    # Check the slopes for parallelness
+    denomA = (a2[0] - a1[0])
+    denomB = (b2[0] - b1[0])
+    # If both denominators are 0, they are parallel
+    if denomA == 0 and denomB == 0:
+        return False
+    # If neither is 0, check the slopes to see if they are parallel
+    elif denomA != 0 and denomB != 0:
+        slopeA = (a2[1] - a1[1]) / denomA
+        slopeB = (b2[1] - b1[1]) / denomB
+        # If the slopes are the same, they are parallel
+        if slopeA == slopeB:
+            return False
+
+    # If we haven't returned yet, we are not parallel
     left = max(min(a1[0], a2[0]), min(b1[0], b2[0]))
     right = min(max(a1[0], a2[0]), max(b1[0], b2[0]))
-    top = max(min(a1[1], a2[1]), min(b1[1], b2[1]))
-    bottom = min(max(a1[1], a2[1]), max(b1[1], b2[1]))
+    bottom = max(min(a1[1], a2[1]), min(b1[1], b2[1]))
+    top = min(max(a1[1], a2[1]), max(b1[1], b2[1]))
 
-    if top > bottom or left > right:
-        return None # No intersection
-    if (top,left) == (bottom,right):
-        return np.array([[left],[top]])
-    return None # Lines overlap; shouldn't ever happen
+    if bottom > top or left > right:
+        return False # No intersection
+    return True
+    # if (bottom,left) == (top,right):
+    #     #return np.array([[left],[top]])
+    #     return True
+    # return False # Lines overlap; shouldn't ever happen
 
 def _perp(a):
-    b = empty_like(a)
+    b = np.empty_like(a)
     b[0] = -a[1]
     b[1] = a[0]
     return b
@@ -279,10 +306,13 @@ def _seg_intersect(a1, a2, b1, b2):
     db = b2 - b1
     dp = a1 - b1
     dap = _perp(da)
-    denom = dot(dap, db)
-    num = dot(dap, dp)
+    denom = np.dot(dap, db)
+    num = np.dot(dap, dp)
     # This could potentially cause a divide by 0 error if the
     # lines are parallel
+    if denom == 0:
+        print '_seg_intersect(...): denom == 0'
+        return ((a1[0] + a2[0]) / 2, (a1[1] + a2[1]) / 2)
     intersect = (num / denom.astype(float)) * db + b1
     return intersect
 
