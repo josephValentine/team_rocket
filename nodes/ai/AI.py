@@ -98,6 +98,8 @@ class AI(object):
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
         goalvec = np.array([[field_width/2], [0]])
+        # go from center of goal to +/- quarter goal width to aim for the center
+        # half of the goal
         goalTopvec = np.array([[field_width/2], [goal_height/4]])
         goalBottomvec = np.array([[field_width/2], [-goal_height/4]])
         # If we are home the goal we score on is on the other side.
@@ -108,10 +110,12 @@ class AI(object):
 
         # Check if ball is between us and goal. If so, go to goal.
         me2ballvec = (ballvec - mevec) * 1000
-        command = _intersection(mevec, mevec + me2ballvec, goalBottomvec, goalTopvec)
-        if command is not None:
+        did_intersect = _do_intersect(mevec, mevec + me2ballvec, goalBottomvec,
+                                      goalTopvec)
+        if did_intersect:
             print 'Going to goal.'
-            cmdvec = command
+            cmdvec = _seg_intersect(mevec, mevec + me2ballvec, goalBottomvec,
+                                    goalTopvec)
         else:
             # Get vectors away from ball along the principle axes.
             # These will be used to get around the ball instead of
@@ -128,6 +132,7 @@ class AI(object):
 
             # compute a position 20cm behind ball, but aligned with goal
             p = ballvec - 0.30*uv
+            print('p: {} ({})'.format(p, type(p)))
 
             # Compute vector from me to commanded position
             me2comvec = p - mevec
@@ -136,38 +141,35 @@ class AI(object):
             # Initialize closest distances to 50 meters
             close_dist = 50
             dist = 50
-            closest = _intersection(mevec, p, ballvec, b_posXvec)
-            if closest is not None:
-                close_dist = np.linalg.norm(mevec - closest)
-                print 'dist to b_posXvec = {}'.format(close_dist)
-                p = ballvec + b_posXvec
-            intersect = _intersection(mevec, p, ballvec, b_posYvec)
-            if intersect is not None:
-                dist = np.linalg.norm(mevec - intersect)
-                print 'dist to b_posYvec = {}'.format(dist)
-            if dist < close_dist:
-                closest = intersect
-                close_dist = dist
-                p = ballvec + b_posYvec
-            intersect = _intersection(mevec, p, ballvec, b_negXvec)
-            if intersect is not None:
-                dist = np.linalg.norm(mevec - intersect)
-                print 'dist to b_negXvec = {}'.format(dist)
-            if dist < close_dist:
-                closest = intersect
-                close_dist = dist
-                p = ballvec + b_negXvec
-            intersect = _intersection(mevec, p, ballvec, b_negYvec)
-            if intersect is not None:
-                dist = np.linalg.norm(mevec - intersect)
-                print 'dist to b_negYvec = {}'.format(dist)
-            if dist < close_dist:
-                closest = intersect
-                close_dist = dist
-                p = ballvec + b_negYvec
 
+            print 'mevec: {}, ballvec: {}'.format(mevec, ballvec)
+            print 'mevec->p: {}'.format(p - mevec)
+            closest_intersection = None
+            closest_distance = float('inf')
+            closest_intersection_vec = None
+            for vec in [b_posXvec, b_posYvec, b_negXvec, b_negYvec]:
+                print 'vec:', vec
+                did_intersect = _do_intersect(mevec, p, ballvec, vec)
+                if did_intersect:
+                    print '\tIntersect with: {}'.format(vec)
+                    intersection = _seg_intersect(mevec, p, ballvec, vec)
+                    distance = np.linalg.norm(mevec - intersection)
+                    print '\tintersection: {}\n\tdistance: {}'.format(
+                        intersection, distance)
+                    if distance < closest_distance:
+                        closest_intersection = intersection
+                        closest_distance = distance
+                        closest_intersection_vec = vec
+                print
 
+            if closest_intersection is not None:
+                p = ballvec + closest_intersection_vec
+                print('p: {} ({})'.format(p, type(p)))
+
+            print('p: {} ({})'.format(p, type(p)))
             cmdvec = p
+            print('p: {} ({})'.format(p, type(p)))
+
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
             # # drive to the goal.
@@ -244,40 +246,6 @@ def _flip_coordinate_system(cmds):
     return cmds
     # return (-cmds[0], -cmds[1], (cmds[2]+180) % 360)
 
-def _intersection(a1, a2, b1, b2):#s1, s2):
-    print 'a1 = ({},{})'.format(a1[0], a1[1])
-    print 'a2 = ({},{})'.format(a2[0], a2[1])
-    print 'b1 = ({},{})'.format(b1[0], b1[1])
-    print 'b2 = ({},{})'.format(b2[0], b2[1])
-
-    # Check the slopes for parallelness
-    denomA = (a2[0] - a1[0])
-    denomB = (b2[0] - b1[0])
-    # If both denominators are 0, they are parallel
-    if denomA == 0 and denomB == 0:
-        return False
-    # If neither is 0, check the slopes to see if they are parallel
-    elif denomA != 0 and denomB != 0:
-        slopeA = (a2[1] - a1[1]) / denomA
-        slopeB = (b2[1] - b1[1]) / denomB
-        # If the slopes are the same, they are parallel
-        if slopeA == slopeB:
-            return False
-
-    # If we haven't returned yet, we are not parallel
-    left = max(min(a1[0], a2[0]), min(b1[0], b2[0]))
-    right = min(max(a1[0], a2[0]), max(b1[0], b2[0]))
-    bottom = max(min(a1[1], a2[1]), min(b1[1], b2[1]))
-    top = min(max(a1[1], a2[1]), max(b1[1], b2[1]))
-
-    if bottom > top or left > right:
-        return False # No intersection
-    return True
-    # if (bottom,left) == (top,right):
-    #     #return np.array([[left],[top]])
-    #     return True
-    # return False # Lines overlap; shouldn't ever happen
-
 def _perp(a):
     b = np.empty_like(a)
     b[0] = -a[1]
@@ -289,15 +257,61 @@ def _seg_intersect(a1, a2, b1, b2):
     db = b2 - b1
     dp = a1 - b1
     dap = _perp(da)
-    denom = np.dot(dap, db)
-    num = np.dot(dap, dp)
+    print '\tdb: {} ({})'.format(db, type(db))
+    print '\tdap: {} ({})'.format(dap, type(dap))
+    denom = np.asscalar(np.dot(dap.T, db))
+    num = np.asscalar(np.dot(dap.T, dp))
+    print '\tdenom: {} ({})'.format(denom, type(denom))
     # This could potentially cause a divide by 0 error if the
     # lines are parallel
+    # if denom[0][0] == 0:
     if denom == 0:
-        print '_seg_intersect(...): denom == 0'
+        print '\t_seg_intersect(...): denom == 0'
         return ((a1[0] + a2[0]) / 2, (a1[1] + a2[1]) / 2)
-    intersect = (num / denom.astype(float)) * db + b1
+    intersect = (num / denom) * db + b1
     return intersect
+
+
+################################################################################
+# see: http://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+# 0: co-linear
+# 1: clockwise
+# 2: counter-clockwise
+def _orientation(p, q, r):
+    val = (q[1] - p[1]) * (r[0] - q[0]) - \
+          (q[0] - p[0]) * (r[1] - q[1])
+
+    if val == 0: return 0
+    return 1 if val > 0 else 2
+
+def _on_segment(p, q, r):
+    if q[0] <= max(p[0], r[0]) and q[0] >= min(p[0], r[0]) and \
+       q[1] <= max(p[1], r[1]) and q[1] >= min(p[1], r[1]):
+        return True
+    else:
+        return False
+
+def _do_intersect(p1, q1, p2, q2):
+    o1 = _orientation(p1, q1, p2)
+    o2 = _orientation(p1, q1, q2)
+    o3 = _orientation(p2, q2, p1)
+    o4 = _orientation(p2, q2, q1)
+
+    # general case
+    if o1 != o2 and o3 != o4: return True
+
+    # special cases
+    # p1, q1, and p2 are colinear and p2 lies on segment p1q1
+    if o1 == 0 and _on_segment(p1, p2, q1): return True
+    # p1, q1, and q2 are colinear and q2 lies on segment p1q1
+    if o2 == 0 and _on_segment(p1, p2, q1): return True
+    # p2, q2, and p1 are colinear and p1 lies on segment p2q2
+    if o3 == 0 and _on_segment(p2, p1, q2): return True
+    # p2, q2, and q1 are colinear and q1 lies on segment p2q2
+    if o4 == 0 and _on_segment(p2, p1, q2): return True
+
+    return False
+################################################################################
 
 def test():
     import Constants
@@ -314,8 +328,21 @@ def test():
     ai.game_state.game_info.side = Constants.right_side
     cmds = ai.strategize()
     print cmds
+    print '-'*80
+    print 'First'
     # put our robot in between ball and goal, it should go to the side
     ai.update(Pose2D(1.0, 0.01, 0.0), # me
+              Pose2D(-1.0, 1.0, 0.0), # ally
+              Pose2D(1.0, 1.0, 0.0),  # opp1
+              Pose2D(1.0, -1.0, 0.0), # opp2
+              Pose2D(0.0, 0.0, 0.0),  # ball
+              # (1.5, -1.0, 0.0),
+              None)
+    cmds = ai.strategize()
+    print cmds
+    print '-'*80
+    print 'Second'
+    ai.update(Pose2D(1.0, -1, 0.0), # me
               Pose2D(-1.0, 1.0, 0.0), # ally
               Pose2D(1.0, 1.0, 0.0),  # opp1
               Pose2D(1.0, -1.0, 0.0), # opp2
