@@ -16,7 +16,7 @@ _ally_number = 1
 
 # create a blank GameState message
 # to keep track of current state
-# _game_state = GameState()
+_game_state = GameState()
 
 # initialize vision positions
 _me = Pose2D()
@@ -65,6 +65,9 @@ def _handle_game_state(msg):
 
 def main():
     rospy.init_node('ai', anonymous=False)
+
+    # global
+    global _game_state
 
     # are we home or away?
     global _team_side
