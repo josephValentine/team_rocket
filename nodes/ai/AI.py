@@ -54,7 +54,7 @@ class AI(object):
         if self.ally1:
             # return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
-            print 'rush goal'
+            # print 'rush goal'
             cmds = self.rush_goal(
                 _position_to_pose2d(self.game_state.field.ally1.position),
                 _point_to_pose2d(self.game_state.field.ball.point))
@@ -63,7 +63,7 @@ class AI(object):
             #     _position_to_pose2d(self.game_state.field.ally1.position)
 
         else:
-            print 'goalie'
+            # print 'goalie'
             # be a goalie (i.e., follow line on ball)
             # cmds = self.follow_ball_on_line(ball, -1.25)
             cmds = _position_to_tuple(Skills.stay_between_goalnball(
