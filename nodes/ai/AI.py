@@ -220,23 +220,6 @@ def p2d_2_pos(p):
     return Position(Point(p.x, p.y), Angle(p.theta, False))
 
 
-def test():
-    import Constants
-    ai = AI('home', 2)
-    cmds = ai.strategize()
-    # print cmds
-    ai.update(_position_to_pose2d(ai.game_state.field.ally2.position),
-              _position_to_pose2d(ai.game_state.field.ally1.position),
-              _position_to_pose2d(ai.game_state.field.opp1.position),
-              _position_to_pose2d(ai.game_state.field.opp2.position),
-              Pose2D(1.5, -1.0, 0.0),
-              # (1.5, -1.0, 0.0),
-              ())
-    ai.game_state.game_info.side = Constants.right_side
-    cmds = ai.strategize()
-    # print cmds
-
-
 def _position_to_pose2d(position):
     from geometry_msgs.msg import Pose2D
     return Pose2D(position.point.x, position.point.y, position.angle.degree)
@@ -315,6 +298,34 @@ def _seg_intersect(a1, a2, b1, b2):
         return ((a1[0] + a2[0]) / 2, (a1[1] + a2[1]) / 2)
     intersect = (num / denom.astype(float)) * db + b1
     return intersect
+
+def test():
+    import Constants
+    ai = AI('home', "1")
+    cmds = ai.strategize()
+    print cmds
+    ai.update(_position_to_pose2d(ai.game_state.field.ally2.position),
+              _position_to_pose2d(ai.game_state.field.ally1.position),
+              _position_to_pose2d(ai.game_state.field.opp1.position),
+              _position_to_pose2d(ai.game_state.field.opp2.position),
+              Pose2D(1.5, -1.0, 0.0),
+              # (1.5, -1.0, 0.0),
+              None)
+    ai.game_state.game_info.side = Constants.right_side
+    cmds = ai.strategize()
+    print cmds
+    # put our robot in between ball and goal, it should go to the side
+    ai.update(Pose2D(1.0, 0.01, 0.0), # me
+              Pose2D(-1.0, 1.0, 0.0), # ally
+              Pose2D(1.0, 1.0, 0.0),  # opp1
+              Pose2D(1.0, -1.0, 0.0), # opp2
+              Pose2D(0.0, 0.0, 0.0),  # ball
+              # (1.5, -1.0, 0.0),
+              None)
+    cmds = ai.strategize()
+    print cmds
+
+
 
 if __name__ == '__main__':
    test()
