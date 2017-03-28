@@ -16,7 +16,7 @@ _ally_number = 1
 
 # create a blank GameState message
 # to keep track of current state
-# _game_state = GameState()
+_game_state = GameState()
 
 # initialize vision positions
 _me = Pose2D()
@@ -58,7 +58,7 @@ def _handle_ball(msg):
 
 
 def _handle_game_state(msg):
-    # print "handle_game_state"
+    print "handle_game_state"
     global _game_state
     _game_state = msg
 
@@ -66,16 +66,30 @@ def _handle_game_state(msg):
 def main():
     rospy.init_node('ai', anonymous=False)
 
+    # global
+    global _game_state
+
     # are we home or away?
     global _team_side
-    param_name = rospy.search_param('team_side')
-    _team_side = rospy.get_param(param_name, 'home')
+    team_param_name = rospy.search_param('team_side')
+    _team_side = rospy.get_param(team_param_name, 'home')
 
     # which ally are we?
+    global _my_number
     global _ally_number
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
-    _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
+    my_number_param_name = rospy.search_param('my_number')
+    _my_number = rospy.get_param(my_number_param_name, '1')
+    ally_number_param_name = rospy.search_param('ally_number')
+    _ally_number = rospy.get_param(ally_number_param_name, '2')
+    print 'team_param_name', team_param_name
+    print '_team_side', _team_side
+    print 'my_number_param_name', my_number_param_name
+    print '_my_number', _my_number
+    print 'ally_number_param_name', ally_number_param_name
+    print '_ally_number', _ally_number
+    # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
     # _ally_number = '1'
 
     # Subscribe to Robot and Ball positions
@@ -93,15 +107,21 @@ def main():
     pub = rospy.Publisher('desired_position', Pose2D, queue_size=10)
 
     # Create the AI object
-    ai = AI(_team_side, _ally_number)
+    ai = AI(_team_side, _my_number)
 
     rate = rospy.Rate(100) # 100 Hz
+    count = 0
     while not rospy.is_shutdown():
 
         # Get a message ready to send
         msg = Pose2D()
         # print 'ai_node: msg = %s' % msg
 
+        count = (count + 1) % 100
+        if count == 0:
+            # print _game_state
+            pass
+        
         if _game_state.reset_field:
             # Send robot to home
             if _ally_number == 1:
@@ -114,8 +134,8 @@ def main():
                 msg.y = 0
                 msg.theta = 0
 
-        elif _game_state.play:
-        # if True:
+        # elif _game_state.play:
+        elif True:
             # Run AI as normal
             # Based on the state of the game and the positions of the players,
             # run the AI and return commanded positions for this robot
@@ -132,8 +152,8 @@ def main():
 
         # If we shouldn't play and the field doesn't need to be
         # reset, then the AI node is out of a job.
-        if _game_state.play or _game_state.reset_field:
-        # if True:
+        # if _game_state.play or _game_state.reset_field:
+        if True:
             pub.publish(msg)
 
         # Wait however long it takes to make this tick at 100Hz

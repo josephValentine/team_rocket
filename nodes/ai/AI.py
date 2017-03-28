@@ -14,7 +14,7 @@ goal_height = 0.619
 no_attack = False
 
 class AI(object):
-    def __init__(self, team_side, ally_number):
+    def __init__(self, team_side, my_number):
         super(AI, self).__init__()
 
         # Create GameState object
@@ -22,8 +22,10 @@ class AI(object):
         self.game_state.game_info.side = team_side
         self.team_side = team_side
         # Am I ally1?
-        self.ally1 = (ally_number == "1")
-        print 'I am ally %s' % ally_number
+        # self.ally1 = (ally_number == "1")
+        self.ally1 = (my_number == 1) or (my_number == '1')
+        print 'I am ally %s' % my_number
+        print 'my_number: {} ({})'.format(my_number, type(my_number))
         self.timer = 0
 
 
@@ -52,6 +54,7 @@ class AI(object):
         if self.ally1:
             # return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
+            # print 'rush goal'
             cmds = self.rush_goal(
                 _position_to_pose2d(self.game_state.field.ally1.position),
                 _point_to_pose2d(self.game_state.field.ball.point))
@@ -60,6 +63,7 @@ class AI(object):
             #     _position_to_pose2d(self.game_state.field.ally1.position)
 
         else:
+            # print 'goalie'
             # be a goalie (i.e., follow line on ball)
             # cmds = self.follow_ball_on_line(ball, -1.25)
             cmds = _position_to_tuple(Skills.stay_between_goalnball(
