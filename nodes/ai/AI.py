@@ -100,8 +100,12 @@ class AI(object):
         goalvec = np.array([[field_width/2], [0]])
         # go from center of goal to +/- quarter goal width to aim for the center
         # half of the goal
-        goalTopvec = np.array([[field_width/2], [goal_height/4]])
-        goalBottomvec = np.array([[field_width/2], [-goal_height/4]])
+        # this is a factor proportional to our distance from the goal to make it
+        # ok to be 'less accurate' if we're far away from the goal
+        min_target_factor = field_height/(field_width*2)
+        min_target_height = max(min_target_factor*me.x, goal_height/4)
+        goalTopvec = np.array([[field_width/2], [min_target_height]])
+        goalBottomvec = np.array([[field_width/2], [-min_target_height]])
         # If we are home the goal we score on is on the other side.
         if self.game_state.game_info.side == 'home':
             goalvec = -goalvec
