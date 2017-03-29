@@ -1,6 +1,7 @@
 import numpy as np
 from std_srvs.srv import Trigger
 import rospy
+import math
 
 import Skills
 from Models import GameState, Field, GameInfo
@@ -12,6 +13,12 @@ field_width = 3.40
 field_height = 2.38
 goal_height = 0.619
 no_attack = False
+
+# These are the angles our 'long' sides are at. If we want to go in a certain
+# orientation, what we really want is for our angle to be that degree +/- one of
+# these angles. This will make one of our long sides face that angle.
+# These are measured in degrees.
+long_side_orientations = [60, 180, 300]
 
 class AI(object):
     def __init__(self, team_side, my_number):
@@ -226,6 +233,29 @@ class AI(object):
             pass
 
 
+def _convert_to_long_side_angle(commanded_angle):
+    """Returns the closest angle to a long side.
+
+    For a given commanded angle, we want our robot to face that direction. What
+    we really want is for one of the long sides to face that direction. For
+    that, we will look at each of the angle offsets for the long sides (see
+    comment on `long_side_orientations`) and see which one is closest. This then
+    returns the angle with the appropriate offset.
+    """
+    closest_angle = None
+    closest_angle_error = float('inf')
+    for long_side_angle in long_side_orientations:
+        cw_error  = (long_side_angle - commanded_angle) % 360
+        ccw_error = (commanded_angle - long_side_angle) % 360
+        if cw_error < ccw_error and cw_error < closest_angle_error:
+            closest_angle = 
+            closest_angle_error = cw_error
+        error = math.min((commanded_angle - long_side_angle) % 360,
+                         (long_side_angle - commanded_angle) % 360)
+        if error < closest_angle_error:
+            closest_angle = (long_side_angle + commanded_angle) % 360
+
+        
 def p2d_2_pos(p):
     return Position(Point(p.x, p.y), Angle(p.theta, False))
 
