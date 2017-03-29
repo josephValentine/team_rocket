@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <launch>
   <!-- declare arg to be passed in -->
-  <arg name="team_side"   default="home" />
-  <arg name="debug"       default="false" />
-  <arg name="my_number"   default="1" />
-  <arg name="ally_number" default="2" />
+  <arg name="team_side"         default="home" />
+  <arg name="debug"             default="false" />
+  <arg name="ignore_game_state" default="false" />
+  <arg name="my_number"         default="1" />
+  <arg name="ally_number"       default="2" />
 
   <!-- using which side of the field we are on, determine the appropriate -->
   <!-- connections to the output of the vision system -->

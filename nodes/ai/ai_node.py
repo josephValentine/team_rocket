@@ -74,6 +74,10 @@ def main():
     team_param_name = rospy.search_param('team_side')
     _team_side = rospy.get_param(team_param_name, 'home')
 
+    global _ignore_game_state
+    ignore_game_state_param_name = rospy.search_param('ignore_game_state')
+    _ignore_game_state = rospy.get_param(ignore_game_state_param_name, 'False')
+
     # which ally are we?
     global _my_number
     global _ally_number
@@ -121,8 +125,8 @@ def main():
         if count == 0:
             # print _game_state
             pass
-        
-        if _game_state.reset_field:
+
+        if _game_state.reset_field and not _ignore_game_state:
             # Send robot to home
             if _ally_number == 1:
                 msg.x = -0.5
@@ -134,15 +138,15 @@ def main():
                 msg.y = 0
                 msg.theta = 0
 
-        # elif _game_state.play:
-        elif True:
+        elif _game_state.play or _ignore_game_state:
+        # elif True:
             # Run AI as normal
             # Based on the state of the game and the positions of the players,
             # run the AI and return commanded positions for this robot
             # ai.update(_me, _ally, _opp1, _opp2, _ball, _game_state)
             ai.update(_me, _ally, _opp1, _opp2, _ball, None)
             cmds = ai.strategize()
-            
+
             msg.x = cmds[0]
             msg.y = cmds[1]
             msg.theta = cmds[2]
@@ -152,8 +156,8 @@ def main():
 
         # If we shouldn't play and the field doesn't need to be
         # reset, then the AI node is out of a job.
-        # if _game_state.play or _game_state.reset_field:
-        if True:
+        if _game_state.play or _game_state.reset_field or _ignore_game_state:
+        # if True:
             pub.publish(msg)
 
         # Wait however long it takes to make this tick at 100Hz
