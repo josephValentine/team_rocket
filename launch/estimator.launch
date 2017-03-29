@@ -1,24 +1,25 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- declare arg to be passed in -->
-    <arg name="team_side" default="home" />
+  <!-- declare arg to be passed in -->
+  <arg name="team_side" default="home" />
 
-    <!-- Hardware agnostic code -->
-    <!-- <node name="us1_estimator" pkg="teamrocket" type="estimator_node.py" output="screen"> -->
-        <!-- <remap from="data" to="orienter/us1" /> -->
-        <!-- <remap from="estimated_state" to="estimator/us1" /> -->
-    <!-- </node> -->
+  <!-- Hardware agnostic code -->
+  <!-- <node name="us1_estimator" pkg="teamrocket" type="estimator_node.py" output="screen"> -->
+  <!-- <remap from="data" to="orienter/us1" /> -->
+  <!-- <remap from="estimated_state" to="estimator/us1" /> -->
+  <!-- </node> -->
 
-    <!-- Hardware agnostic code -->
-    <!-- <node name="us2_estimator" pkg="teamrocket" type="estimator_node.py" output="screen"> -->
-        <!-- <remap from="data" to="orienter/us2" /> -->
-        <!-- <remap from="estimated_state" to="estimator/us2" /> -->
-    <!-- </node> -->
+  <!-- Hardware agnostic code -->
+  <!-- <node name="us2_estimator" pkg="teamrocket" type="estimator_node.py" output="screen"> -->
+  <!-- <remap from="data" to="orienter/us2" /> -->
+  <!-- <remap from="estimated_state" to="estimator/us2" /> -->
+  <!-- </node> -->
 
-    <!-- Hardware agnostic code -->
-    <node name="ball_estimator" pkg="teamrocket" type="estimator_node.py" output="screen">
-        <remap from="data" to="orienter/ball" />
-        <remap from="estimated_state" to="estimator/ball" />
-    </node>
+  <!-- Hardware agnostic code -->
+  <node name="ball_estimator" pkg="teamrocket" type="estimator_node.py"
+        output="screen">
+    <remap from="data" to="orienter/ball" />
+    <remap from="estimated_state" to="estimator/ball" />
+  </node>
 
 </launch>

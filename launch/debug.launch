@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="debug" pkg="teamrocket" type="debug_node.py" output="screen">
-    </node>
+  <node name="debug" pkg="teamrocket" type="debug_node.py" output="screen">
+  </node>
 </launch>
