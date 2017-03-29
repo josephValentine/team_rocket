@@ -36,7 +36,7 @@
   </node>
   <!-- Serializer -->
   <node name="serializer" pkg="teamrocket" type="serializer_node.py"
-        output="screen" if="$(arg debug)">
+        output="screen"   unless="$(arg debug)">
     <!-- The serializer needs to know which vision msg to listen to -->
     <remap from="vel_cmds" to="command/us$(arg my_number)" />
     <remap from="me"       to="controller/us$(arg my_number)" />

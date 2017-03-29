@@ -58,7 +58,7 @@ def _handle_ball(msg):
 
 
 def _handle_game_state(msg):
-    print "handle_game_state"
+    # print "handle_game_state"
     global _game_state
     _game_state = msg
 
