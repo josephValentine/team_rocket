@@ -1,65 +1,67 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- declare arg to be passed in -->
-    <arg name="team_side" default="away" />
-    <arg name="sim_mode" default="true" />
-    <arg name="two_robots" default="true" />
-    <!-- Set to false if you're not debugging
-         This creates a window to show us where it thinks the robot is and where
-         it's trying to go. -->
-    <!-- Actually right now we're only doing debugging in vision, not here -->
-    <!-- <arg name="debug" default="true" /> -->
+  <!-- declare arg to be passed in -->
+  <arg name="team_side"  default="away" />
+  <arg name="sim_mode"   default="true" />
+  <arg name="two_robots" default="true" />
+  <arg name="debug"      default="false" />
+  <!-- Set to false if you're not debugging
+       This creates a window to show us where it thinks the robot is and where
+       it's trying to go. -->
+  <!-- Actually right now we're only doing debugging in vision, not here -->
+  <!-- <arg name="debug" default="true" /> -->
 
-    <!-- Outputs to either real world or simulation -->
-    <!-- <arg name="vel_cmd_ally1" default="vel_cmds" /> -->
-    <!-- <arg name="vel_cmd_ally2" default="vel_cmds" /> -->
-    <arg name="kick_ally1" default="kick" />
-    <arg name="kick_ally2" default="kick" />
+  <!-- Outputs to either real world or simulation -->
+  <!-- <arg name="vel_cmd_ally1" default="vel_cmds" /> -->
+  <!-- <arg name="vel_cmd_ally2" default="vel_cmds" /> -->
+  <arg name="kick_ally1" default="kick" />
+  <arg name="kick_ally2" default="kick" />
 
-    <group ns="teamrocket_$(arg team_side)">
+  <group ns="teamrocket_$(arg team_side)">
 
-        <!-- Running vision on computer instead of pi -->
-        <!-- Vision -->
-        <!-- Start the vision up -->
-        <!-- <include file="$(find teamrocket)/launch/vision.launch"> -->
-          <!-- <arg name="team_side" value="$(arg team_side)" /> -->
-        <!-- </include> -->
+    <!-- Running vision on computer instead of pi -->
+    <!-- Vision -->
+    <!-- Start the vision up -->
+    <!-- <include file="$(find teamrocket)/launch/vision.launch"> -->
+    <!-- <arg name="team_side" value="$(arg team_side)" /> -->
+    <!-- </include> -->
 
-        <!-- Orienter -->
-        <!-- Start the orienter up -->
-        <include file="$(find teamrocket)/launch/orienter.launch">
-          <arg name="team_side" value="$(arg team_side)" />
-        </include>
+    <!-- Orienter -->
+    <!-- Start the orienter up -->
+    <include file="$(find teamrocket)/launch/orienter.launch">
+      <arg name="team_side" value="$(arg team_side)" />
+    </include>
 
-        <!-- Estimator -->
-        <!-- Start the estimator up -->
-        <include file="$(find teamrocket)/launch/estimator.launch">
-          <arg name="team_side" value="$(arg team_side)" />
-        </include>
+    <!-- Estimator -->
+    <!-- Start the estimator up -->
+    <include file="$(find teamrocket)/launch/estimator.launch">
+      <arg name="team_side" value="$(arg team_side)" />
+    </include>
 
-        <!-- Set ROS parameters that the code can access -->
-        <!-- <param name="my_number" type="string" /> -->
-        <!-- <param name="ally_number" type="string" /> -->
-        <!-- <param name="team_side" type="string" value="$(arg team_side)" /> -->
+    <!-- Set ROS parameters that the code can access -->
+    <!-- <param name="my_number" type="string" /> -->
+    <!-- <param name="ally_number" type="string" /> -->
+    <!-- <param name="team_side" type="string" value="$(arg team_side)" /> -->
 
-        <!-- <group ns="ally1"> -->
-            <!-- Start the robot up -->
-            <include file="$(find teamrocket)/launch/robot.launch">
-                <arg name="my_number"	value="1" />
-                <arg name="ally_number" value="2" />
-                <arg name="team_side"	value="$(arg team_side)" />
-            </include>
-        <!-- </group> -->
+    <!-- <group ns="ally1"> -->
+    <!-- Start the robot up -->
+    <include file="$(find teamrocket)/launch/robot.launch">
+      <arg name="my_number"   value="1" />
+      <arg name="ally_number" value="2" />
+      <arg name="team_side"   value="$(arg team_side)" />
+      <arg name="debug"       value="$(arg debug)" />
+    </include>
+    <!-- </group> -->
 
-        <!-- start up ally2 -->
-        <!-- <group ns="ally2" if="$(arg two_robots)"> -->
-            <!-- Start the robot up -->
-            <!-- <include file="$(find teamrocket)/launch/robot.launch"> -->
-                <!-- <arg name="my_number" value="2" /> -->
-                <!-- <arg name="ally_number" value="1" /> -->
-                <!-- <arg name="team_side" value="$(arg team_side)" /> -->
-            <!-- </include> -->
-        <!-- </group> -->
+    <!-- start up ally2 -->
+    <!-- <group ns="ally2" if="$(arg two_robots)"> -->
+    <!-- Start the robot up -->
+    <!-- <include file="$(find teamrocket)/launch/robot.launch"> -->
+    <!-- <arg name="my_number"   value="2" /> -->
+    <!-- <arg name="ally_number" value="1" /> -->
+    <!-- <arg name="team_side"   value="$(arg team_side)" /> -->
+    <!-- </include> -->
+    <!-- </group> -->
 
-    </group>
+  </group>
 </launch>
