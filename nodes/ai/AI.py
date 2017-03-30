@@ -1,12 +1,11 @@
 import numpy as np
-from std_srvs.srv import Trigger
-import rospy
-import math
+# from std_srvs.srv import Trigger
+# import rospy
 
 import Skills
 from Models import GameState, Field, GameInfo
 from Geometry.Models import Position, Point, Angle
-from geometry_msgs.msg import Pose2D
+# from geometry_msgs.msg import Pose2D
 
 #field_width = 3.53
 field_width = 3.40
@@ -233,7 +232,7 @@ class AI(object):
             pass
 
 
-def _convert_to_long_side_angle(commanded_angle):
+def _convert_to_long_side_angle(current_angle, commanded_angle):
     """Returns the closest angle to a long side.
 
     For a given commanded angle, we want our robot to face that direction. What
@@ -242,18 +241,27 @@ def _convert_to_long_side_angle(commanded_angle):
     comment on `long_side_orientations`) and see which one is closest. This then
     returns the angle with the appropriate offset.
     """
-    closest_angle = None
-    closest_angle_error = float('inf')
+    closest_angle_offset = float('inf')
+    # closest_angle_error = float('inf')
+    # for long_side_angle in [(current_angle + long_side_angle_offset) % 360
+    #                         for long_side_angle_offset in long_side_orientations
+    # ]:
     for long_side_angle in long_side_orientations:
-        cw_error  = (long_side_angle - commanded_angle) % 360
-        ccw_error = (commanded_angle - long_side_angle) % 360
-        if cw_error < ccw_error and cw_error < closest_angle_error:
-            closest_angle = 
-            closest_angle_error = cw_error
-        error = math.min((commanded_angle - long_side_angle) % 360,
-                         (long_side_angle - commanded_angle) % 360)
-        if error < closest_angle_error:
-            closest_angle = (long_side_angle + commanded_angle) % 360
+        cw_offset  = (long_side_angle - commanded_angle - current_angle) % 360
+        ccw_offset = (commanded_angle - long_side_angle - current_angle) % 360
+        if cw_offset < ccw_offset and \
+           cw_offset < abs(closest_angle_offset):
+            closest_angle_offset = -cw_offset
+            # closest_angle_error = cw_error
+        elif ccw_offset < cw_offset and \
+             ccw_offset < abs(closest_angle_offset):
+            closest_angle_offset = ccw_offset
+    return (current_angle + closest_angle_offset) % 360
+        # error = math.min((commanded_angle - long_side_angle) % 360,
+        #                  (long_side_angle - commanded_angle) % 360)
+        # if error < closest_angle_error:
+        #     closest_angle_offset = (long_side_angle + commanded_angle) % 360
+        #     closest_angle_error = cw_error
 
         
 def p2d_2_pos(p):
@@ -390,7 +398,18 @@ def test():
     cmds = ai.strategize()
     print cmds
 
+def test2():
+    for commanded_angle in [1, 59, 100, 330]:
+        print 'commanded_angle: {}'.format(commanded_angle)
+        for current_angle in [0, 30, 60, 110]:
+            goto_angle = _convert_to_long_side_angle(current_angle,
+                                                     commanded_angle)
+            print '\tcurrent_angle: {}, converted angle: {}'.format(
+                current_angle, _convert_to_long_side_angle(
+                    current_angle, commanded_angle))
+
 
 
 if __name__ == '__main__':
-   test()
+    # test()
+    test2()
