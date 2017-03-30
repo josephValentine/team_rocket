@@ -121,7 +121,7 @@ class AI(object):
         did_intersect = _do_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                       goalTopvec)
         if did_intersect:
-            print 'Going to goal.'
+            # print 'Going to goal.'
             cmdvec = _seg_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                     goalTopvec)
         else:
