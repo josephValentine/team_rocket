@@ -5,7 +5,7 @@ from geometry_msgs.msg import Twist, Pose2D
 
 from Serializer import Serializer
 import FrameConverter
-
+import numpy as np
 
 _twist = Twist()
 def _handle_twist(msg):
@@ -65,20 +65,20 @@ def main():
       w1, w2, w3 = w1*ser_factor, w2*ser_factor, w3*ser_factor
 
      #Parker Lusks suggestion to reduce effects from stiction
-      smallestCommandForMotion=0.5
+      smallestCommandForMotion=0.99
       negligableCommandThresh=0.1
-      if np.abs(w1) < smallestCommandForMotion && np.abs(w1) > negligableCommandThresh:
+      if np.abs(w1) < smallestCommandForMotion and np.abs(w1) > negligableCommandThresh:
         w1 = np.sign(w1)*smallestCommandForMotion
       elif np.abs(w1) < negligableCommandThresh:
         w1 = 0
 
-      if np.abs(w2) < smallestCommandForMotion && np.abs(w2) > negligableCommandThresh:
-        w1 = np.sign(w2)*smallestCommandForMotion
+      if np.abs(w2) < smallestCommandForMotion and np.abs(w2) > negligableCommandThresh:
+        w2 = np.sign(w2)*smallestCommandForMotion
       elif np.abs(w2) < negligableCommandThresh:
         w2 = 0
 
-      if np.abs(w3) < smallestCommandForMotion && np.abs(w3) > negligableCommandThresh:
-        w1 = np.sign(w3)*smallestCommandForMotion
+      if np.abs(w3) < smallestCommandForMotion and np.abs(w3) > negligableCommandThresh:
+        w3 = np.sign(w3)*smallestCommandForMotion
       elif np.abs(w3) < negligableCommandThresh:
         w3 = 0
 
