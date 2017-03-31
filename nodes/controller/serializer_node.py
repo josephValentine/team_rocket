@@ -64,6 +64,24 @@ def main():
       ser_factor = 1
       w1, w2, w3 = w1*ser_factor, w2*ser_factor, w3*ser_factor
 
+     #Parker Lusks suggestion to reduce effects from stiction
+      smallestCommandForMotion=0.5
+      negligableCommandThresh=0.1
+      if np.abs(w1) < smallestCommandForMotion && np.abs(w1) > negligableCommandThresh:
+        w1 = np.sign(w1)*smallestCommandForMotion
+      elif np.abs(w1) < negligableCommandThresh:
+        w1 = 0
+
+      if np.abs(w2) < smallestCommandForMotion && np.abs(w2) > negligableCommandThresh:
+        w1 = np.sign(w2)*smallestCommandForMotion
+      elif np.abs(w2) < negligableCommandThresh:
+        w2 = 0
+
+      if np.abs(w3) < smallestCommandForMotion && np.abs(w3) > negligableCommandThresh:
+        w1 = np.sign(w3)*smallestCommandForMotion
+      elif np.abs(w3) < negligableCommandThresh:
+        w3 = 0
+
       if cntr == 20:
           print 'Serializer: w1: {:.3f}\tw2: {:.3f}\tw3: {:.3f}'.format(
               w1, w2, w3)
