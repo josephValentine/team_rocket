@@ -184,20 +184,21 @@ class AI(object):
             cmdvec = p
             # print('p: {} ({})'.format(p, type(p)))
 	    
-	    buffer = 0.6
-	    maxX = (field_width - buffer)/2
-	    minX = -maxX
-	    maxY = (field_height - buffer)/2
-	    minY = -maxY
-	    #print(maxX,minX,maxY,minY)
-	    if cmdvec[0] > maxX:
-	        cmdvec[0] = maxX
-	    if cmdvec[1] > maxY:
-	        cmdvec[1] = maxY
-	    if cmdvec[0] < minX:
-	        cmdvec[0] = minX
-	    if cmdvec[1] < minY:
-	        cmdvec[1] = minY
+        buffHor = 0.5
+	buffVert = 0.5
+	maxX = (field_width - buffHor)/2
+	minX = -maxX
+	maxY = (field_height - buffVert)/2
+	minY = -maxY
+	#print(maxX,minX,maxY,minY)
+	if cmdvec[0] > maxX:
+	    cmdvec[0] = maxX
+	if cmdvec[1] > maxY:
+	    cmdvec[1] = maxY
+	if cmdvec[0] < minX:
+	    cmdvec[0] = minX
+	if cmdvec[1] < minY:
+	    cmdvec[1] = minY
 	    # print(cmdvec)
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
