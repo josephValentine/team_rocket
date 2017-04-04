@@ -122,6 +122,15 @@ class AI(object):
             goalTopvec = -goalTopvec
             goalBottomvec = -goalBottomvec
 
+        # Make sure the robot does not try to go off the field.
+        buffHor = 0.5
+        buffVert = 0.5
+        maxX = (field_width - buffHor)/2
+        minX = -maxX
+        maxY = (field_height - buffVert)/2
+        minY = -maxY
+        #print(maxX,minX,maxY,minY)
+
         # Check if ball is between us and goal. If so, go to goal.
         me2ballvec = (ballvec - mevec) * 1000
         did_intersect = _do_intersect(mevec, mevec + me2ballvec, goalBottomvec,
@@ -147,6 +156,17 @@ class AI(object):
             # compute a position 20cm behind ball, but aligned with goal
             p = ballvec - 0.30*uv
             # print('p: {} ({})'.format(p, type(p)))
+
+            # Make sure the position is not off the field.
+            if p[1] > maxY or p[1] < minY: # Too far up or down
+                # If the goal is to the right, go to the left of the ball, and vice versa.
+                if uv[0] > 0:
+                    p = b_negXvec
+                else:
+                    p = b_posXvec
+
+            # I'm not sure what we should do in the x-direction. I don't know what we did for
+            # the y-direction would be useful.
 
             # Compute vector from me to commanded position
             me2comvec = p - mevec
@@ -184,21 +204,14 @@ class AI(object):
             cmdvec = p
             # print('p: {} ({})'.format(p, type(p)))
 	    
-        buffHor = 0.5
-	buffVert = 0.5
-	maxX = (field_width - buffHor)/2
-	minX = -maxX
-	maxY = (field_height - buffVert)/2
-	minY = -maxY
-	#print(maxX,minX,maxY,minY)
-	if cmdvec[0] > maxX:
-	    cmdvec[0] = maxX
-	if cmdvec[1] > maxY:
-	    cmdvec[1] = maxY
-	if cmdvec[0] < minX:
-	    cmdvec[0] = minX
-	if cmdvec[1] < minY:
-	    cmdvec[1] = minY
+    	if cmdvec[0] > maxX:
+    	    cmdvec[0] = maxX
+    	if cmdvec[1] > maxY:
+    	    cmdvec[1] = maxY
+    	if cmdvec[0] < minX:
+    	    cmdvec[0] = minX
+    	if cmdvec[1] < minY:
+    	    cmdvec[1] = minY
 	    # print(cmdvec)
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
