@@ -198,7 +198,7 @@ class AI(object):
 	        cmdvec[0] = minX
 	    if cmdvec[1] < minY:
 	        cmdvec[1] = minY
-	    print(cmdvec)
+	    # print(cmdvec)
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
             # # drive to the goal.
