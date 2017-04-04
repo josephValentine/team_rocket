@@ -157,13 +157,15 @@ class AI(object):
             p = ballvec - 0.30*uv
             # print('p: {} ({})'.format(p, type(p)))
 
-            # Make sure the position is not off the field.
-            if p[1] > maxY or p[1] < minY: # Too far up or down
-                # If the goal is to the right, go to the left of the ball, and vice versa.
-                if uv[0] > 0:
-                    p = b_negXvec
-                else:
-                    p = b_posXvec
+#            # Make sure the position is not off the field.
+#            if p[1] > maxY or p[1] < minY: # Too far up or down
+#                # If the goal is to the right, go to the left of the ball, and vice versa.
+#                if uv[0] > 0:
+#                    print 'p too high or low, goal to right'
+#                    p = b_negXvec
+#                else:
+#                    print 'p too high or low, goal to left'
+#                    p = b_posXvec
 
             # I'm not sure what we should do in the x-direction. I don't know what we did for
             # the y-direction would be useful.
