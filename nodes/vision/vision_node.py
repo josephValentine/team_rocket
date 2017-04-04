@@ -39,9 +39,9 @@ def _process_img(msg):
    # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[255,89,128,159,54,98]
+   ourRobot1Color=[250,80,138,190,33,101]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 66, 146, 212, 6, 0]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -262,7 +262,8 @@ def _ball(image, color, isFirst):
    for c in cnts:
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
-      if radius > 2.0 and radius < 3:
+      #print radius
+      if radius > 1.6 and radius < 3:
          objects.append((pt[0],pt[1],radius))
   
    x=None
