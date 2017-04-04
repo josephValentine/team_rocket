@@ -106,8 +106,14 @@ class AI(object):
         # half of the goal
         # this is a factor proportional to our distance from the goal to make it
         # ok to be 'less accurate' if we're far away from the goal
-        min_target_factor = field_height/(field_width*2)
-        min_target_height = max(min_target_factor*me.x, goal_height/4)
+        min_target_factor = 2 * field_height/(field_width*2)
+        min_target_height = max(min_target_factor*(me.x + field_width/2), goal_height/4)
+	
+	#if me.x > 0:
+	#    min_target_height = goal_height/4
+	#else:
+	#    min_target_height = 2
+
         goalTopvec = np.array([[field_width/2], [min_target_height]])
         goalBottomvec = np.array([[field_width/2], [-min_target_height]])
         # If we are home the goal we score on is on the other side.
@@ -177,7 +183,22 @@ class AI(object):
             # print('p: {} ({})'.format(p, type(p)))
             cmdvec = p
             # print('p: {} ({})'.format(p, type(p)))
-
+	    
+	    buffer = 0.6
+	    maxX = (field_width - buffer)/2
+	    minX = -maxX
+	    maxY = (field_height - buffer)/2
+	    minY = -maxY
+	    #print(maxX,minX,maxY,minY)
+	    if cmdvec[0] > maxX:
+	        cmdvec[0] = maxX
+	    if cmdvec[1] > maxY:
+	        cmdvec[1] = maxY
+	    if cmdvec[0] < minX:
+	        cmdvec[0] = minX
+	    if cmdvec[1] < minY:
+	        cmdvec[1] = minY
+	    # print(cmdvec)
             # # If I am sufficiently close to the point behind the ball,
             # # or in other words, once I am 21cm behind the ball, just
             # # drive to the goal.
