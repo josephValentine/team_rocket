@@ -48,6 +48,7 @@ class AI(object):
         # print game_state
         # home_score, away_score, home_bot_count, away_bot_count,
         # remaining_seconds, play, reset_field, second_half
+        self.game_state.game_info.half = game_state.second_half
 
     def strategize(self):
 
