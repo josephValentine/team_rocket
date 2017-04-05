@@ -63,6 +63,16 @@ def _handle_game_state(msg):
     _game_state = msg
 
 
+_xpos = 0
+_ypos = 0
+_theta = 0
+def _handle_me(msg):
+    global _xpos, _ypos, _theta
+    _xpos = msg.x
+    _ypos = msg.y
+    _theta = msg.theta
+
+
 def main():
     rospy.init_node('ai', anonymous=False)
 
@@ -113,6 +123,10 @@ def main():
     # /game_state, and in hardware testing it will be
     # /teamrocket_teamside/game_state.
     rospy.Subscriber('game_state', GameState, _handle_game_state)
+
+    # We need to know where we currently are in order to stop moving when the game
+    # is paused.
+    rospy.Subscriber('orienter/us{}'.format(_my_number), Pose2D, _handle_me)
 
     # This is our publisher that tells the controller where we want to be
     pub = rospy.Publisher('desired_position', Pose2D, queue_size=10)
@@ -185,10 +199,18 @@ def main():
             # msg.y = 0
             # msg.theta = _me.theta
 
+        elif not _game_state.play and not _ignore_game_state:
+            if count == 0 and print_when_commanding:
+                print 'Paused'
+                pass
+            msg.x = _xpos
+            msg.y = _ypos
+            msg.theta = _theta
+
         # If we shouldn't play and the field doesn't need to be
         # reset, then the AI node is out of a job.
-        if _game_state.play or _game_state.reset_field or _ignore_game_state:
-        # if True:
+        # if _game_state.play or _game_state.reset_field or _ignore_game_state:
+        if True:
             if count == 0 and print_when_commanding:
                 print 'publishing command'
             pub.publish(msg)
