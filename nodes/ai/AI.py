@@ -122,6 +122,13 @@ class AI(object):
             goalvec = -goalvec
             goalTopvec = -goalTopvec
             goalBottomvec = -goalBottomvec
+        # if (self.game_state.game_info.side == 'home' and \
+        #    self.game_state.game_info.half) or \
+        #    (self.game_
+        # :
+        #     goalvec = -goalvec
+        #     goalTopvec = -goalTopvec
+        #     goalBottomvec = -goalBottomvec
 
         # Make sure the robot does not try to go off the field.
         buffHor = 0.5
