@@ -77,6 +77,8 @@ def main():
     global _ignore_game_state
     ignore_game_state_param_name = rospy.search_param('ignore_game_state')
     _ignore_game_state = rospy.get_param(ignore_game_state_param_name, 'False')
+    print 'ignoring game state: {} ({})'.format(_ignore_game_state,
+                                                type(_ignore_game_state))
 
     # which ally are we?
     global _my_number
@@ -105,7 +107,12 @@ def main():
 
     # This message comes from the soccerref and
     # tells us if we should be playing or not
-    rospy.Subscriber('/game_state', GameState, _handle_game_state)
+    # rospy.Subscriber('/game_state', GameState, _handle_game_state)
+    # We used to always listen to the game_state in the root namespace but now
+    # our launch file remaps us the correct one. In competition this will be
+    # /game_state, and in hardware testing it will be
+    # /teamrocket_teamside/game_state.
+    rospy.Subscriber('game_state', GameState, _handle_game_state)
 
     # This is our publisher that tells the controller where we want to be
     pub = rospy.Publisher('desired_position', Pose2D, queue_size=10)
@@ -115,6 +122,7 @@ def main():
 
     rate = rospy.Rate(100) # 100 Hz
     count = 0
+    print_when_commanding = False
     while not rospy.is_shutdown():
 
         # Get a message ready to send
@@ -122,12 +130,19 @@ def main():
         # print 'ai_node: msg = %s' % msg
 
         count = (count + 1) % 100
-        if count == 0:
+        if count == 0 and print_when_commanding:
             # print _game_state
+            print 'tick'
+            print 'reset: {}\nplay: {}'.format(_game_state.reset_field,
+                                               _game_state.play)
             pass
+
 
         if _game_state.reset_field and not _ignore_game_state:
             # Send robot to home
+            if count == 0 and print_when_commanding:
+                print 'Send robot to home'
+                pass
             if _ally_number == 1:
                 msg.x = -0.5
                 msg.y = 0
@@ -141,6 +156,9 @@ def main():
         elif _game_state.play or _ignore_game_state:
         # elif True:
             # Run AI as normal
+            if count == 0 and print_when_commanding:
+                print 'Run AI as normal'
+                pass
             # Based on the state of the game and the positions of the players,
             # run the AI and return commanded positions for this robot
             # ai.update(_me, _ally, _opp1, _opp2, _ball, _game_state)
@@ -158,6 +176,8 @@ def main():
         # reset, then the AI node is out of a job.
         if _game_state.play or _game_state.reset_field or _ignore_game_state:
         # if True:
+            if count == 0 and print_when_commanding:
+                print 'publishing command'
             pub.publish(msg)
 
         # Wait however long it takes to make this tick at 100Hz

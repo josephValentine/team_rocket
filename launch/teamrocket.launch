@@ -4,8 +4,9 @@
   <arg name="team_side"         default="away" />
   <arg name="debug"             default="false" />
   <arg name="ignore_game_state" default="false" />
-  <arg name="sim_mode"          default="true" />
+  <arg name="sim_mode"          default="false" />
   <arg name="two_robots"        default="true" />
+  <arg name="game_state"        default="/game_state" />
   <!-- Set to false if you're not debugging
        This creates a window to show us where it thinks the robot is and where
        it's trying to go. -->
@@ -51,7 +52,8 @@
       <arg name="ally_number"       value="2" />
       <arg name="team_side"         value="$(arg team_side)" />
       <arg name="debug"             value="$(arg debug)" />
-      <arg name="ignore_game_state" value="$(arg debug)" />
+      <arg name="ignore_game_state" value="$(arg ignore_game_state)" />
+      <arg name="game_state"        value="$(arg game_state)" />
     </include>
     <!-- </group> -->
 

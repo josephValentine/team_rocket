@@ -6,6 +6,7 @@
   <arg name="ignore_game_state" default="false" />
   <arg name="my_number"         default="1" />
   <arg name="ally_number"       default="2" />
+  <arg name="game_state"        default="/game_state" />
 
   <!-- using which side of the field we are on, determine the appropriate -->
   <!-- connections to the output of the vision system -->
@@ -14,15 +15,17 @@
   
   <!-- Hardware agnostic code -->
   <node name="ai" pkg="teamrocket" type="ai_node.py" output="screen">
-    <param name="my_number"        value="$(arg my_number)" />
-    <param name="ally_number"      value="$(arg ally_number)" />
-    <param name="team_side"        value="$(arg team_side)" />
-    <remap from="me"               to="controller/us$(arg my_number)" />
-    <!-- <remap from="ally"        to="controller/us$(arg ally_number)" /> -->
-    <!-- <remap from="opp1"        to="estimator/them1" /> -->
-    <!-- <remap from="opp2"        to="estimator/them2" /> -->
-    <remap from="ball"             to="estimator/ball" />
-    <remap from="desired_position" to="desired_position/us$(arg my_number)" />
+    <param name="my_number"         value="$(arg my_number)" />
+    <param name="ally_number"       value="$(arg ally_number)" />
+    <param name="team_side"         value="$(arg team_side)" />
+    <param name="ignore_game_state" value="$(arg ignore_game_state)" />
+    <remap from="me"                to="controller/us$(arg my_number)" />
+    <!-- <remap from="ally"         to="controller/us$(arg ally_number)" /> -->
+    <!-- <remap from="opp1"         to="estimator/them1" /> -->
+    <!-- <remap from="opp2"         to="estimator/them2" /> -->
+    <remap from="ball"              to="estimator/ball" />
+    <remap from="desired_position"  to="desired_position/us$(arg my_number)" />
+    <remap from="game_state"        to="$(arg game_state)" />
   </node>
   <node name="controller" pkg="teamrocket" type="controller_node.py"
         output="screen">

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="team_side"         default="away" />
+  <arg name="debug"             default="false" />
+  <arg name="ignore_game_state" default="false" />
+  <arg name="sim_mode"          default="false" />
+  <arg name="two_robots"        default="true" />
+  
+
+  <!--
+
+1. Spin up vision node, connect to usb_cam vision
+2. Spin up each robot (using 'machine' tags)
+3. Referee node (for game_state messages)
+
+  -->
+
+  <include file="$(find teamrocket)/launch/teamrocket.launch">
+    <arg name="team_side"         value="$(arg team_side)" />
+    <arg name="debug"             value="$(arg debug)" />
+    <arg name="ignore_game_state" value="$(arg ignore_game_state)" />
+    <arg name="sim_mode"          value="$(arg sim_mode)" />
+    <arg name="two_robots"        value="$(arg two_robots)" />
+    <arg name="game_state"        value="game_state" />
+
+    <!-- <arg name="team_side"             value="home" /> -->
+    <!-- <arg name="sim_mode"              value="false" /> -->
+    <!-- <arg name="competition_mode" value="false" /> -->
+    <!-- <arg name="two_robots"            value="true" /> -->
+    <!-- <arg name="debug"                 default="false" /> -->
+
+    <!-- Outputs to either real world or simulation -->
+    <!-- <arg name="vel_cmd_ally1" value="vel_cmds" /> -->
+    <!-- <arg name="vel_cmd_ally2" value="vel_cmds" /> -->
+    <!-- <arg name="kick_ally1" value="kick" /> -->
+    <!-- <arg name="kick_ally2" value="kick" /> -->
+  </include>
+
+  <group ns="teamrocket_$(arg team_side)">
+
+    <include file="$(find soccerref)/launch/referee.launch">
+      <arg name="half_duration_secs" value="120" />
+      <arg name="use_timer" value="false" />
+      <arg name="simulation_mode" value="false" />
+    </include>
+
+  </group>
+</launch>
