@@ -16,6 +16,7 @@ isFirst = True
 us1Vision = Pose2D()
 us1Estimated = Pose2D()
 us1Commanded = Pose2D()
+ballVision = Pose2D()
 field_dim = Pose2D()
 field_dim.x = 1 # avoid dividing by zero the first couple of times
 field_dim.y = 1
@@ -34,7 +35,7 @@ def _ros2cv(msg):
 def _process_camera(msg):
    global image, isFirst
    image = _ros2cv(msg)
-   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7) 
+   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7)
 
    _draw(image, isFirst)
    isFirst = False
@@ -44,14 +45,24 @@ def _draw(image, isFirst):
    if not _live:
       if isFirst:
          cv2.namedWindow("debug")
+
       us1VisionX,us1VisionY,us1VisionTheta = convert_coordinates_back(us1Vision)
-      cv2.putText(image, 'us1V', (us1VisionX,us1VisionY), cv2.FONT_ITALIC, 0.3, (0,0,255))
+      cv2.putText(image, 'us1V', (us1VisionX,us1VisionY), cv2.FONT_ITALIC, 0.3,
+                  (0,0,255))
 
-      us1EstimatedX,us1EstimatedY,us1EstimatedTheta = convert_coordinates_back(us1Estimated)
-      cv2.putText(image, 'us1E', (us1EstimatedX,us1EstimatedY), cv2.FONT_ITALIC, 0.3, (255,0,0))
+      us1EstimatedX,us1EstimatedY,us1EstimatedTheta = convert_coordinates_back(
+         us1Estimated)
+      cv2.putText(image, 'us1E', (us1EstimatedX,us1EstimatedY), cv2.FONT_ITALIC,
+                  0.3, (255,0,0))
 
-      us1CommandedX,us1CommandedY,us1CommandedTheta = convert_coordinates_back(us1Commanded)
-      cv2.putText(image, 'us1C', (us1CommandedX,us1CommandedY), cv2.FONT_ITALIC, 0.3, (0,255,255))
+      us1CommandedX,us1CommandedY,us1CommandedTheta = convert_coordinates_back(
+         us1Commanded)
+      cv2.putText(image, 'us1C', (us1CommandedX,us1CommandedY), cv2.FONT_ITALIC,
+                  0.3, (0,255,255))
+
+      ballVisionX,ballVisionY,ballVisionTheta = convert_coordinates_back(ballVision)
+      cv2.putText(image, 'ballV', (ballVisionX,ballVisionY), cv2.FONT_ITALIC,
+                  0.3, (203, 192, 255))
 
       cv2.imshow("debug",image)
       cv2.waitKey(3)
@@ -100,9 +111,9 @@ def convert_coordinates_back(rval):
 
 
 def _process_measured_us1(msg):
-   global us1Vision 
+   global us1Vision
    us1Vision = msg
-   
+
 
 def _process_measured_us2(msg):
    global image
@@ -117,8 +128,8 @@ def _process_measured_them2(msg):
    pass
 
 def _process_measured_ball(msg):
-   global image
-   pass
+   global ballVision
+   ballVision = msg
 
 def _process_estimated_us1(msg):
    global us1Estimated
@@ -167,7 +178,7 @@ def main():
    # rospy.Subscriber('vision/us2',   Pose2D, _process_measured_us2)
    # rospy.Subscriber('vision/them1', Pose2D, _process_measured_them1)
    # rospy.Subscriber('vision/them2', Pose2D, _process_measured_them2)
-   # rospy.Subscriber('vision/ball',  Pose2D, _process_measured_ball)
+   rospy.Subscriber('vision/ball',  Pose2D, _process_measured_ball)
 
    rospy.Subscriber('controller/us1',  Pose2D, _process_estimated_us1)
    # rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
@@ -181,7 +192,7 @@ def main():
    rospy.Subscriber('vision/field_dim', Pose2D, _process_field_dim)
    rospy.Subscriber('vision/field_pos', Pose2D, _process_field_pos)
 
-   
+
    rospy.spin()
    rate = rospy.Rate(100) # 100 Hz
    while not rospy.is_shutdown():
