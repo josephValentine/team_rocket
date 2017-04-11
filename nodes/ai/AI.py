@@ -118,10 +118,10 @@ class AI(object):
         goalTopvec = np.array([[field_width/2], [min_target_height]])
         goalBottomvec = np.array([[field_width/2], [-min_target_height]])
         # If we are home the goal we score on is on the other side.
-        if self.game_state.game_info.side == 'home':
-            goalvec = -goalvec
-            goalTopvec = -goalTopvec
-            goalBottomvec = -goalBottomvec
+        #if self.game_state.game_info.side == 'home':
+        #    goalvec = -goalvec
+        #    goalTopvec = -goalTopvec
+        #    goalBottomvec = -goalBottomvec
         # if (self.game_state.game_info.side == 'home' and \
         #    self.game_state.game_info.half) or \
         #    (self.game_
@@ -144,7 +144,7 @@ class AI(object):
         did_intersect = _do_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                       goalTopvec)
         if did_intersect:
-            # print 'Going to goal.'
+            print 'Going to goal.'
             cmdvec = _seg_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                     goalTopvec)
         else:
@@ -207,8 +207,11 @@ class AI(object):
                 # print
 
             if closest_intersection is not None:
-                p = ballvec + closest_intersection_vec
+                print 'Using waypoints'
+                p = closest_intersection_vec
                 # print('p: {} ({})'.format(p, type(p)))
+            else:
+                print 'Going behind ball'
 
             # print('p: {} ({})'.format(p, type(p)))
             cmdvec = p
