@@ -99,10 +99,14 @@ class AI(object):
             return me
         # print 'me ({}): {}'.format(type(me), me)
         # print 'ball ({}): {}'.format(type(ball), ball)
+        field_half_w = field_width/2
+        if self.game_state.game_info.side == 'away':
+            field_half_w = -field_half_w
+       
         # Use numpy to create vectors
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
-        goalvec = np.array([[-field_width/2], [0]])
+        goalvec = np.array([[field_half_w], [0]])
         # go from center of goal to +/- quarter goal width to aim for the center
         # half of the goal
         # this is a factor proportional to our distance from the goal to make it
@@ -115,8 +119,8 @@ class AI(object):
 	#else:
 	#    min_target_height = 2
 
-        goalTopvec = np.array([[-field_width/2], [min_target_height]])
-        goalBottomvec = np.array([[-field_width/2], [-min_target_height]])
+        goalTopvec = np.array([[field_half_w], [min_target_height]])
+        goalBottomvec = np.array([[field_half_w], [-min_target_height]])
         # If we are home the goal we score on is on the other side.
         #if self.game_state.game_info.side == 'home':
         #    goalvec = -goalvec
