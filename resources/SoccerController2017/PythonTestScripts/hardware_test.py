@@ -51,7 +51,7 @@ speedM3 = 3.5
 
 # Set the PIDQ values for all motors
 #setPID(0, 1, 1, 800)
-setPID(0, 1.5, 3, 100000)
+setPID(0, 1.5, 3, 70000)
 
 # Set tick period (triggers PID control) and velocity filter corner frequency
 setT(20, 50)

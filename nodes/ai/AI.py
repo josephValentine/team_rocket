@@ -254,7 +254,7 @@ class AI(object):
             #     # print 'Get behind ball'
             #     cmdvec = p
 
-        return (cmdvec.flatten()[0], cmdvec.flatten()[1], 0)
+        return (cmdvec.flatten()[0], cmdvec.flatten()[1], 180)
 
 
     def kick(self):

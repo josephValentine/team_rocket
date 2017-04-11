@@ -53,7 +53,11 @@ speedM2 = 4
 speedM3 = 4
 
 # Set the PIDQ values for all motors
-setPID(0, 1.5, 4, 70000)
+setPID(0, 1.5, 1.5, 70000)
+
+# setPID(1, 1.6, 1.5, 70000)
+# setPID(2, 1.5, 1.5, 70000)
+# setPID(3, 1.5, 1.5, 70000)
 
 #setPID(1, 1.6, 3, 100000)
 #setPID(2, 1.5, 3, 100000)

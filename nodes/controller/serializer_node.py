@@ -32,7 +32,7 @@ def main():
 
    # create a serializer object
    ser = Serializer()
-   ser.setPID(0, 1.5, 4, 70000)
+   ser.setPID(0, 1.5, 1.5, 70000)
    #ser.setPID(1, 1.6, 3, 100000)
    #ser.setPID(2, 1.5, 3, 100000)
    #ser.setPID(3, 1.4, 3, 100000)
