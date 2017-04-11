@@ -12,7 +12,7 @@ from AI import AI
 
 # which team/robot am I running on?
 _team_side = 'home'
-_ally_number = 1
+_my_number = 1
 
 # create a blank GameState message
 # to keep track of current state
@@ -83,21 +83,21 @@ def main():
 
     # which ally are we?
     global _my_number
-    global _ally_number
+    global _my_number
     # An exteremely brittle way of getting the robot number
     # Try setting as a rosparam instead?
     my_number_param_name = rospy.search_param('my_number')
     _my_number = rospy.get_param(my_number_param_name, '1')
-    ally_number_param_name = rospy.search_param('ally_number')
-    _ally_number = rospy.get_param(ally_number_param_name, '2')
+    my_number_param_name = rospy.search_param('my_number')
+    _my_number = rospy.get_param(my_number_param_name, '2')
     print 'team_param_name', team_param_name
     print '_team_side', _team_side
     print 'my_number_param_name', my_number_param_name
     print '_my_number', _my_number
-    print 'ally_number_param_name', ally_number_param_name
-    print '_ally_number', _ally_number
-    # _ally_number = int(rospy.get_namespace().split('/')[-2][-1])
-    # _ally_number = '1'
+    print 'my_number_param_name', my_number_param_name
+    print '_my_number', _my_number
+    # _my_number = int(rospy.get_namespace().split('/')[-2][-1])
+    # _my_number = '1'
 
     # Subscribe to Robot and Ball positions
     rospy.Subscriber('me',   Pose2D, _handle_me  )
@@ -146,23 +146,23 @@ def main():
                 pass
 
             if _team_side == 'away':
-                if _ally_number == 1:
+                if _my_number == 1:
                     msg.x = +0.5
                     msg.y = 0
                     msg.theta = 180
 
-                elif _ally_number == 2:
+                elif _my_number == 2:
                     msg.x = +1
                     msg.y = 0
                     msg.theta = 180
 
             else:
-                if _ally_number == 1:
+                if _my_number == 1:
                     msg.x = -0.5
                     msg.y = 0
                     msg.theta = 0
 
-                elif _ally_number == 2:
+                elif _my_number == 2:
                     msg.x = -1
                     msg.y = 0
                     msg.theta = 0
