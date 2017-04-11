@@ -48,12 +48,12 @@ totalTime = 2   #seconds
 sampleRate = 50 #samples per second
 #pulsePerRotation = 116.16 #New motors
 pulsePerRotation = 4955 #Old motors
-speedM1 = 5
-speedM2 = 5
-speedM3 = 5
+speedM1 = 4
+speedM2 = 4
+speedM3 = 4
 
 # Set the PIDQ values for all motors
-setPID(0, 1.5, 3, 100000)
+setPID(0, 1.5, 4, 70000)
 
 #setPID(1, 1.6, 3, 100000)
 #setPID(2, 1.5, 3, 100000)

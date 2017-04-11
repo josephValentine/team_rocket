@@ -32,10 +32,10 @@ def main():
 
    # create a serializer object
    ser = Serializer()
-   #ser.setPID(0, 1.5, 3, 100000)
-   ser.setPID(1, 1.6, 3, 100000)
-   ser.setPID(2, 1.5, 3, 100000)
-   ser.setPID(3, 1.4, 3, 100000)
+   ser.setPID(0, 1.5, 4, 70000)
+   #ser.setPID(1, 1.6, 3, 100000)
+   #ser.setPID(2, 1.5, 3, 100000)
+   #ser.setPID(3, 1.4, 3, 100000)
 
    # loop until shutdown
    rate = rospy.Rate(100) # 100 Hz
