@@ -40,9 +40,9 @@ def _process_img(msg):
    # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[255,189,107,218,106,65]
+   ourRobot1Color=[255,220,107,218,20,65]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 74, 255, 212, 0, 106]#ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 74, 255, 162, 0, 106]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -297,9 +297,9 @@ def _orient(msg):
    """
    if _game_state.second_half:
       msg.x = -msg.x
-      # msg.y = -msg.y Don't change y
-      # msg.theta = (msg.theta + 180) % 360
-      msg.theta = -((msg.theta + 180) % 360)
+      msg.y = -msg.y # Don't change y
+      msg.theta = (msg.theta + 180) % 360
+      # msg.theta = -((msg.theta + 180) % 360)
    return msg
 
 

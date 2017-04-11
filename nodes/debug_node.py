@@ -44,6 +44,7 @@ def _process_camera(msg):
    image = cv2.resize(image, (0,0), fx=0.7, fy=0.7)
    if _game_state.second_half:
       image = cv2.flip(image, 1)
+      image = cv2.flip(image, 0)
 
    _draw(image, isFirst)
    isFirst = False
