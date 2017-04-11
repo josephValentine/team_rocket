@@ -42,7 +42,7 @@ def _process_img(msg):
    fieldColor=[189,108,215,123,25,31]
    ourRobot1Color=[255,220,107,218,20,65]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 74, 255, 162, 0, 106]#ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 77, 255, 162, 0, 117]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
