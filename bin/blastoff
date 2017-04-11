@@ -1,1 +1,1 @@
-roslaunch teamrocket teamrocket.launch
+roslaunch teamrocket teamrocket.launch $@
