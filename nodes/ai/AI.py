@@ -102,7 +102,7 @@ class AI(object):
         # Use numpy to create vectors
         ballvec = np.array([[ball.x], [ball.y]])
         mevec = np.array([[me.x], [me.y]])
-        goalvec = np.array([[field_width/2], [0]])
+        goalvec = np.array([[-field_width/2], [0]])
         # go from center of goal to +/- quarter goal width to aim for the center
         # half of the goal
         # this is a factor proportional to our distance from the goal to make it

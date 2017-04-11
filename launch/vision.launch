@@ -33,6 +33,10 @@
     <node name="debug" pkg="teamrocket" type="debug_node.py" output="screen"
           if="$(arg debug)">
       <remap from="camera" to="/usb_cam_$(arg team_side)/image_raw" />
+      <remap from="game_state" to="/game_state"
+             unless="$(arg hw_testing)" />
+      <remap from="game_state" to="game_state"
+             if="$(arg hw_testing)" />
     </node>
 
   </group>

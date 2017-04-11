@@ -8,6 +8,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+from soccerref.msg import GameState
 
 # change this if we're live (on the pi)
 _live = False
@@ -23,6 +24,11 @@ field_dim.y = 1
 field_pos = Pose2D()
 
 
+_game_state = GameState()
+def _process_game_state(msg):
+   global _game_state
+   _game_state = msg
+   
 
 def _ros2cv(msg):
    try:
@@ -36,6 +42,8 @@ def _process_camera(msg):
    global image, isFirst
    image = _ros2cv(msg)
    image = cv2.resize(image, (0,0), fx=0.7, fy=0.7)
+   if _game_state.second_half:
+      image = cv2.flip(image, 1)
 
    _draw(image, isFirst)
    isFirst = False
@@ -172,6 +180,8 @@ def main():
 
    #get camera to overlay images on
    rospy.Subscriber('camera', Image, _process_camera)
+
+   rospy.Subscriber('game_state', GameState, _process_game_state)
 
    # subscribe to locations
    rospy.Subscriber('vision/us1',   Pose2D, _process_measured_us1)
