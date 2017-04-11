@@ -158,27 +158,36 @@ def main():
                 print 'Send robot to home'
                 pass
 
-            if _team_side == 'home':
-                if _ally_number == 1:
-                    msg.x = +0.5
-                    msg.y = 0
-                    msg.theta = 0
+            # if _team_side == 'home':
+            #     if _ally_number == 1:
+            #         msg.x = +0.5
+            #         msg.y = 0
+            #         msg.theta = 0
 
-                elif _ally_number == 2:
-                    msg.x = +1
-                    msg.y = 0
-                    msg.theta = 0
+            #     elif _ally_number == 2:
+            #         msg.x = +1
+            #         msg.y = 0
+            #         msg.theta = 0
 
-            else:
-                if _ally_number == 1:
-                    msg.x = -0.5
-                    msg.y = 0
-                    msg.theta = 0
+            # else:
+            #     if _ally_number == 1:
+            #         msg.x = -0.5
+            #         msg.y = 0
+            #         msg.theta = 0
 
-                elif _ally_number == 2:
-                    msg.x = -1
-                    msg.y = 0
-                    msg.theta = 0
+            #     elif _ally_number == 2:
+            #         msg.x = -1
+            #         msg.y = 0
+            #         msg.theta = 0
+            if _ally_number == 1:
+                msg.x = -0.5
+                msg.y = 0
+                msg.theta = 0
+
+            elif _ally_number == 2:
+                msg.x = -1
+                msg.y = 0
+                msg.theta = 0
 
         elif _game_state.play or _ignore_game_state:
         # elif True:
