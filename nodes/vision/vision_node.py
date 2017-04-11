@@ -297,8 +297,9 @@ def _orient(msg):
    """
    if _game_state.second_half:
       msg.x = -msg.x
-      msg.y = -msg.y
-      msg.theta = (msg.theta + 180) % 360
+      # msg.y = -msg.y Don't change y
+      # msg.theta = (msg.theta + 180) % 360
+      msg.theta = -((msg.theta + 180) % 360)
    return msg
 
 
