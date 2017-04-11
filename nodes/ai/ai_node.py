@@ -166,13 +166,13 @@ def main():
             #         msg.x = -1
             #         msg.y = 0
             #         msg.theta = 0
-            if _ally_number == 1:
-                msg.x = -0.5
+            if _my_number == 1:
+                msg.x = 0.5
                 msg.y = 0
                 msg.theta = 0
 
-            elif _ally_number == 2:
-                msg.x = -1
+            elif _my_number == 2:
+                msg.x = 1
                 msg.y = 0
                 msg.theta = 0
 

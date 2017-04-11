@@ -115,8 +115,8 @@ class AI(object):
 	#else:
 	#    min_target_height = 2
 
-        goalTopvec = np.array([[field_width/2], [min_target_height]])
-        goalBottomvec = np.array([[field_width/2], [-min_target_height]])
+        goalTopvec = np.array([[-field_width/2], [min_target_height]])
+        goalBottomvec = np.array([[-field_width/2], [-min_target_height]])
         # If we are home the goal we score on is on the other side.
         #if self.game_state.game_info.side == 'home':
         #    goalvec = -goalvec
