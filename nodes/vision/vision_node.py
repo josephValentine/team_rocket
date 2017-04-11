@@ -8,6 +8,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose2D
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+from soccerref.msg import GameState
 
 # change this if we're live (on the pi)
 _live = False
@@ -39,9 +40,9 @@ def _process_img(msg):
    # _show_raw(image)
 
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[250,80,138,190,33,101]
+   ourRobot1Color=[255,189,107,218,106,65]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 66, 146, 212, 6, 0]#ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 74, 255, 212, 0, 106]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -64,24 +65,24 @@ def _process_img(msg):
       if (ourRobot1[0] is not None and ourRobot1[1] is not None):#angle can be zero so cant use all() func
          us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
          # print 'x_old = {}, y_old = {}'.format(ourRobot1[0], ourRobot1[1])
-         us1_pub.publish(us1_msg)
+         us1_pub.publish(_orient(us1_msg))
 
       ourRobot2 = _findRobot(image, ourRobot2Color, "ourRobot2", isFirst, (3,3))
       if (ourRobot2[0] is not None and ourRobot2[1] is not None):#angle can be zero so cant use all() func
          us2_msg = convert_coordinates(ourRobot2[0],ourRobot2[1],ourRobot2[2], field)
-         us2_pub.publish(us2_msg)
-      
+         us2_pub.publish(_orient(us2_msg))
+
       ball = _ball(image, ballColor, isFirst)
       if (ball[0] is not None and ball[1] is not None):
          ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
-         ball_pub.publish(ball_msg)
+         ball_pub.publish(_orient(ball_msg))
 
    if not _live:
       cv2.waitKey(3)#the windows dont stay open if this isnt here...
    isFirst = False
 
-   
-   
+
+
 
 def convert_coordinates(x,y,theta, field):
    # This assumes the field position zero is top left
@@ -140,7 +141,7 @@ def _color_mask(image, controlWindow, color, first=False):
    upper = np.array(upper, dtype = "uint8")
 
    #resize the image to reduce process time, fx and fy are the scale factors in those axis
-   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7) 
+   image = cv2.resize(image, (0,0), fx=0.7, fy=0.7)
 
    # find the colors within the specified boundaries and apply
    # the mask
@@ -163,7 +164,7 @@ def _findRobot(image, color, name, isFirst, size):
    if not _live:
       cv2.namedWindow(name)
    out1 = _color_mask(image,name,color,isFirst)
-   
+
    #remove noise
    kernel = np.ones(size,np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
@@ -179,7 +180,7 @@ def _findRobot(image, color, name, isFirst, size):
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       objects.append((pt[0],pt[1],radius))
-   
+
    x=None
    y=None
    angle=None
@@ -197,7 +198,7 @@ def _findRobot(image, color, name, isFirst, size):
       # print(x,y,angle)
       cv2.circle(out3, (int(sortedObj[0][0]), int(sortedObj[0][1])), int(sortedObj[0][2]), (0,0,255), 2)
       cv2.circle(out3, (int(sortedObj[1][0]), int(sortedObj[1][1])), int(sortedObj[1][2]), (255,0,0), 2)
-      
+
    if not _live:
       cv2.imshow(name,out3)
    return (x,y,angle)
@@ -208,7 +209,7 @@ def _field(image, color, isFirst):
    if not _live:
       cv2.namedWindow("field")
    out1 = _color_mask(image, 'field',color,isFirst)
-   
+
    #remove noise
    kernel = np.ones((10,10),np.uint8) #sets size of holes accepted i think?
    out2 = cv2.morphologyEx(out1, cv2.MORPH_OPEN, kernel)
@@ -224,7 +225,7 @@ def _field(image, color, isFirst):
       x,y,w,h = cv2.boundingRect(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       objects.append((x,y,w,h))
-  
+
    x=None
    y=None
    w=None
@@ -265,7 +266,7 @@ def _ball(image, color, isFirst):
       #print radius
       if radius > 1.6 and radius < 3:
          objects.append((pt[0],pt[1],radius))
-  
+
    x=None
    y=None
    if len(objects) >= 1:
@@ -274,16 +275,40 @@ def _ball(image, color, isFirst):
       y=sortedObj[0][1]
       # print('ball',x,y,sortedObj[0][2])
       cv2.circle(out3, (int(x), int(y)), int(sortedObj[0][2]), (100,100,255), -1)
-   
+
    if not _live:
       cv2.imshow("ball",out3)
    return (x,y,0)
+
+_game_state = GameState()
+def _process_game_state(msg):
+   global _game_state
+   _game_state = msg
+
+
+def _orient(msg):
+   """If we're in the second half, we need to flip where we're going
+
+   This allows the ai to run the same code all the time; it always thinks it's
+   going to the right.
+
+   If it turns out that the away camera is flipped from the home camera, we'll
+   have to check for that here as well.
+   """
+   if _game_state.second_half:
+      msg.x = -msg.x
+      msg.y = -msg.y
+      msg.theta = (msg.theta + 180) % 360
+   return msg
+
 
 def main():
    rospy.init_node('vision', anonymous=False)
 
    # subscribe to camera
    rospy.Subscriber('camera', Image, _process_img)
+   # subscribe to the game_state
+   rospy.Subscriber('game_state', GameState, _process_game_state)
 
    global us1_pub, us2_pub, ball_pub, field_dim_pub, field_pos_pub
    # publish locations
