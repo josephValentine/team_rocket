@@ -51,7 +51,11 @@ speedM3 = 3.5
 
 # Set the PIDQ values for all motors
 #setPID(0, 1, 1, 800)
-setPID(0, 1.5, 3, 70000)
+# setPID(0, 1.5, 3, 70000)
+# setPID(0, 1.5, 1.5, 70000)
+setPID(1, 1.5, 1.5, 70000)
+setPID(2, 1.5, 1.5, 69000)
+setPID(3, 1.5, 1.5, 70000)
 
 # Set tick period (triggers PID control) and velocity filter corner frequency
 setT(20, 50)
@@ -86,9 +90,21 @@ def runSpeed(speed1, speed2, speed3, starti):
 #setSpeed(0, 0, 0)
 starti = 0
 
-starti = runSpeed(speedM1, -speedM2, 0, starti)
-starti = runSpeed(-speedM1, 0, speedM3, starti)
-starti = runSpeed(0, speedM2, -speedM3, starti)
+# big side forward - other order
+starti = runSpeed(0, -speedM2, speedM3, starti)
+starti = runSpeed(speedM1, 0, -speedM3, starti)
+starti = runSpeed(-speedM1, speedM2, 0, starti)
+# starti = runSpeed(0, -speedM2, speedM3, starti)
+# starti = runSpeed(0, -speedM2, speedM3, starti)
+# starti = runSpeed(0, -speedM2, speedM3, starti)
+# # big side forward
+# starti = runSpeed(-speedM1, speedM2, 0, starti)
+# starti = runSpeed(speedM1, 0, -speedM3, starti)
+# starti = runSpeed(0, -speedM2, speedM3, starti)
+# small side forward
+# starti = runSpeed(speedM1, -speedM2, 0, starti)
+# starti = runSpeed(-speedM1, 0, speedM3, starti)
+# starti = runSpeed(0, speedM2, -speedM3, starti)
 # starti = runSpeed(speedM1, 0, 0, starti)
 # starti = runSpeed(0, speedM2, 0, starti)
 # starti = runSpeed(0, 0, speedM3, starti)
