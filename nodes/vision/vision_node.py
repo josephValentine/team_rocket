@@ -39,10 +39,17 @@ def _process_img(msg):
    image = _ros2cv(msg)
    # _show_raw(image)
 
+   # shiny pink ball - 255, 255, 255, 221, 0, 0
+   # dull pink ball - 255, 73, 255, 162, 0, 167
+   # blue - 255, 220, 107, 218, 20, 65
+   # purple - 252, 73, 204, 214, 0, 113
+   # red - 255, 139, 20, 201, 80, 0
+   # green - 255, 96, 255, 203, 55, 0
+   # yellow - 255, 36, 97, 218, 0, 0
    fieldColor=[189,108,215,123,25,31]
    ourRobot1Color=[255,220,107,218,20,65]
    ourRobot2Color=[229,216,241,204,195,222]
-   ballColor=[255, 77, 255, 162, 0, 117]#ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 73, 255, 162, 0, 167]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
