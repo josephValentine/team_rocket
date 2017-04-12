@@ -258,7 +258,16 @@ class AI(object):
             #     # print 'Get behind ball'
             #     cmdvec = p
 
-        return (cmdvec.flatten()[0], cmdvec.flatten()[1], 180)
+        # If we're away, we're going to the left, so face 0 degrees so our 
+        # long side faces to the left
+        if self.team_side == 'away':
+            angle = 0
+        # If we're home, we're going to the right, so face 180 degrees so our 
+        # long side faces to the right
+        else:
+            angle = 180
+
+        return (cmdvec.flatten()[0], cmdvec.flatten()[1], angle)
 
 
     def kick(self):
