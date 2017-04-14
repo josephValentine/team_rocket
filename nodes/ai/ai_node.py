@@ -101,7 +101,7 @@ def main():
 
     # Subscribe to Robot and Ball positions
     rospy.Subscriber('me',   Pose2D, _handle_me  )
-    # rospy.Subscriber('ally', Pose2D, _handle_ally)
+    rospy.Subscriber('ally', Pose2D, _handle_ally)
     # rospy.Subscriber('opp1', Pose2D, _handle_opp1)
     # rospy.Subscriber('opp2', Pose2D, _handle_opp2)
     rospy.Subscriber('ball', Pose2D, _handle_ball)

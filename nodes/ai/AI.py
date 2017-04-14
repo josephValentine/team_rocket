@@ -52,7 +52,7 @@ class AI(object):
 
     def strategize(self):
 
-        if False:
+        if self.ally1:
             # return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
             # print 'rush goal'
@@ -148,7 +148,7 @@ class AI(object):
         did_intersect = _do_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                       goalTopvec)
         if did_intersect:
-            print 'Going to goal.'
+            # print 'Going to goal.'
             cmdvec = _seg_intersect(mevec, mevec + me2ballvec, goalBottomvec,
                                     goalTopvec)
         else:
@@ -211,11 +211,12 @@ class AI(object):
                 # print
 
             if closest_intersection is not None:
-                print 'Using waypoints'
+                # print 'Using waypoints'
                 p = closest_intersection_vec
                 # print('p: {} ({})'.format(p, type(p)))
             else:
-                print 'Going behind ball'
+                # print 'Going behind ball'
+                pass
 
             # print('p: {} ({})'.format(p, type(p)))
             cmdvec = p

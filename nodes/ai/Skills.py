@@ -67,6 +67,7 @@ def get_ellipse_position(game_state):
 count = 0
 prev_ball_point = Point(0, 0)
 prev_prev_ball_point = Point(0, 0)
+field_width = 3.40
 def get_smart_goalie_position(game_state, distance):
    """Return a point at specified distance from goal toward the ball
 
@@ -79,6 +80,10 @@ def get_smart_goalie_position(game_state, distance):
                             ball
 
    """
+   field_half_w = field_width/2
+   if self.game_state.game_info.side == 'away':
+      field_half_w = -field_half_w
+
    global count, prev_ball_point, prev_prev_ball_point
    ball_point = game_state.field.ball.point
    count = (count + 1) % 5
@@ -88,19 +93,19 @@ def get_smart_goalie_position(game_state, distance):
    delta_x = prev_ball_point.x - prev_prev_ball_point.x
    if count == 0:
       print 'delta_x = {}'.format(delta_x)
-   goal_center_point = game_state.game_info.get_home_goal_point()
+   goal_center_point = field_half_w # game_state.game_info.get_home_goal_point()
    if abs(delta_x) > 0.01:
       delta_y = prev_ball_point.y - prev_prev_ball_point.y
-      dist_to_goal = goal_center_point.x - prev_prev_ball_point.x
+      dist_to_goal = goal_center_point - prev_prev_ball_point.x
       future_y = delta_y / delta_x * dist_to_goal
    else:
       future_y = ball_point.y
    if future_y > Constants.goal_top_y:
-      goal_point = Point(goal_center_point.x, Constants.goal_top_y)
+      goal_point = Point(goal_center_point, Constants.goal_top_y)
    elif future_y < Constants.goal_bottom_y:
-      goal_point = Point(goal_center_point.x, Constants.goal_bottom_y)
+      goal_point = Point(goal_center_point, Constants.goal_bottom_y)
    else:
-      goal_point = Point(goal_center_point.x, future_y)
+      goal_point = Point(goal_center_point, future_y)
    vec    = ball_point - goal_point
    angle  = vec.get_angle()
    # print "commanded angle: %s" % angle
