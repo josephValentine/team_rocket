@@ -81,7 +81,7 @@ def get_smart_goalie_position(game_state, distance):
 
    """
    field_half_w = field_width/2
-   if self.game_state.game_info.side == 'away':
+   if game_state.game_info.side == 'away':
       field_half_w = -field_half_w
 
    global count, prev_ball_point, prev_prev_ball_point
