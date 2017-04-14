@@ -83,8 +83,8 @@ def main():
         w3 = 0
 
       if cntr == 20:
-          print 'Serializer: w1: {:.3f}\tw2: {:.3f}\tw3: {:.3f}'.format(
-              w1, w2, w3)
+          # print 'Serializer: w1: {:.3f}\tw2: {:.3f}\tw3: {:.3f}'.format(
+            # w1, w2, w3)
           cntr = 0
       cntr += 1
       # update the speeds

@@ -52,7 +52,7 @@ class AI(object):
 
     def strategize(self):
 
-        if self.ally1:
+        if False:
             # return _position_to_tuple(self.game_state.field.ally1.position)
             # rush ball
             # print 'rush goal'
