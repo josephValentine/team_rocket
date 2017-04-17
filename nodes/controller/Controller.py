@@ -17,7 +17,7 @@ _theta_loops = 1 # so every 2 loops do theta controller
 
 velocities = (0, 0, 0)
 
-def init(gains=None):
+def init(gains=None, my_number=1):
     global PID_x, PID_y, PID_theta
 
     xP = 2.5
@@ -34,8 +34,14 @@ def init(gains=None):
 
     # The limits that we pass in are limits to how fast the robot can go.
     # Limit x and y velocities to 0.5 m/s, angular velocity to 30 deg/s.
-    PID_x = PID(xP, xI, xD, 1.5, 0.05, integrator_limit=0.05)
-    PID_y = PID(yP, yI, yD, 1.5, 0.05, integrator_limit=0.05)
+    if my_number == 1:
+        max_x_vel = max_y_vel = 1.5
+    else:
+        max_x_vel = max_y_vel = 2.0
+    print 'max_x_vel = %d' % max_x_vel
+    print 'max_y_vel = %d' % max_y_vel
+    PID_x = PID(xP, xI, xD, max_x_vel, 0.05, integrator_limit=0.05)
+    PID_y = PID(yP, yI, yD, max_y_vel, 0.05, integrator_limit=0.05)
     PID_theta = PID(thetaP, thetaI, thetaD, 120, 0.05, integrator_limit=0.05)
 
 def set_commanded_position(x, y, theta):

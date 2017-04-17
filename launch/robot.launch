@@ -34,6 +34,7 @@
     <remap from="desired_position" to="desired_position/us$(arg my_number)" />
     <!-- For simulation, remap the output -->
     <remap from="vel_cmds"         to="command/us$(arg my_number)" />
+    <param name="my_number"        value="$(arg my_number)" />
   </node>
 
   <!-- Serializer -->

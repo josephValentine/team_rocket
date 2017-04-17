@@ -9,6 +9,8 @@
   <arg name="two_robots"        default="true" />
   <arg name="game_state"        default="/game_state" />
   <arg name="use_vision"        default="false" />
+  <arg name="use_weezing"       default="true" />
+  <arg name="use_arbok"         default="true" />
 
   <!-- Outputs to either real world or simulation -->
   <!-- <arg name="vel_cmd_ally1" default="vel_cmds" /> -->
@@ -34,7 +36,7 @@
     <!-- <param name="team_side" type="string" value="$(arg team_side)" /> -->
 
     <!-- Robot 1 (Weezing) -->
-    <group>
+    <group if="$(arg use_weezing)" >
 
       <!-- declare machines -->
       <machine name="weezing" address="192.168.1.110" user="weezing"
@@ -53,13 +55,13 @@
 
 
     <!-- Robot 2 (Arbok) -->
-    <group>
+    <group if="$(arg use_arbok)" >
 
       <!-- declare machines -->
       <machine name="arbok" address="192.168.1.24" user="arbok"
                env-loader="~/env.sh" default="true" />
 
-      <include file="$(find teamrocket)/launch/robot.launch">
+      <include file="$(find teamrocket)/launch/robot.launch" >
         <arg name="my_number"         value="2" />
         <arg name="ally_number"       value="1" />
         <arg name="team_side"         value="$(arg team_side)" />

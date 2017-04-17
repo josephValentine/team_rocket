@@ -58,17 +58,17 @@ def _handle_desired_position(msg):
 def _estimate_state(vx, vy, w):
     # print 'Controller: estimating state'
     global _xhat, _yhat, _thetahat, _msg_received, _alpha
-    
+
     _xhat = _xhat + _ctrl_period * vx
     _yhat = _yhat + _ctrl_period * vy
     _thetahat = (_thetahat + _ctrl_period * w) % 360
-    
+
     if _msg_received:
         # print '\tmessage received'
         _xhat = _alpha * _xhat + (1 - _alpha) * _xmeas
         _yhat = _alpha * _yhat + (1 - _alpha) * _ymeas
         _thetahat = _alpha * _thetahat + (1 - _alpha) * _thetameas
-        
+
         _msg_received = False
 
 
@@ -85,9 +85,14 @@ def main():
     pub = rospy.Publisher('vel_cmds', Twist, queue_size=10)
     pubState = rospy.Publisher('estimated_state', Pose2D, queue_size=10)
 
+    # Get my number
+    my_number_param_name = rospy.search_param('my_number')
+    _my_number = int(rospy.get_param(my_number_param_name, '1'))
+    print 'my_number: %d' % _my_number
+
     # initialize the controller
-    Controller.init()
-    
+    Controller.init(my_number=_my_number)
+
     # Initialize commanded velocities
     vx = 0
     vy = 0
@@ -95,7 +100,7 @@ def main():
 
     rate = rospy.Rate(int(1/_ctrl_period))
     while not rospy.is_shutdown():
-        
+
         _estimate_state(vx, vy, w)
 
         (vx, vy, w) = Controller.update(_ctrl_period, _xmeas, _ymeas, _thetameas)
@@ -118,7 +123,7 @@ def main():
         # testing to just go in one direction
         # msg.linear.x, msg.linear.y, msg.angular.z = 0, 3, 0
         pub.publish(msg)
-        
+
         # Publish estimated state of robot
         state = Pose2D()
         # state.x = _xhat
