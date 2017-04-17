@@ -6,7 +6,7 @@ import sys
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose2D
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import String
 from soccerref.msg import GameState
 
@@ -32,11 +32,16 @@ def _nothing(x):
 isFirst = True
 def _process_img(msg):
 
+   # print 'vision msg: camera'
+
    global isFirst, field
    # print 'hello everyone'
    # return
-
-   image = _ros2cv(msg)
+   array = np.fromstring(msg.data, np.uint8)
+   uncompressed_img = cv2.imdecode(array, 1)
+   image = uncompressed_img
+   # image = _ros2cv(uncompressed_img)
+   # image = _ros2cv(msg)
    # _show_raw(image)
 
    # shiny pink ball - 255, 255, 255, 221, 0, 0
@@ -290,6 +295,7 @@ def _ball(image, color, isFirst):
 _game_state = GameState()
 def _process_game_state(msg):
    global _game_state
+   # print 'vision msg: game_state'
    _game_state = msg
 
 
@@ -311,12 +317,17 @@ def _orient(msg):
 
 
 def main():
+   print 'starting vision node'
    rospy.init_node('vision', anonymous=False)
+   print 'vision a'
 
    # subscribe to camera
-   rospy.Subscriber('camera', Image, _process_img)
+   # rospy.Subscriber('camera', Image, _process_img)
+   rospy.Subscriber('camera', CompressedImage, _process_img)
+   print 'vision b'
    # subscribe to the game_state
    rospy.Subscriber('game_state', GameState, _process_game_state)
+   print 'vision c'
 
    global us1_pub, us2_pub, ball_pub, field_dim_pub, field_pos_pub
    # publish locations
@@ -327,11 +338,14 @@ def main():
    ball_pub  = rospy.Publisher('vision/ball', Pose2D, queue_size=10)
    field_dim_pub = rospy.Publisher('vision/field_dim', Pose2D, queue_size=10)
    field_pos_pub = rospy.Publisher('vision/field_pos', Pose2D, queue_size=10)
+   print 'vision d'
 
-   rospy.spin()
+   # rospy.spin()
+   print 'vision e'
    rate = rospy.Rate(100) # 100 Hz
    while not rospy.is_shutdown():
 
+      # print 'vision tick'
 
       # Wait however long it takes to make this tick at 100Hz
       rate.sleep()

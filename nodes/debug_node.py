@@ -6,7 +6,7 @@ import sys
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import Pose2D
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import String
 from soccerref.msg import GameState
 
@@ -43,7 +43,10 @@ def _ros2cv(msg):
 
 def _process_camera(msg):
    global image, isFirst
-   image = _ros2cv(msg)
+   array = np.fromstring(msg.data, np.uint8)
+   uncompressed_img = cv2.imdecode(array, 1)
+   image = uncompressed_img
+   # image = _ros2cv(msg)
    image = cv2.resize(image, (0,0), fx=0.7, fy=0.7)
    if _game_state.second_half:
       image = cv2.flip(image, 1)
@@ -197,7 +200,8 @@ def main():
    rospy.init_node('debug', anonymous=False)
 
    #get camera to overlay images on
-   rospy.Subscriber('camera', Image, _process_camera)
+   # rospy.Subscriber('camera', Image, _process_camera)
+   rospy.Subscriber('camera', CompressedImage, _process_camera)
 
    rospy.Subscriber('game_state', GameState, _process_game_state)
 
