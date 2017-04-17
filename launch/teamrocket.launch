@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+
   <!-- declare arg to be passed in -->
   <arg name="team_side"         default="away" />
   <arg name="debug"             default="false" />
@@ -7,37 +8,24 @@
   <arg name="sim_mode"          default="false" />
   <arg name="two_robots"        default="true" />
   <arg name="game_state"        default="/game_state" />
-  <!-- Set to false if you're not debugging
-       This creates a window to show us where it thinks the robot is and where
-       it's trying to go. -->
-  <!-- Actually right now we're only doing debugging in vision, not here -->
-  <!-- <arg name="debug" default="true" /> -->
+  <arg name="use_vision"        default="false" />
 
   <!-- Outputs to either real world or simulation -->
   <!-- <arg name="vel_cmd_ally1" default="vel_cmds" /> -->
   <!-- <arg name="vel_cmd_ally2" default="vel_cmds" /> -->
-  <arg name="kick_ally1" default="kick" />
-  <arg name="kick_ally2" default="kick" />
+  <!-- <arg name="kick_ally1" default="kick" /> -->
+  <!-- <arg name="kick_ally2" default="kick" /> -->
 
   <group ns="teamrocket_$(arg team_side)">
 
     <!-- Running vision on computer instead of pi -->
     <!-- Vision -->
     <!-- Start the vision up -->
-    <!-- <include file="$(find teamrocket)/launch/vision.launch"> -->
-    <!-- <arg name="team_side" value="$(arg team_side)" /> -->
-    <!-- </include> -->
-
-    <!-- Orienter -->
-    <!-- Start the orienter up -->
-    <include file="$(find teamrocket)/launch/orienter.launch">
-      <arg name="team_side" value="$(arg team_side)" />
-    </include>
-
-    <!-- Estimator -->
-    <!-- Start the estimator up -->
-    <include file="$(find teamrocket)/launch/estimator.launch">
-      <arg name="team_side" value="$(arg team_side)" />
+    <include file="$(find teamrocket)/launch/vision.launch"
+             if="$(arg use_vision)" >
+      <arg name="team_side"  value="$(arg team_side)" />
+      <arg name="debug"      value="true" />
+      <arg name="hw_testing" value="false" />
     </include>
 
     <!-- Set ROS parameters that the code can access -->
@@ -45,16 +33,85 @@
     <!-- <param name="ally_number" type="string" /> -->
     <!-- <param name="team_side" type="string" value="$(arg team_side)" /> -->
 
+    <!-- Robot 1 (Weezing) -->
+    <group>
+
+      <!-- declare machines -->
+      <machine name="weezing" address="192.168.1.110" user="weezing"
+               env-loader="~/env.sh" default="true" />
+
+      <include file="$(find teamrocket)/launch/robot.launch">
+        <arg name="my_number"         value="1" />
+        <arg name="ally_number"       value="2" />
+        <arg name="team_side"         value="$(arg team_side)" />
+        <arg name="debug"             value="$(arg debug)" />
+        <arg name="ignore_game_state" value="$(arg ignore_game_state)" />
+        <arg name="game_state"        value="$(arg game_state)" />
+      </include>
+
+    </group>
+
+
+    <!-- Robot 2 (Arbok) -->
+    <group>
+
+      <!-- declare machines -->
+      <machine name="arbok" address="192.168.1.24" user="arbok"
+               env-loader="~/env.sh" default="true" />
+
+      <include file="$(find teamrocket)/launch/robot.launch">
+        <arg name="my_number"         value="2" />
+        <arg name="ally_number"       value="1" />
+        <arg name="team_side"         value="$(arg team_side)" />
+        <arg name="debug"             value="$(arg debug)" />
+        <arg name="ignore_game_state" value="$(arg ignore_game_state)" />
+        <arg name="game_state"        value="$(arg game_state)" />
+      </include>
+
+    </group>
+
+    <!-- Orienter -->
+    <!-- Start the orienter up -->
+    <node name="orienter" pkg="teamrocket"
+          type="orienter_node.py" output="screen">
+    </node>
+
+    <node name="ball_estimator" pkg="teamrocket" type="estimator_node.py"
+          output="screen">
+      <remap from="data" to="orienter/ball" />
+      <remap from="estimated_state" to="estimator/ball" />
+    </node>
+
+    <!-- <node machine="weezing" name="ally1" pkg="teamrocket" type="robot" -->
+    <!--       output="screen"> -->
+    <!--     <param name="my_number"         value="1" /> -->
+    <!--     <param name="ally_number"       value="2" /> -->
+    <!--     <param name="team_side"         value="$(arg team_side)" /> -->
+    <!--     <param name="debug"             value="$(arg debug)" /> -->
+    <!--     <param name="ignore_game_state" value="$(arg ignore_game_state)" /> -->
+    <!--     <param name="game_state"        value="$(arg game_state)" /> -->
+    <!-- </node> -->
+
+    <!-- <node machine="arbok" name="ally2" pkg="teamrocket" type="robot" output="screen"> -->
+    <!--     <param name="my_number"         value="2" /> -->
+    <!--     <param name="ally_number"       value="1" /> -->
+    <!--     <param name="team_side"         value="$(arg team_side)" /> -->
+    <!--     <param name="debug"             value="$(arg debug)" /> -->
+    <!--     <param name="ignore_game_state" value="$(arg ignore_game_state)" /> -->
+    <!--     <param name="game_state"        value="$(arg game_state)" /> -->
+    <!-- </node> -->
+
+
     <!-- <group ns="ally1"> -->
     <!-- Start the robot up -->
-    <include file="$(find teamrocket)/launch/robot.launch">
-      <arg name="my_number"         value="1" />
-      <arg name="ally_number"       value="2" />
-      <arg name="team_side"         value="$(arg team_side)" />
-      <arg name="debug"             value="$(arg debug)" />
-      <arg name="ignore_game_state" value="$(arg ignore_game_state)" />
-      <arg name="game_state"        value="$(arg game_state)" />
-    </include>
+    <!-- <include file="$(find teamrocket)/launch/robot.launch"> -->
+    <!--   <arg name="my_number"         value="1" /> -->
+    <!--   <arg name="ally_number"       value="2" /> -->
+    <!--   <arg name="team_side"         value="$(arg team_side)" /> -->
+    <!--   <arg name="debug"             value="$(arg debug)" /> -->
+    <!--   <arg name="ignore_game_state" value="$(arg ignore_game_state)" /> -->
+    <!--   <arg name="game_state"        value="$(arg game_state)" /> -->
+    <!-- </include> -->
     <!-- </group> -->
 
     <!-- start up ally2 -->
