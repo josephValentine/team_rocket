@@ -17,6 +17,9 @@ isFirst = True
 us1Vision = Pose2D()
 us1Estimated = Pose2D()
 us1Commanded = Pose2D()
+us2Vision = Pose2D()
+us2Estimated = Pose2D()
+us2Commanded = Pose2D()
 ballVision = Pose2D()
 field_dim = Pose2D()
 field_dim.x = 1 # avoid dividing by zero the first couple of times
@@ -67,6 +70,20 @@ def _draw(image, isFirst):
       us1CommandedX,us1CommandedY,us1CommandedTheta = convert_coordinates_back(
          us1Commanded)
       cv2.putText(image, 'us1C', (us1CommandedX,us1CommandedY), cv2.FONT_ITALIC,
+                  0.3, (0,255,255))
+
+      us2VisionX,us2VisionY,us2VisionTheta = convert_coordinates_back(us2Vision)
+      cv2.putText(image, 'us2V', (us2VisionX,us2VisionY), cv2.FONT_ITALIC, 0.3,
+                  (0,0,255))
+
+      us2EstimatedX,us2EstimatedY,us2EstimatedTheta = convert_coordinates_back(
+         us2Estimated)
+      cv2.putText(image, 'us2E', (us2EstimatedX,us2EstimatedY), cv2.FONT_ITALIC,
+                  0.3, (255,0,0))
+
+      us2CommandedX,us2CommandedY,us2CommandedTheta = convert_coordinates_back(
+         us2Commanded)
+      cv2.putText(image, 'us2C', (us2CommandedX,us2CommandedY), cv2.FONT_ITALIC,
                   0.3, (0,255,255))
 
       ballVisionX,ballVisionY,ballVisionTheta = convert_coordinates_back(ballVision)
@@ -125,8 +142,8 @@ def _process_measured_us1(msg):
 
 
 def _process_measured_us2(msg):
-   global image
-   pass
+   global us2Vision
+   us2Vision = msg
 
 def _process_measured_them1(msg):
    global image
@@ -145,8 +162,8 @@ def _process_estimated_us1(msg):
    us1Estimated = msg
 
 def _process_estimated_us2(msg):
-   global image
-   pass
+   global us2Estimated
+   us2Estimated = msg
 
 def _process_estimated_them1(msg):
    global image
@@ -165,8 +182,8 @@ def _process_commanded_us1(msg):
    us1Commanded = msg
 
 def _process_commanded_us2(msg):
-   global image
-   pass
+   global us2Commanded
+   us2Commanded = msg
 
 def _process_field_dim(msg):
    global field_dim
@@ -186,19 +203,19 @@ def main():
 
    # subscribe to locations
    rospy.Subscriber('vision/us1',   Pose2D, _process_measured_us1)
-   # rospy.Subscriber('vision/us2',   Pose2D, _process_measured_us2)
+   rospy.Subscriber('vision/us2',   Pose2D, _process_measured_us2)
    # rospy.Subscriber('vision/them1', Pose2D, _process_measured_them1)
    # rospy.Subscriber('vision/them2', Pose2D, _process_measured_them2)
    rospy.Subscriber('vision/ball',  Pose2D, _process_measured_ball)
 
    rospy.Subscriber('controller/us1',  Pose2D, _process_estimated_us1)
-   # rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
+   rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
    # rospy.Subscriber('estimator/them1', Pose2D, _process_estimated_them1)
    # rospy.Subscriber('estimator/them2', Pose2D, _process_estimated_them2)
    # rospy.Subscriber('estimator/ball',  Pose2D, _process_estimated_ball)
 
    rospy.Subscriber('desired_position/us1', Pose2D, _process_commanded_us1)
-   # rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)
+   rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)
 
    rospy.Subscriber('vision/field_dim', Pose2D, _process_field_dim)
    rospy.Subscriber('vision/field_pos', Pose2D, _process_field_pos)
