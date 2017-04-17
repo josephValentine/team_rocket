@@ -21,6 +21,7 @@ us2Vision = Pose2D()
 us2Estimated = Pose2D()
 us2Commanded = Pose2D()
 ballVision = Pose2D()
+ballEstimated = Pose2D()
 field_dim = Pose2D()
 field_dim.x = 1 # avoid dividing by zero the first couple of times
 field_dim.y = 1
@@ -92,6 +93,10 @@ def _draw(image, isFirst):
       ballVisionX,ballVisionY,ballVisionTheta = convert_coordinates_back(ballVision)
       cv2.putText(image, 'ballV', (ballVisionX,ballVisionY), cv2.FONT_ITALIC,
                   0.3, (203, 192, 255))
+
+      ballEstimatedX,ballEstimatedY,ballEstimatedTheta = convert_coordinates_back(ballEstimated)
+      cv2.putText(image, 'ballE', (ballEstimatedX,ballEstimatedY), cv2.FONT_ITALIC,
+                  0.3, (0, 0, 0))
 
       cv2.imshow("debug",image)
       cv2.waitKey(3)
@@ -177,8 +182,8 @@ def _process_estimated_them2(msg):
    pass
 
 def _process_estimated_ball(msg):
-   global image
-   pass
+   global ballEstimated
+   ballEstimated = msg
 
 def _process_commanded_us1(msg):
    global us1Commanded
@@ -216,7 +221,7 @@ def main():
    rospy.Subscriber('controller/us2',  Pose2D, _process_estimated_us2)
    # rospy.Subscriber('estimator/them1', Pose2D, _process_estimated_them1)
    # rospy.Subscriber('estimator/them2', Pose2D, _process_estimated_them2)
-   # rospy.Subscriber('estimator/ball',  Pose2D, _process_estimated_ball)
+   rospy.Subscriber('estimator/ball',  Pose2D, _process_estimated_ball)
 
    rospy.Subscriber('desired_position/us1', Pose2D, _process_commanded_us1)
    rospy.Subscriber('desired_position/us2', Pose2D, _process_commanded_us2)

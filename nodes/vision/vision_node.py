@@ -34,7 +34,7 @@ def _process_img(msg):
 
    # print 'vision msg: camera'
 
-   global isFirst, field
+   global isFirst, field, fgbg
    # print 'hello everyone'
    # return
    array = np.fromstring(msg.data, np.uint8)
@@ -54,12 +54,14 @@ def _process_img(msg):
    fieldColor=[189,108,215,123,25,31]
    ourRobot1Color=[255, 222, 107, 234, 58, 65]
    ourRobot2Color=[252, 73, 204, 214, 0, 113]
-   ballColor=[255, 160, 255, 156, 0, 129]#ballColor=[255, 145, 238, 177, 6, 153]
+   ballColor=[255, 58, 220, 199, 20, 0]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
    if isFirst:
       field = _field(image, fieldColor, isFirst)
+      # fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
+      # fgbg = cv2.createBackgroundSubtractorMOG2()
    global us1_pub, us2_pub, ball_pub, field_dim_pub, field_pos_pub
    dim_msg = Pose2D()
    dim_msg.x = field[2]
@@ -259,6 +261,11 @@ def _ball(image, color, isFirst):
 
    if not _live:
       cv2.namedWindow("ball")
+
+   
+   # fgmask = fgbg.apply(image)
+   # out3 = fgmask
+
    out1 = _color_mask(image, 'ball',color,isFirst)
 
    #remove noise
@@ -276,7 +283,7 @@ def _ball(image, color, isFirst):
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       #print radius
-      if radius > 1.6 and radius < 3:
+      if radius > 1.5 and radius < 3:
          objects.append((pt[0],pt[1],radius))
 
    x=None
