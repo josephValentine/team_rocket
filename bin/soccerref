@@ -1,1 +1,1 @@
-roslaunch soccerref simref.launch
+roslaunch soccerref referee.launch
