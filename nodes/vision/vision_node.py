@@ -75,18 +75,18 @@ def _process_img(msg):
    field_pos_pub.publish(pos_msg)
 
    if all(field):
-      ourRobot1 = _findRobot(image, ourRobot1Color, "ourRobot1", isFirst, (3,3))
+      ourRobot1 = _findRobot(image, ourRobot1Color, "ourRobot1", isFirst, (3,3), field)
       if (ourRobot1[0] is not None and ourRobot1[1] is not None):#angle can be zero so cant use all() func
          us1_msg = convert_coordinates(ourRobot1[0],ourRobot1[1],ourRobot1[2], field)
          # print 'x_old = {}, y_old = {}'.format(ourRobot1[0], ourRobot1[1])
          us1_pub.publish(_orient(us1_msg))
 
-      ourRobot2 = _findRobot(image, ourRobot2Color, "ourRobot2", isFirst, (3,3))
+      ourRobot2 = _findRobot(image, ourRobot2Color, "ourRobot2", isFirst, (3,3), field)
       if (ourRobot2[0] is not None and ourRobot2[1] is not None):#angle can be zero so cant use all() func
          us2_msg = convert_coordinates(ourRobot2[0],ourRobot2[1],ourRobot2[2], field)
          us2_pub.publish(_orient(us2_msg))
 
-      ball = _ball(image, ballColor, isFirst)
+      ball = _ball(image, ballColor, isFirst, field)
       if (ball[0] is not None and ball[1] is not None):
          ball_msg = convert_coordinates(ball[0], ball[1], ball[2], field)
          ball_pub.publish(_orient(ball_msg))
@@ -117,7 +117,7 @@ def convert_coordinates(x,y,theta, field):
    return rval
 
 
-def _color_mask(image, controlWindow, color, first=False):
+def _color_mask(image, controlWindow, color, field, first=False, useField=True):
 
    if not _live:
       # create the filter color params
@@ -161,12 +161,25 @@ def _color_mask(image, controlWindow, color, first=False):
    # the mask
    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
    mask = cv2.inRange(hsv, lower, upper)
-   out1 = cv2.bitwise_and(image, image, mask = mask)
+   #print 'rows: %d, cols %d' % (image.shape[0], image.shape[1])
+   if useField:
+      #height=int(640*0.7)
+      #width=int(480*0.7)
+      height=336
+      width=605
+      rect_img = np.zeros((height,width), np.uint8)
+      #cv2.circle(circle_img,(width/2,height/2),280,1,thickness=-1)
+      cv2.rectangle(rect_img, (field[0], field[1]), (field[0]+field[2], field[1]+field[3]), 
+         (255, 255, 255), -1)
+      out = cv2.bitwise_and(image, image, mask = rect_img)
+      out1 = cv2.bitwise_and(out, out, mask = mask )
+   else:
+      out1 = cv2.bitwise_and(image, image, mask = mask )
 
    return out1
 
 
-def _findRobot(image, color, name, isFirst, size):
+def _findRobot(image, color, name, isFirst, size, field):
    """
    image: image
    color: array of color values for mask (6)
@@ -177,7 +190,7 @@ def _findRobot(image, color, name, isFirst, size):
    """
    if not _live:
       cv2.namedWindow(name)
-   out1 = _color_mask(image,name,color,isFirst)
+   out1 = _color_mask(image,name,color, field,isFirst)
 
    #remove noise
    kernel = np.ones(size,np.uint8) #sets size of holes accepted i think?
@@ -222,7 +235,7 @@ def _field(image, color, isFirst):
 
    if not _live:
       cv2.namedWindow("field")
-   out1 = _color_mask(image, 'field',color,isFirst)
+   out1 = _color_mask(image, 'field',color, None, isFirst, useField=False)
 
    #remove noise
    kernel = np.ones((10,10),np.uint8) #sets size of holes accepted i think?
@@ -257,7 +270,7 @@ def _field(image, color, isFirst):
       cv2.imshow("field",out3)
    return (x,y,w,h)
 
-def _ball(image, color, isFirst):
+def _ball(image, color, isFirst, field):
 
    if not _live:
       cv2.namedWindow("ball")
@@ -266,7 +279,7 @@ def _ball(image, color, isFirst):
    # fgmask = fgbg.apply(image)
    # out3 = fgmask
 
-   out1 = _color_mask(image, 'ball',color,isFirst)
+   out1 = _color_mask(image, 'ball',color, field, isFirst)
 
    #remove noise
    kernel = np.ones((2,2),np.uint8) #sets size of holes accepted i think?
@@ -283,7 +296,7 @@ def _ball(image, color, isFirst):
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       #print radius
-      if radius > 1.5 and radius < 3:
+      if radius > 1 and radius < 2.5:
          objects.append((pt[0],pt[1],radius))
 
    x=None
