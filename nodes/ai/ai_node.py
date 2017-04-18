@@ -139,7 +139,53 @@ def main():
             pass
 
 
-        if _game_state.reset_field and not _ignore_game_state:
+        if _game_state.home_penalty and not _ignore_game_state:
+            if _team_side == 'home':
+                if _my_number == 1:
+                    msg.x = -0.2
+                    msg.y = 0.6
+                    msg.theta = 0
+
+                elif _my_number == 2:
+                    msg.x = -0.2
+                    msg.y = -0.6
+                    msg.theta = 0
+
+            else:
+                if _my_number == 1:
+                    msg.x = +0.5
+                    msg.y = 0
+                    msg.theta = 180
+
+                elif _my_number == 2:
+                    msg.x = +1
+                    msg.y = 0
+                    msg.theta = 180
+
+        elif _game_state.away_penalty and not _ignore_game_state:
+            if _team_side == 'away':
+                if _my_number == 1:
+                    msg.x = 0.2
+                    msg.y = 0.6
+                    msg.theta = 180
+
+                elif _my_number == 2:
+                    msg.x = 0.2
+                    msg.y = -0.6
+                    msg.theta = 180
+
+            else:
+                if _my_number == 1:
+                    msg.x = -0.5
+                    msg.y = 0
+                    msg.theta = 0
+
+                elif _my_number == 2:
+                    msg.x = -1
+                    msg.y = 0
+                    msg.theta = 0
+
+        elif _game_state.reset_field and not _ignore_game_state:
             # Send robot to home
             if count == 0 and print_when_commanding:
                 print 'Send robot to home'
