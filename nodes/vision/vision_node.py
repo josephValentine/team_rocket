@@ -45,16 +45,16 @@ def _process_img(msg):
    # _show_raw(image)
 
    # shiny pink ball - 255, 255, 255, 221, 0, 0
-   # dull pink ball - 255, 160, 255, 156, 0, 129
-   # blue - 255, 222, 107, 234, 58, 65
-   # purple - 252, 73, 204, 214, 0, 113
-   # red - 255, 139, 20, 201, 80, 0
-   # green - 255, 96, 255, 203, 55, 0
+   # dull pink ball - 255, 160, 192, 204, 1, 0
+   # blue - 255, 173, 121, 214, 73, 65
+   # purple - 252, 63, 174, 214, 0, 127
+   # red - 250, 170, 56, 201, 94, 0
+   # green - 250, 124, 81, 170, 29, 57
    # yellow - 255, 36, 97, 218, 0, 0
    fieldColor=[189,108,215,123,25,31]
-   ourRobot1Color=[255, 222, 107, 234, 58, 65]
-   ourRobot2Color=[252, 73, 204, 214, 0, 113]
-   ballColor=[255, 58, 220, 199, 20, 0]#ballColor=[255, 145, 238, 177, 6, 153]
+   ourRobot1Color=[250, 170, 56, 201, 94, 0]
+   ourRobot2Color=[250, 124, 81, 170, 29, 57]
+   ballColor=[255, 160, 192, 204, 1, 0]#ballColor=[255, 145, 238, 177, 6, 153]
    opponent1Color=[229,216,241,204,195,222]
    opponent2Color=[229,216,241,204,195,222]
 
@@ -169,7 +169,7 @@ def _color_mask(image, controlWindow, color, field, first=False, useField=True):
       width=605
       rect_img = np.zeros((height,width), np.uint8)
       #cv2.circle(circle_img,(width/2,height/2),280,1,thickness=-1)
-      cv2.rectangle(rect_img, (field[0], field[1]), (field[0]+field[2], field[1]+field[3]), 
+      cv2.rectangle(rect_img, (field[0], field[1]-10), (field[0]+field[2], field[1]+field[3]), 
          (255, 255, 255), -1)
       out = cv2.bitwise_and(image, image, mask = rect_img)
       out1 = cv2.bitwise_and(out, out, mask = mask )
@@ -296,7 +296,7 @@ def _ball(image, color, isFirst, field):
       pt,radius = cv2.minEnclosingCircle(c)
       # cv2.drawContours(out4, [c],0,(0,128,255),1)
       #print radius
-      if radius > 1 and radius < 2.5:
+      if radius > 1.5 and radius < 3:
          objects.append((pt[0],pt[1],radius))
 
    x=None
